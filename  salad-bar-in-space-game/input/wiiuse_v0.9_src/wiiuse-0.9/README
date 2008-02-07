@@ -1,0 +1,124 @@
+---------------------------
+-
+-  README - Wiiuse
+-
+---------------------------
+
+http://wiiuse.net/
+http://wiiuse.sourceforge.net/
+http://sourceforge.net/projects/wiiuse/
+
+---------------------------
+
+ABOUT
+
+	Wiiuse is a library written in C that communicates with several Nintendo Wii remotes.
+	It captures button presses, motion sensing, IR tracking, and supports the nunchuk and classic controller.
+	Unlike similar projects, wiiuse is single threaded and nonblocking making it a light weight and clean API.
+
+	Distributed under the GPL.
+
+
+AUTHOR
+
+	Michael Laforest        < para >
+	Email: < thepara (--AT--) g m a i l [--DOT--] com >
+
+
+ACKNOWLEDGEMENTS
+
+	http://wiili.org/
+	http://wiibrew.org/
+		Both of these sites and their users have contributed an immense amount of information
+		about the wiimote and its technical details.  I could not have written this program
+		without the vast amounts of reverse engineered information that was researched by them.
+
+	Nintendo
+		Of course Nintendo for designing and manufacturing the Wii and Wii remote.
+
+	BlueZ
+		Easy and intuitive bluetooth stack for Linux.
+
+
+DISCLAIMER AND WARNINGS
+
+	I am in no way responsible for any damages or effects, intended or not, caused by this program.
+
+	*** WARNING *** WARNING *** WARNING ***
+
+	Be aware that writing to memory may damage or destroy your wiimote or expansions.
+
+	*** WARNING *** WARNING *** WARNING ***
+
+	This program was written using reverse engineered specifications available from wiili.org
+	and wiibrew.org.  Therefore the operation of this program may not be entirely correct.
+	Results obtained by using this program may vary.
+
+
+AUDIENCE
+
+	This project is intended for developers who wish to include support for the Nintendo Wii remote
+	with their third party application.  Please be aware that by using this software you are bound
+	to the terms of the GNU GPL.
+
+
+PLATFORMS AND DEPENDENCIES
+
+	Wiiuse currently operates on both Linux and Windows.
+	You will need:
+
+	For Linux:
+		- The kernel must support bluetooth
+		- The BlueZ bluetooth drivers must be installed
+
+	For Windows:
+		- Bluetooth driver (tested with Microsoft's stack with Windows XP SP2)
+		- If compiling, Microsoft Windows Driver Development Kit (DDK)
+
+
+COMPILING
+
+	Linux:
+		To compile the wiiuse source as a module:
+			# cd src/
+			# make
+		This will build a shared object in src/ called wiiuse.so.
+
+		To compile the example program:
+			# cd api/
+			# make
+		This will create an example program in api/ called wiiuse-example.
+
+		To compile a graphical example that plots IR data:
+			# cd gfx/
+			# make
+		You need SDL and OpenGL installed to compile this program.
+
+	Windows:
+		A Microsoft Visual C++ 6.0 project file has been included.
+
+		You need the install the Windows DDK (driver development kit)
+		to compile wiiuse. Make sure you include the inc/ and lib/
+		directories from the DDK in your IDE include and library paths.
+		You can download this from here:
+			http://www.microsoft.com/whdc/devtools/ddk/default.mspx
+
+		You need to link the following libraries (already set in the
+		included project file):
+			- Ws2_32.lib
+			- hid.lib
+			- setupapi.lib
+
+
+USING THE LIBRARY IN A THIRD PARTY APPLICATION
+
+	To use the library in your own program you must first compile wiiuse as a module.
+	Include api/wiiuse.c and src/wiiuse.h in your own project.
+
+	api/wiiuse.c offers functions to easily load and communicate with the wiiuse module.
+	See api/example.c for an example of how to use the library with your program.
+
+
+BUGS
+
+	On Windows the disconnect callback does not work with the Power button.
