@@ -352,36 +352,3 @@ public:
 
 // different behavior when for holding down and tapping buttons.
 
-
-// Consider making InputManager and Action threadsafe.  Tap(), press(), release(), isPress(), getAmount().
-
-//        /* Wait for display to be available, then lock it. */
-//        WaitForSingleObject( hScreenMutex, INFINITE );
-//
-//        /* If we still occupy the old screen position, blank it out. */
-//        ReadConsoleOutputCharacter( hConsoleOut, &OldCell, 1, Old, &Dummy );
-//        ReadConsoleOutputAttribute( hConsoleOut, &OldAttrib, 1, Old, &Dummy );
-//        if (( OldCell == MyCell ) && (OldAttrib == MyAttrib))
-//            WriteConsoleOutputCharacter( hConsoleOut, &BlankCell, 1, Old, &Dummy );
-//
-//        /* Draw new face, then clear screen lock */
-//        WriteConsoleOutputCharacter( hConsoleOut, &MyCell, 1, Coords, &Dummy );
-//        WriteConsoleOutputAttribute( hConsoleOut, &MyAttrib, 1, Coords, &Dummy );
-//        ReleaseMutex( hScreenMutex );
-
-
-//    hScreenMutex = CreateMutex( NULL, FALSE, NULL );   /* Cleared */
-//    hRunMutex = CreateMutex( NULL, TRUE, NULL );       /* Set */
-//    ThreadNr = 0;
-//
-//    /* Start waiting for keyboard input to dispatch threads or exit. */
-//    KbdFunc();
-//
-//    /* All threads done. Clean up handles. */
-//    CloseHandle( hScreenMutex );
-//    CloseHandle( hRunMutex );
-//    CloseHandle( hConsoleOut );
-
-
-
-//	  _beginthread( BounceProc, 0, &ThreadNr );
