@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="9.00"
 	Name="InputManager"
 	ProjectGUID="{898CCA5F-217A-47AC-A1CB-32E21942357E}"
 	RootNamespace="InputManager"
 	Keyword="ManagedCProj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -170,6 +171,10 @@
 			>
 			<File
 				RelativePath=".\Inputmanager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MastEventReceiver.cpp"
 				>
 			</File>
 		</Filter>
