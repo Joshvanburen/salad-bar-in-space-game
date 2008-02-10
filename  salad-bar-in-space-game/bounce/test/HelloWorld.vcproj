@@ -44,7 +44,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\irrlicht\include"
+				AdditionalIncludeDirectories="..\..\irrlicht-1.4\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -74,7 +74,7 @@
 				OutputFile="..\bin\Win32-VisualStudio\test.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="..\..\irrlicht\lib\Win32-visualstudio"
+				AdditionalLibraryDirectories="..\..\irrlicht-1.4\lib\Win32-visualstudio"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Debug/HelloWorld.pdb"
 				SubSystem="1"

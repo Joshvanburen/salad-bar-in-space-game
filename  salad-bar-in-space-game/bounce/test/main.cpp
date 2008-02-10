@@ -41,7 +41,8 @@ develop applications with the Irrlicht Engine.
 
 */
 #include <irrlicht.h>
-
+#include "MastEventReceiver.cpp"
+#include <stdio.h>
 /*
 In the Irrlicht Engine, everything can be found in the namespace
 'irr'. So if you want to use a class of the engine, you have to
@@ -108,10 +109,11 @@ int main()
 	eventReceiver: An object to receive events. We do not want to use this
 	   parameter here, and set it to 0.
 	*/
-
+	MastEventReceiver eventReceiver;
+	eventReceiver.init();
 	IrrlichtDevice *device =
 		createDevice( video::EDT_SOFTWARE, dimension2d<s32>(640, 480), 16,
-			false, false, false, 0);
+			false, false, false, &eventReceiver);
 
 	/*
 	Set the caption of the window to some nice text. Note that there is 
@@ -176,8 +178,11 @@ int main()
 	want to run any more. This would be when the user closed the window
 	or pressed ALT+F4 in windows.
 	*/
+
+	bool show = false;
 	while(device->run())
 	{
+		eventReceiver.endEventProcess();
 		/*
 		Anything can be drawn between a beginScene() and an endScene()
 		call. The beginScene clears the screen with a color and also the
@@ -187,10 +192,15 @@ int main()
 		*/
 		driver->beginScene(true, true, SColor(255,100,101,140));
 
+	
+		if(eventReceiver.keyPressed(KEY_KEY_A))
+		{
+			printf("test");
+		}
 		smgr->drawAll();
 		guienv->drawAll();
-
 		driver->endScene();
+		eventReceiver.startEventProcess();
 	}
 
 	/*

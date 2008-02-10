@@ -60,7 +60,7 @@ class MastEventReceiver : public IEventReceiver
 
    processStateENUM processState; // STARTED = handling events, ENDED = not handling events
 
-   virtual bool OnEvent(SEvent event)
+   virtual bool OnEvent(const SEvent event)
    {
       bool eventprocessed = false;
 
