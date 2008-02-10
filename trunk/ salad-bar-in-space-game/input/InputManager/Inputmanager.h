@@ -1,45 +1,42 @@
 
-//need to fix mouse actions.
-//Might be useful to implement some callbacks in the actions.  Might also cause nasty resulting code that uses this class.
-//Maybe later should add multiple keypresses of the same key in a certain time period to trigger action.
 
 #pragma once
 #include "singleton.h"
+#include "MastEventReceiver.cpp"
+#include "wiiuse.h"
 
 class InputManager;
 //!namespace containing all Input related structures used by the InputManager.
 namespace Input{
+	static const int WII_MOVE_HANDS_OUTWARD;
+	static const int WII_MOVE_HANDS_INWARD;
+	static const int WII_RIGHT_HAND_UP;
+	static const int WII_BOTH_HANDS_DOWN;
+	static const int WII_RIGHT_HAND_RIGHT;
+	static const int WII_RIGHT_HAND_LEFT;
+	static const int WII_A_BUTTON;
+	static const int WII_B_BUTTON;
+	static const int WII_PLUS_BUTTON;
+	static const int WII_MINUS_BUTTON;
+	static const int WII_Z_BUTTON;
+	static const int WII_C_BUTTON;
 
 	//! InputDeviceInit should be inherited from if a new device needs to be added, should contain initialiation information.
 	struct InputDeviceInit{
 		std::string m_name;	//!< Name of the device
 	};
-	//! Default DirectX keyboard provided.
+	//! Default Irrilicht keyboard provided.
 	struct KeyboardInit : InputDeviceInit{
-		bool bDisableWinKey;
-		DWORD dwCoopFlags;
-		//!Initialized in InputManager::init() currently, but it would hurt for the user to do this.
-		HWND hwnd;
-		KeyboardInit(){
-			bDisableWinKey = true;
-			m_name = "DirectX Keyboard";
-			hwnd = NULL;
-			dwCoopFlags = DISCL_NONEXCLUSIVE | DISCL_FOREGROUND | DISCL_NOWINKEY;
+		KeyboardInit(){	
+			m_name = "Irrlicht Keyboard";
 		}
 	};
-	//! Default DirectX mouse provided.
-	struct MouseInit : InputDeviceInit{
-		DWORD dwCoopFlags;
-		//! Initialized in InputManager::init() currently, but it would hurt for the user to do this.
-		HWND  hwnd;
 
-		MouseInit(){
-			m_name = "DirectX Mouse";
-			hwnd = NULL;
-			dwCoopFlags = DISCL_EXCLUSIVE | DISCL_FOREGROUND;
+	struct WiimoteInit : InputDeviceInit{
+
+		WiimoteInit(){
+			m_name = "Wii Mote";
 		}
-	private:
-
 	};
 	//!InputDevice is the base class for all devices added to the InputManager.
 	class InputDevice
@@ -50,7 +47,7 @@ namespace Input{
 
 		std::string m_name; //!< The name of the device.
 
-		LPDIRECTINPUT8 m_lpdi; //!< A pointer to the DirectInput8 object, initialized by InputManager.
+		MastEventReceiver* receiver; //!< A pointer to the Irrilicth input receiver object, initialized by InputManager.
 
 		virtual void release() = 0; //!< release() should be overridden by derived class, it is called by InputManager.
 		
@@ -84,6 +81,57 @@ namespace Input{
 		}
 
 	};
+
+	class Wiimote : public InputDevice{
+
+		int[] LEDs;
+		float battery_level;
+		bool attachment;
+		float joystickAngle;
+		float joystickMagnitude;
+		int moteID;
+		wiimote** wiimotes;
+
+		friend class ::InputManager;
+	private:
+
+	protected:
+		void handle_event(struct wiimote_t* wm);
+
+		void handle_ctrl_status(struct wiimote_t* wm, int attachment, int speaker, int ir, int led[4], float battery_level);
+
+		void handle_disconnect(wiimote* wm);
+
+		bool init(InputDeviceInit &deviceInit);
+
+		bool read();
+
+		void release();
+
+		bool buttonStatus(int code) const;
+
+		bool operator()(int code) const;
+
+
+	public:
+
+		void rumble(int duration);
+
+		float getBatteryLevel();
+
+		bool hasAttachement();
+
+		bool* whichLEDs();
+
+		float joystickAngle();
+
+		float joystickMagnitude();
+
+		void toggleLED(int which);
+		Wiimote();
+
+		~Wiimote();
+	};
 	//! Keyboard is a specialization of the InputDevice provided by the InputManager by default.
 	/*! This implementation of Keyboard is using the default DirectInput keyboard.  Keys are stored in an array of 256 BYTES.  The class
 	* also provides the ability to covert input codes into a char if printing of typed keys was needed.  In addition to keyToChar(), appendToString() 
@@ -92,21 +140,14 @@ namespace Input{
 	class Keyboard : public InputDevice{
 		friend class ::InputManager;
 	protected:
-		LPDIRECTINPUTDEVICE8 m_lpdikey; //!< a pointer to the keyboard device used by DirectInput.
-
-		BYTE m_Key[256]; //!< array of BYTE which gets filled with the current state of the keyboard each time the keyboard is polled.
-
-		bool m_Active;
-		bool m_Acquired;
-
 		bool init(InputDeviceInit &deviceInit);
 
 		bool read();
 
 		void release();
-		//! Converts given directX keycode to a char.
+		//! Converts given Irrilicht keycode to a char.
 		/*! Uses the directx keycode constants to find a corresponding char and returns it.
-		* @param key The directx key constant.
+		* @param key The irrilicht key constant.
 		* @return char value represented by the constant.
 		*/
 		char keyToChar(int key);
@@ -131,72 +172,7 @@ namespace Input{
 
 
 	};
-	//! Mouse is a specialization of the InputDevice provided by the InputManager by default.
-	/*! This implementation of Mouse is using the default DirectInput Mouse.  The buttons are stored as an array of BYTE, buttons can be referenced
-	* by using the Mouse constants which are in the form of DIM_N, where N is the number of the button.  Mouse also offers the ability to change the mouse
-	* options such as sensitivity, limits, and setting exclusive mode.
-	*/
-	class Mouse : public InputDevice{
-		friend class ::InputManager;
-	public:
-		//! getRelativePosition() takes four LONG pointers and modifies the value they point to to be the current relative position of the mouse.
-		void getRelativePosition(LONG* x, LONG* y, LONG* z);
-		
-		void setLimits(long x1, long y1, long x2, long y2); //!< Sets limits for the mouse.  Useful to limit the mouse to a smaller window.
 
-		void setSensitivity(int factor); //!< sets the factor that mouse movements will be multiplied by, I currently don't have a range and need to add it in here when i find out.
-
-		int getSensitivity() const; //!< returns a float containing the current sensitivity setting for the mouse.
-		//! getAbsolutePosition() takes two ints and modifies their values so they point to the current absolute position of the mouse pointer.
-		void getAbsolutePosition(int* x, int* y);
-
-		long getRelativeX() const{
-			return m_dx;
-		}
-
-		long getRelativeY() const{
-			return m_dy;
-		}
-
-		long getRelativeZ() const{
-			return m_dz;
-		}
-	protected:
-		LPDIRECTINPUTDEVICE8 m_lpdimouse; //!< A pointer to the Mouse device used by DirectInput.
-
-		BYTE m_Button[8]; //!< array of BYTE which gets filled with the current state of the Mouse buttons each time the Mouse is polled.
-
-		LONG m_dx,	//!< LONG value representing the relative change in X the last time the Mouse was Polled.
-			 m_dy,  //!< LONG value representing the relative change in Y the last time the Mouse was Polled.
-			 m_dz;  //!< LONG value representing the relative change in Z(mouse wheel, usually) the last time the Mouse was Polled.
-
-		bool m_Active;
-		bool m_Acquired;
-
-		LONG m_MouseSpeed;
-		LONG m_MouseAbsX, m_MouseAbsY;
-
-		bool init(InputDeviceInit &deviceInit);
-
-		bool read();
-
-		void release();
-
-		bool buttonStatus(int code) const;
-	public:
-		Mouse();
-
-		~Mouse();
-	public:
-		//! Returns absolute x position of mouse
-		LONG getAbsX() const{
-			return m_MouseAbsX;
-		}
-		//! Returns absolute y position of mouse
-		LONG getAbsY() const{
-			return m_MouseAbsY;
-		}
-	};
 
 	//! Action maps a button to a behavior.
 	/*! The Action class encapsulates a behavior.  An action is created with the inputmanager.  When creating an action an InputDevice must be specified,
@@ -222,7 +198,6 @@ namespace Input{
 		long m_ToggleTime; //!<Timeout before tapped button can be pressed again.
 		std::map<std::string, std::set<std::set<int> > > deviceCodeMap;
 		
-		::HANDLE  hInputMutex;        //!< Input Mutex used to synchronize access to the Action functions.
 	public:
 		//! Resets the state of the Action to default.
 		virtual  void reset() { 
@@ -286,11 +261,10 @@ private:
 
 	Input::Keyboard m_Keyboard; //!< provided Keyboard implementation.
 
-	Input::Mouse m_Mouse; //!< provided Mouse implementation.
-
+	Input::Wiimote m_Wiimote //!< provided Wiimote implementation
 	//Create initialization structures
-	Input::MouseInit m_MouseInit;
 	Input::KeyboardInit m_KeyboardInit;
+	Input::WiimoteInit m_WiimoteInit;
 
 	Input::StrActionMap m_ActionMap; //!< Maps strings to Actions.
 
@@ -298,7 +272,7 @@ private:
 
 	Input::StrDeviceMap m_DeviceMap; //!< Maps strings to devices.
 
-	LPDIRECTINPUT8 m_lpdi;
+	MastEventReceiver* receiver;
 
 	InputManager();
 	~InputManager();
@@ -307,9 +281,9 @@ private:
 public:
 	friend CSingleton<InputManager>;
 
-	bool init(HINSTANCE main_instance, HWND hwnd); //!< Initialize DirectInput and the rest of the input system.
+	bool init(MastEventReceiver* eventReceiver); //!< Initialize the input system.
 
-	void shutdown();  //!< shutdown DirectInput and any resources used by the InputManager.
+	void shutdown();  //!< shutdown any resources used by the InputManager.
 	
 	//! Creates an Action with the given parameters and returns it to the caller.
 	/*! 
@@ -333,20 +307,20 @@ public:
 	//! Resets all the registered actions, useful for beginning a level with nothing pressed.
 	void resetAllActions();
 
-	Input::Mouse& getDIMouse(){
-		return m_Mouse;
-	}
-
-	Input::Keyboard& getDIKeyboard(){
+	Input::Keyboard& getKeyboard(){
 		return m_Keyboard;
 	}
-	//! Used to retrieve the Mouse initialization structure to modify settings before calling InputManager::init().
-	Input::MouseInit& getMouseInit(){
-		return m_MouseInit;
+
+	Input::Wiimote& getWiimote(){
+		return m_Wiimote;
 	}
 	//! Used to retrieve the keyboard initialization structure to modify settings before calling InputManager::init().
 	Input::KeyboardInit& getKeyboardInit(){
 		return m_KeyboardInit;
+	}
+
+	Input::WiimoteInit& getWiimoteInit(){
+		return m_WiimoteInit;
 	}
 };
 
