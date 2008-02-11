@@ -33,6 +33,8 @@ class Level
 			string levelName;
 			//Filename of music file
 			string musicFile;
+			//Level timer;
+			int time;
 	//Public methods and variables
 	public:
 			//Constructor
@@ -55,6 +57,8 @@ class Level
 			void setMusicFileName(string mName);
 			//Gets the current level time
 			int getCurrentTime();
+			//Sets the current level time
+			void setCurrentTime();
 }
 
 
