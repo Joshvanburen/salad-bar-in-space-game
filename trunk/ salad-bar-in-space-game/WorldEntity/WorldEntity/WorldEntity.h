@@ -10,11 +10,15 @@ public:
 	// Constructor
 	WorldEntity();
 	// destructor
-	~WorldEntity();
+	virtual ~WorldEntity(){};
 
-	void setLocation( x, y, z);
+	void setLocation(x, y, z);
 	
 	SceneNode entity();
+
+	// get/set ID
+	int getID();
+	void setID( int iID );
 
 private:
 	float x;// Used for location on the x-axis
@@ -36,6 +40,9 @@ private:
 	virtual void draw(float fElapsedTime) = 0;
 
 	virtual void load() = 0;
+
+	// Unique ID
+	int id;
 };
 
 #endif
