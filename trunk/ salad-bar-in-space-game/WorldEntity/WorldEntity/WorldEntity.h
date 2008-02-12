@@ -9,7 +9,7 @@ class WorldEntity{
 public:
 	// Constructor
 	WorldEntity();
-	// destructor
+	// virtual destructor
 	virtual ~WorldEntity(){};
 
 	void setLocation(x, y, z);
