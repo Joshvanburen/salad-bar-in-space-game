@@ -38,7 +38,7 @@ class Level
 	//Public methods and variables
 	public:
 			//Constructor
-			Level(ISceneNode node, string lName, string mName);
+			Level(ISceneNode node, string lName, string mName, vector<WorldEntity> wE);
 			//Draws the level
 			void drawLevel();
 			//Updates the level and all children
@@ -58,7 +58,9 @@ class Level
 			//Gets the current level time
 			int getCurrentTime();
 			//Sets the current level time
-			void setCurrentTime();
+			void setCurrentTime(int ctime);
+			//Loads the level
+			void load();
 }
 
 
