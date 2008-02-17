@@ -38,7 +38,7 @@ class Level
 	//Public methods and variables
 	public:
 			//Constructor
-			Level(ISceneNode node, string lName, string mName, vector<WorldEntity> wE);
+			Level(ISceneNode node, string lName, string mName, vector<WorldEntity> &wE);
 			//Draws the level
 			void drawLevel();
 			//Updates the level and all children

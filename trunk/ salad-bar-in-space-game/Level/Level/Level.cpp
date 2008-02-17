@@ -21,13 +21,13 @@ using namespace irr;
 #pragma comment(lib, "Irrlicht.lib")
 
 //Constructor
-Level::Level(ISceneNode node, string lName, string mName, vector<WorldEntity> wE)
+Level::Level(ISceneNode node, string lName, string mName, vector<WorldEntity> &wE)
 {
 	//Initializes the scene node, name of the level, music file, and vector of world entities
 	sceneNode = node;
 	levelName = lName;
 	musicName = mName;
-	worldEntities = wE;
+	worldEntities = *wE;
 }
 
 //Draws the level
