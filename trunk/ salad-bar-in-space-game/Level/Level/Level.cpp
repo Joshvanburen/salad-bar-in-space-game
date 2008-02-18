@@ -23,7 +23,7 @@ using namespace std;
 #pragma comment(lib, "Irrlicht.lib")
 
 //Constructor
-Level::Level(string lName, string mName, string lfName, string mfName, vector<WorldEntity> wE)
+Level::Level(string lName, string mName, const c8* lfName, const c8* mfName, vector<WorldEntity> wE)
 {
 	//Initializes the name of the level, music file, and vector of world entities
 	levelName = lName;
@@ -77,10 +77,10 @@ void Level::load()
 	smgr = device->getSceneManager();
 
 	//Loads the map file
-	device->getFileSystem()->addZipFileArchive((const c8*)levelFileName);
+	device->getFileSystem()->addZipFileArchive(levelFileName);
 
 	//Loads the mesh and initializes the node
-	scene::IAnimatedMesh* mesh = smgr->getMesh((const c8*)meshFileName);
+	scene::IAnimatedMesh* mesh = smgr->getMesh(meshFileName);
 	sceneNode = 0;
 
 	//Creates the node if the mesh exists
@@ -132,7 +132,7 @@ scene::ISceneNode* Level::getSceneNode()
 void Level::setSceneNode(scene::ISceneNode* node)
 {
 	//Sets the scene node
-	sceneNode* = node;
+	sceneNode = node;
 }
 
 //Gets the music file name
