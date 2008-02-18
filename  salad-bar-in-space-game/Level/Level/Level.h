@@ -39,9 +39,9 @@ class Level
 			//Level name
 			string levelName;
 			//Level file name
-			string levelFileName;
+			const c8* levelFileName;
 			//Mesh file name
-			string meshFileName;
+			const c8* meshFileName;
 			//Filename of music file
 			string musicFile;
 			//Level timer;
@@ -49,7 +49,7 @@ class Level
 	//Public methods and variables
 	public:
 			//Constructor
-			Level(string lName, string mName, string lfName, string mfName, vector<WorldEntity> wE);
+			Level(string lName, string mName, const c8* lfName, const c8* mfName, vector<WorldEntity> wE);
 			//Draws the level
 			void drawLevel();
 			//Updates the level and all children
