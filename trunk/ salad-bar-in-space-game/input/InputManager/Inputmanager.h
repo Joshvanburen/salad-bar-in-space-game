@@ -2,24 +2,14 @@
 
 #pragma once
 #include "singleton.h"
-#include "MastEventReceiver.cpp"
 #include "wiiuse.h"
+#include "irrlicht.h"
+#include "MastEventReceiver.cpp"
 
 class InputManager;
 //!namespace containing all Input related structures used by the InputManager.
 namespace Input{
-	static const int WII_MOVE_HANDS_OUTWARD;
-	static const int WII_MOVE_HANDS_INWARD;
-	static const int WII_RIGHT_HAND_UP;
-	static const int WII_BOTH_HANDS_DOWN;
-	static const int WII_RIGHT_HAND_RIGHT;
-	static const int WII_RIGHT_HAND_LEFT;
-	static const int WII_A_BUTTON;
-	static const int WII_B_BUTTON;
-	static const int WII_PLUS_BUTTON;
-	static const int WII_MINUS_BUTTON;
-	static const int WII_Z_BUTTON;
-	static const int WII_C_BUTTON;
+
 
 	//! InputDeviceInit should be inherited from if a new device needs to be added, should contain initialiation information.
 	struct InputDeviceInit{
@@ -83,24 +73,45 @@ namespace Input{
 	};
 
 	class Wiimote : public InputDevice{
+	public:
+		static const int WII_MOVE_HANDS_OUTWARD;
+		static const int WII_MOVE_HANDS_INWARD;
+		static const int WII_RIGHT_HAND_UP;
+		static const int WII_BOTH_HANDS_DOWN;
+		static const int WII_RIGHT_HAND_RIGHT;
+		static const int WII_RIGHT_HAND_LEFT;
+		static const int WII_A_BUTTON;
+		static const int WII_B_BUTTON;
+		static const int WII_PLUS_BUTTON;
+		static const int WII_MINUS_BUTTON;
+		static const int WII_Z_BUTTON;
+		static const int WII_C_BUTTON;
+		static const int WII_1_BUTTON;
+		static const int WII_2_BUTTON;
 
-		int[] LEDs;
-		float battery_level;
-		bool attachment;
-		float joystickAngle;
-		float joystickMagnitude;
-		int moteID;
-		wiimote** wiimotes;
+
 
 		friend class ::InputManager;
 	private:
 
 	protected:
+		int LEDs[4];
+		float battery_level;
+		bool attachment;
+		int moteID;
+		wiimote** wiimotes;
+		bool hands_out;
+		bool hands_in;
+		bool right_hand_up;
+		bool both_hands_down;
+		bool right_hand_right;
+		bool right_hand_left;
+
 		void handle_event(struct wiimote_t* wm);
 
-		void handle_ctrl_status(struct wiimote_t* wm, int attachment, int speaker, int ir, int led[4], float battery_level);
+		void handle_ctrl_status(struct wiimote_t* wm);
 
-		void handle_disconnect(wiimote* wm);
+		//void handle_disconnect(wiimote* wm);
 
 		bool init(InputDeviceInit &deviceInit);
 
@@ -115,13 +126,13 @@ namespace Input{
 
 	public:
 
-		void rumble(int duration);
+		void toggleRumble();
 
 		float getBatteryLevel();
 
 		bool hasAttachement();
 
-		bool* whichLEDs();
+		int* whichLEDs();
 
 		float joystickAngle();
 
@@ -130,7 +141,7 @@ namespace Input{
 		void toggleLED(int which);
 		Wiimote();
 
-		~Wiimote();
+		virtual ~Wiimote();
 	};
 	//! Keyboard is a specialization of the InputDevice provided by the InputManager by default.
 	/*! This implementation of Keyboard is using the default DirectInput keyboard.  Keys are stored in an array of 256 BYTES.  The class
@@ -138,6 +149,46 @@ namespace Input{
 	* can be used to append each key to a previous string.
 	*/
 	class Keyboard : public InputDevice{
+		static const int KEY_A;
+		static const int KEY_B;
+		static const int KEY_C;
+		static const int KEY_D;
+		static const int KEY_E;
+		static const int KEY_F;
+		static const int KEY_G;
+		static const int KEY_H;
+		static const int KEY_I;
+		static const int KEY_J;
+		static const int KEY_K;
+		static const int KEY_L;
+		static const int KEY_M;
+		static const int KEY_N;
+		static const int KEY_O;
+		static const int KEY_P;
+		static const int KEY_Q;
+		static const int KEY_R;
+		static const int KEY_S;
+		static const int KEY_T;
+		static const int KEY_U;
+		static const int KEY_V;
+		static const int KEY_W;
+		static const int KEY_X;
+		static const int KEY_Y;
+		static const int KEY_Z;
+		static const int KEY_LSHIFT;
+		static const int KEY_RSHIFT;
+		static const int KEY_SPACE;
+		static const int KEY_1;
+		static const int KEY_2;
+		static const int KEY_3;
+		static const int KEY_4;
+		static const int KEY_5;
+		static const int KEY_6;
+		static const int KEY_7;
+		static const int KEY_8;
+		static const int KEY_9;
+		static const int KEY_0;
+
 		friend class ::InputManager;
 	protected:
 		bool init(InputDeviceInit &deviceInit);
@@ -167,7 +218,7 @@ namespace Input{
 	public:
 		Keyboard();
 
-		~Keyboard();
+		virtual ~Keyboard();
 
 
 
@@ -261,7 +312,7 @@ private:
 
 	Input::Keyboard m_Keyboard; //!< provided Keyboard implementation.
 
-	Input::Wiimote m_Wiimote //!< provided Wiimote implementation
+	Input::Wiimote m_Wiimote; //!< provided Wiimote implementation
 	//Create initialization structures
 	Input::KeyboardInit m_KeyboardInit;
 	Input::WiimoteInit m_WiimoteInit;
@@ -281,10 +332,15 @@ private:
 public:
 	friend CSingleton<InputManager>;
 
-	bool init(MastEventReceiver* eventReceiver); //!< Initialize the input system.
+	bool init(); //!< Initialize the input system.
 
 	void shutdown();  //!< shutdown any resources used by the InputManager.
 	
+	void stopPolling(); //!< Stops the irrilicht keyboard input system from polling the keyboard.  Should be called at beginning of main loop.
+
+	void resumePolling(); //!< Starts the irrilicth keyboard input system to poll the keyboard.  Should be called at end of main loop.
+
+	MastEventReceiver* getEventReceiver(); //!< Returns the eventReceiver that needs to be passed to the irrilcht createDevice method
 	//! Creates an Action with the given parameters and returns it to the caller.
 	/*! 
 	* Actions are managed by the InputManager, deleteAction is provided if needed, but when the InputManager is shutdown
@@ -306,6 +362,7 @@ public:
 
 	//! Resets all the registered actions, useful for beginning a level with nothing pressed.
 	void resetAllActions();
+
 
 	Input::Keyboard& getKeyboard(){
 		return m_Keyboard;
