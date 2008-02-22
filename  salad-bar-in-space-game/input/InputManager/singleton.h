@@ -50,7 +50,7 @@ public:
         Be aware that all references to the single class instance will be
         invalid after this method has been executed!
     */
-    static destroy()
+    static void destroy()
     {
         delete m_instance;
         m_instance = NULL;

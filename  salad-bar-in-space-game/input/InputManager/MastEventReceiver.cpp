@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Change this to the path where your Irrlicht Header Files are.
-#include "../irrlicht/include/irrlicht.h"
+#include "irrlicht.h"
 
 using namespace std;
 using namespace irr;
@@ -60,7 +60,7 @@ class MastEventReceiver : public IEventReceiver
 
    processStateENUM processState; // STARTED = handling events, ENDED = not handling events
 
-   virtual bool OnEvent(const SEvent event)
+   virtual bool OnEvent(const SEvent& event)
    {
       bool eventprocessed = false;
 

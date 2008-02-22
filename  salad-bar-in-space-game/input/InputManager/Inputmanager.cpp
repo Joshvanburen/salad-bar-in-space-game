@@ -1,8 +1,11 @@
 #include "Common.h"
 #include ".\inputmanager.h"
+#include "wiiuse.h"
+#define WIIUSE_PATH		"wiiuse.dll"
 //Interface methods don't need an implementation, yet.
 bool Input::InputDevice::init(Input::InputDeviceInit &deviceInit){
 	this->m_name = deviceInit.m_name;
+	receiver = NULL;
 	return true;
 }
 void Input::InputDevice::release(){
@@ -16,13 +19,182 @@ bool Input::InputDevice::buttonStatus(int code) const{
 	return true;
 }
 
-Input::InputDevice::InputDevice() : m_lpdi(NULL){
+Input::InputDevice::InputDevice() : receiver(NULL){
 }
 
 Input::InputDevice::~InputDevice(){
 }
 //End interface methods
 
+
+bool Input::Wiimote::init(Input::InputDeviceInit &deviceInit){
+	int found, connected = 0;
+	//call the base class version first.
+	InputDevice::init(deviceInit);
+
+	Input::WiimoteInit *wiimoteInit = ((WiimoteInit*)&deviceInit);
+
+	//wiiuse_startup(WIIUSE_PATH);
+
+	moteID = 1;
+
+	int ids[] = { moteID };
+	
+	wiimotes =  wiiuse_init(1);
+
+	found = wiiuse_find(wiimotes, 1, 5);
+	if (!found)
+		return false;
+	connected = wiiuse_connect(wiimotes, 1);
+	if (connected)
+		printf("Connected to %i wiimotes (of %i found).\n", connected, found);
+	else {
+		printf("Failed to connect to any wiimote.\n");
+		return false;
+	}
+
+	wiiuse_set_leds(wiimotes[0], WIIMOTE_LED_1 | WIIMOTE_LED_4);
+	wiiuse_rumble(wiimotes[0], 1);
+
+	Sleep(200);
+
+	wiiuse_rumble(wiimotes[0], 0);
+	wiiuse_motion_sensing(wiimotes[0], 1);
+	this->release();
+
+	return true;
+}
+bool Input::Wiimote::read(){
+	InputDevice::read();
+
+	if (wiimotes == NULL){
+		return false;
+	}
+	if (wiiuse_poll(wiimotes, 1)) {
+	/*
+	 *	This happens if something happened on any wiimote.
+	 *	So go through each one and check if anything happened.
+	 */
+		int i = 0;
+		for (; i < 1; ++i) {
+			switch (wiimotes[i]->event) {
+				case WIIUSE_EVENT:
+					/* a generic event occured */
+					handle_event(wiimotes[i]);
+					break;
+
+				case WIIUSE_STATUS:
+					/* a status event occured */
+					handle_ctrl_status(wiimotes[i]);
+					break;
+
+				case WIIUSE_DISCONNECT:
+					/* the wiimote disconnected */
+					//handle_disconnect(wiimotes[i]);
+					break;
+
+				default:
+					break;
+			}
+		}
+	}
+	return true;
+}
+
+void Input::Wiimote::release(){
+	InputDevice::release();
+}
+
+const int Input::Wiimote::WII_MOVE_HANDS_OUTWARD = 1 << 12;
+const int Input::Wiimote::WII_MOVE_HANDS_INWARD = 2 << 12;
+const int Input::Wiimote::WII_RIGHT_HAND_UP = 3 << 12;
+const int Input::Wiimote::WII_BOTH_HANDS_DOWN = 4 << 12;
+const int Input::Wiimote::WII_RIGHT_HAND_RIGHT = 5 << 12;
+const int Input::Wiimote::WII_RIGHT_HAND_LEFT = 6 << 12;
+const int Input::Wiimote::WII_A_BUTTON = WIIMOTE_BUTTON_A;
+const int Input::Wiimote::WII_B_BUTTON = WIIMOTE_BUTTON_B;
+const int Input::Wiimote::WII_PLUS_BUTTON = WIIMOTE_BUTTON_PLUS;
+const int Input::Wiimote::WII_MINUS_BUTTON = WIIMOTE_BUTTON_MINUS;
+const int Input::Wiimote::WII_Z_BUTTON = NUNCHUK_BUTTON_Z;
+const int Input::Wiimote::WII_C_BUTTON = NUNCHUK_BUTTON_C;
+const int Input::Wiimote::WII_1_BUTTON = WIIMOTE_BUTTON_ONE;
+const int Input::Wiimote::WII_2_BUTTON = WIIMOTE_BUTTON_TWO;
+
+
+bool Input::Wiimote::buttonStatus(int code) const{
+	InputDevice::buttonStatus(code);
+	if (code == Input::Wiimote::WII_MOVE_HANDS_OUTWARD){
+		return hands_out;
+	}
+	else if (code == Input::Wiimote::WII_MOVE_HANDS_INWARD){
+		return hands_in;
+	}
+	else if (code == Input::Wiimote::WII_RIGHT_HAND_UP){
+		return right_hand_up;
+	}
+	else if (code == Input::Wiimote::WII_RIGHT_HAND_LEFT){
+		return right_hand_left;
+	}
+	else if (code == Input::Wiimote::WII_RIGHT_HAND_RIGHT){
+		return right_hand_right;
+	}
+	else if (code == Input::Wiimote::WII_BOTH_HANDS_DOWN){
+		return both_hands_down;
+	}
+
+		return (wiimotes[0]->btns & code) == code;
+	
+
+}
+bool Input::Wiimote::operator()(int code) const{
+	InputDevice::buttonStatus(code);
+	return buttonStatus(code);
+
+}
+void Input::Wiimote::toggleRumble(){
+	wiiuse_toggle_rumble(wiimotes[0]);
+}
+
+void Input::Wiimote::handle_ctrl_status(struct wiimote_t* wm){
+
+
+}
+
+float Input::Wiimote::joystickAngle(){
+	return wiimotes[0]->exp.nunchuk.js.ang;
+}
+
+
+float Input::Wiimote::joystickMagnitude(){
+	return wiimotes[0]->exp.nunchuk.js.mag;
+}
+void Input::Wiimote::handle_event(struct wiimote_t* wm){
+
+}
+
+
+float Input::Wiimote::getBatteryLevel(){
+	wiiuse_status(wiimotes[0]);
+	return battery_level;
+}
+
+int* Input::Wiimote::whichLEDs(){
+	wiiuse_status(wiimotes[0]);
+	return LEDs;
+}
+
+bool Input::Wiimote::hasAttachement(){
+	wiiuse_status(wiimotes[0]);
+	return attachment;
+}
+Input::Wiimote::Wiimote() : InputDevice(), battery_level(0), attachment(0), moteID(0), wiimotes(NULL){
+	LEDs[0] = LEDs[1] = LEDs[2] = LEDs[3] = false;
+
+}
+Input::Wiimote::~Wiimote(){
+	wiiuse_cleanup(wiimotes, 1);
+
+}
 bool Input::Keyboard::init(Input::InputDeviceInit &deviceInit){
 	//Call the base class version first.
 	InputDevice::init(deviceInit);
@@ -30,78 +202,18 @@ bool Input::Keyboard::init(Input::InputDeviceInit &deviceInit){
 	Input::KeyboardInit *keyboardInit = (KeyboardInit*)&deviceInit;
 	this->release();
 
-	HRESULT hr;
-
-	//Default coopflags are foreground nonexclusive, this way we can also use DISCL_NOWINKEY to disable the windows key.
-	if (keyboardInit->bDisableWinKey){
-		keyboardInit->dwCoopFlags |= DISCL_NOWINKEY;
-	}
-	if (FAILED(hr = this->m_lpdi->CreateDevice(GUID_SysKeyboard, &m_lpdikey, NULL))){
-		return false;
-	}
-	//Set the data format to 256 array of BYTE.
-	if (FAILED(hr = m_lpdikey->SetDataFormat(&c_dfDIKeyboard))){
-		return false;
-	}
-
-	//Set the cooperativity level.
-	hr = m_lpdikey->SetCooperativeLevel(keyboardInit->hwnd, keyboardInit->dwCoopFlags);
-	//If failed set to the safest coop level.
-	if (hr == DIERR_UNSUPPORTED){
-		hr = m_lpdikey->SetCooperativeLevel(keyboardInit->hwnd, DISCL_BACKGROUND | DISCL_NONEXCLUSIVE);
-	}
-	//If still failed return false.
-	if (FAILED(hr)){
-		return false;
-	}
-
-	//Acquire the keyboard
-	m_lpdikey->Acquire();
-	m_Acquired = true;
-	m_Active = true;
-
 	return true;
 
 }
 
 void Input::Keyboard::release(){
 	InputDevice::release();
-	if (m_lpdikey){
-		m_lpdikey->Unacquire();
-	}
-	m_Active = false;
-	m_Acquired = false;
-
-	//Release any DirectInput objects.
-	if (m_lpdikey){
-		m_lpdikey->Release();
-	}
-
-	m_lpdikey = NULL;
 }
 
 bool Input::Keyboard::read(){
 	InputDevice::read();
-	HRESULT hr;
 
-	if (m_lpdikey == NULL){
-		return true;
-	}
-
-	//Get keyboard state
-	ZeroMemory(m_Key, sizeof(m_Key));
-	hr = m_lpdikey->GetDeviceState(sizeof(m_Key), m_Key);
-
-	if (FAILED(hr)){
-		//The stream might have been interrupted.  Re-acquire.
-		hr = m_lpdikey->Acquire();
-		while (hr == DIERR_INPUTLOST)
-			hr = m_lpdikey->Acquire();
-
-		if (hr == DIERR_OTHERAPPHASPRIO || hr == DIERR_NOTACQUIRED)
-			m_Acquired = false;
-
-		//problems, return true and try again later.
+	if (receiver == NULL){
 		return true;
 	}
 
@@ -110,239 +222,183 @@ bool Input::Keyboard::read(){
 
 bool Input::Keyboard::buttonStatus(int code) const{
 	InputDevice::buttonStatus(code);
-	if (m_Key[code] & 0x80)
+	
+	if (receiver->keyPressed(code))
 		return true;
 	else
 		return false;
 }
+bool Input::Keyboard::operator()(int code) const{
+	InputDevice::buttonStatus(code);
+	return buttonStatus(code);
+}
+const int Input::Keyboard::KEY_A = KEY_KEY_A;
+const int Input::Keyboard::KEY_B = KEY_KEY_B;
+const int Input::Keyboard::KEY_C = KEY_KEY_C;
+const int Input::Keyboard::KEY_D = KEY_KEY_D;
+const int Input::Keyboard::KEY_E = KEY_KEY_E;
+const int Input::Keyboard::KEY_F = KEY_KEY_F;
+const int Input::Keyboard::KEY_G = KEY_KEY_G;
+const int Input::Keyboard::KEY_H = KEY_KEY_H;
+const int Input::Keyboard::KEY_I = KEY_KEY_I;
+const int Input::Keyboard::KEY_J = KEY_KEY_J;
+const int Input::Keyboard::KEY_K = KEY_KEY_K;
+const int Input::Keyboard::KEY_L = KEY_KEY_L;
+const int Input::Keyboard::KEY_M = KEY_KEY_M;
+const int Input::Keyboard::KEY_N = KEY_KEY_N;
+const int Input::Keyboard::KEY_O = KEY_KEY_O;
+const int Input::Keyboard::KEY_P = KEY_KEY_P;
+const int Input::Keyboard::KEY_Q = KEY_KEY_Q;
+const int Input::Keyboard::KEY_R = KEY_KEY_R;
+const int Input::Keyboard::KEY_S = KEY_KEY_S;
+const int Input::Keyboard::KEY_T = KEY_KEY_T;
+const int Input::Keyboard::KEY_U = KEY_KEY_U;
+const int Input::Keyboard::KEY_V = KEY_KEY_V;
+const int Input::Keyboard::KEY_W = KEY_KEY_W;
+const int Input::Keyboard::KEY_X = KEY_KEY_X;
+const int Input::Keyboard::KEY_Y = KEY_KEY_Y;
+const int Input::Keyboard::KEY_Z = KEY_KEY_Z;
+const int Input::Keyboard::KEY_1 = KEY_KEY_1;
+const int Input::Keyboard::KEY_2 = KEY_KEY_2;
+const int Input::Keyboard::KEY_3 = KEY_KEY_3;
+const int Input::Keyboard::KEY_4 = KEY_KEY_4;
+const int Input::Keyboard::KEY_5 = KEY_KEY_5;
+const int Input::Keyboard::KEY_6 = KEY_KEY_6;
+const int Input::Keyboard::KEY_7 = KEY_KEY_7;
+const int Input::Keyboard::KEY_8 = KEY_KEY_8;
+const int Input::Keyboard::KEY_9 = KEY_KEY_9;
+const int Input::Keyboard::KEY_0 = KEY_KEY_0;
+const int Input::Keyboard::KEY_LSHIFT = KEY_LSHIFT;
+const int Input::Keyboard::KEY_RSHIFT = KEY_RSHIFT;
+const int Input::Keyboard::KEY_SPACE = KEY_SPACE;
 
 char Input::Keyboard::keyToChar(int key){
 	char output = ' ';
 
 	switch(key){
-		case DIK_A:
+		case Input::Keyboard::KEY_A:
 			output = 'a';
 			break;
-		case DIK_B:
+		case Input::Keyboard::KEY_B:
 			output = 'b';
 			break;
-		case DIK_C:
+		case Input::Keyboard::KEY_C:
 			output = 'c';
 			break;
-		case DIK_D:
+		case Input::Keyboard::KEY_D:
 			output = 'd';
 			break;
-		case DIK_E:
+		case Input::Keyboard::KEY_E:
 			output = 'e';
 			break;
-		case DIK_F:
+		case Input::Keyboard::KEY_F:
 			output = 'f';
 			break;
-		case DIK_G:
+		case Input::Keyboard::KEY_G:
 			output = 'g';
 			break;
-		case DIK_H:
+		case Input::Keyboard::KEY_H:
 			output = 'h';
 			break;
-		case DIK_I:
+		case Input::Keyboard::KEY_I:
 			output = 'i';
 			break;
-		case DIK_J:
+		case Input::Keyboard::KEY_J:
 			output = 'j';
 			break;
-		case DIK_K:
+		case Input::Keyboard::KEY_K:
 			output = 'k';
 			break;
-		case DIK_L:
+		case Input::Keyboard::KEY_L:
 			output = 'l';
 			break;
-		case DIK_M:
+		case Input::Keyboard::KEY_M:
 			output = 'm';
 			break;
-		case DIK_N:
+		case Input::Keyboard::KEY_N:
 			output = 'n';
 			break;
-		case DIK_O:
+		case Input::Keyboard::KEY_O:
 			output = 'o';
 			break;
-		case DIK_P:
+		case Input::Keyboard::KEY_P:
 			output = 'p';
 			break;
-		case DIK_Q:
+		case Input::Keyboard::KEY_Q:
 			output = 'q';
 			break;
-		case DIK_R:
+		case Input::Keyboard::KEY_R:
 			output = 'r';
 			break;
-		case DIK_S:
+		case Input::Keyboard::KEY_S:
 			output = 's';
 			break;
-		case DIK_T:
+		case Input::Keyboard::KEY_T:
 			output = 't';
 			break;
-		case DIK_U:
+		case Input::Keyboard::KEY_U:
 			output = 'u';
 			break;
-		case DIK_V:
+		case Input::Keyboard::KEY_V:
 			output = 'v';
 			break;
-		case DIK_W:
+		case Input::Keyboard::KEY_W:
 			output = 'w';
 			break;
-		case DIK_X:
+		case Input::Keyboard::KEY_X:
 			output = 'x';
 			break;
-		case DIK_Y:
+		case Input::Keyboard::KEY_Y:
 			output = 'y';
 			break;
-		case DIK_Z:
+		case Input::Keyboard::KEY_Z:
 			output = 'z';
 			break;
+
 	};
 
-	if (m_Key[DIK_LSHIFT] & 0x80 || m_Key[DIK_RSHIFT] & 0x80){
+	if (receiver->keyPressed(Input::Keyboard::KEY_LSHIFT) || receiver->keyPressed(Input::Keyboard::KEY_RSHIFT)){
 		output = toupper(output);
 	}
-	if(output != ' ' || key == DIK_SPACE){
+	if(output != ' ' || receiver->keyPressed(Input::Keyboard::KEY_SPACE)){
 		return output;
 	}
 
-	if (m_Key[DIK_LSHIFT] & 0x80 || m_Key[DIK_RSHIFT] & 0x80){
-		//Shift is being pressed.
-		switch(key){
-			case DIK_GRAVE:
-				return '~';
-				break;
-			case DIK_1:
-				return '!';
-				break;
-			case DIK_2:
-				return '@';
-				break;
-			case DIK_3:
-				return '#';
-				break;
-			case DIK_4:
-				return '$';
-				break;
-			case DIK_5:
-				return '%';
-				break;
-			case DIK_6:
-				return '^';
-				break;
-			case DIK_7:
-				return '&';
-				break;
-			case DIK_8:
-				return '*';
-				break;
-			case DIK_9:
-				return '(';
-				break;
-			case DIK_0:
-				return ')';
-				break;
-			case DIK_MINUS:
-				return '_';
-				break;
-			case DIK_EQUALS:
-				return '+';
-				break;
-			case DIK_BACKSLASH:
-				return '|';
-				break;
-			case DIK_LBRACKET:
-				return '{';
-				break;
-			case DIK_RBRACKET:
-				return '}';
-				break;
-			case DIK_SEMICOLON:
-				return ':';
-				break;
-			case DIK_APOSTROPHE:
-				return '\"';
-				break;
-			case DIK_COMMA:
-				return '<';
-				break;
-			case DIK_PERIOD:
-				return '>';
-				break;
-			case DIK_SLASH:
-				return'?';
-				break;
-		};
-	}
-	else{
-		switch(key){
-			//Shift not being pressed.
-			case DIK_GRAVE:
-				return '`';
-				break;
-			case DIK_1:
-				return '1';
-				break;
-			case DIK_2:
-				return '2';
-				break;
-			case DIK_3:
-				return '3';
-				break;
-			case DIK_4:
-				return '4';
-				break;
-			case DIK_5:
-				return '5';
-				break;
-			case DIK_6:
-				return '6';
-				break;
-			case DIK_7:
-				return '7';
-				break;
-			case DIK_8:
-				return '8';
-				break;
-			case DIK_9:
-				return '9';
-				break;
-			case DIK_0:
-				return '0';
-				break;
-			case DIK_MINUS:
-				return '-';
-				break;
-			case DIK_EQUALS:
-				return '=';
-				break;
-			case DIK_BACKSLASH:
-				return '\\';
-				break;
-			case DIK_LBRACKET:
-				return '[';
-				break;
-			case DIK_RBRACKET:
-				return ']';
-				break;
-			case DIK_SEMICOLON:
-				return ';';
-				break;
-			case DIK_APOSTROPHE:
-				return '\'';
-				break;
-			case DIK_COMMA:
-				return ',';
-				break;
-			case DIK_PERIOD:
-				return '.';
-				break;
-			case DIK_SLASH:
-				return '/';
-				break;
-		};
-	}
+
+	switch(key){
+		//Shift not being pressed.
+		case Input::Keyboard::KEY_0:
+			output = '0';
+			break;
+		case Input::Keyboard::KEY_1:
+			output = '1';
+			break;
+		case Input::Keyboard::KEY_2:
+			output = '2';
+			break;
+		case Input::Keyboard::KEY_3:
+			output = '3';
+			break;
+		case Input::Keyboard::KEY_4:
+			output = '4';
+			break;
+		case Input::Keyboard::KEY_5:
+			output = '5';
+			break;
+		case Input::Keyboard::KEY_6:
+			output = '6';
+			break;
+		case Input::Keyboard::KEY_7:
+			output = '7';
+			break;
+		case Input::Keyboard::KEY_8:
+			output = '8';
+			break;
+		case Input::Keyboard::KEY_9:
+			output = '9';
+			break;
+	};
+	
 
 	return output;
 }
@@ -358,145 +414,15 @@ std::string& Input::Keyboard::appendtoString(std::string &string, char c, bool b
 	return string;
 }
 
-Input::Keyboard::Keyboard() : InputDevice(), m_Acquired(false), m_Active(false), m_lpdikey(false){
-	memset(&m_Key,0,sizeof(BYTE) * 256);
+Input::Keyboard::Keyboard() : InputDevice(){
+
 }
 
 Input::Keyboard::~Keyboard(){
 }
 
-bool Input::Mouse::buttonStatus(int code) const{
-	InputDevice::buttonStatus(code);
-	if (m_Button[code] & 0x80)
-		return true;
-	else
-		return false;
-}
-bool Input::Mouse::init(Input::InputDeviceInit &deviceInit){
-	//Call the base class version first.
-	InputDevice::init(deviceInit);
-
-	//Release the mouse
-	this->release();
-	// Obtain an interface to the system mouse device.
-	Input::MouseInit* mouseInit = (MouseInit*)&deviceInit;
-	if (FAILED(m_lpdi->CreateDevice(GUID_SysMouse, &m_lpdimouse, NULL)))
-		return false;
-	//Set data format to mouse format - predefined by directx DIMOUSESTATE2
-	if (FAILED(m_lpdimouse->SetDataFormat(&c_dfDIMouse2)))
-		return false;
-	HRESULT hr;
-	// Set cooperative level
-	hr = m_lpdimouse->SetCooperativeLevel(mouseInit->hwnd, mouseInit->dwCoopFlags);
-	// if failed set to different cooperative level
-	if (hr == DIERR_UNSUPPORTED){
-		hr = m_lpdimouse->SetCooperativeLevel(mouseInit->hwnd, DISCL_NONEXCLUSIVE | DISCL_BACKGROUND);
-	}
-	// if still failed return false
-	if (FAILED(hr)){
-		return false;
-	}
-	// aquire mouse
-	if (m_lpdimouse->Acquire() != DI_OK)
-		return false;
-
-	m_Acquired = true;
-	m_Active = true;
-
-	return true;
-}
-
-void Input::Mouse::release(){
-	InputDevice::release();
-	if (m_lpdimouse)
-		m_lpdimouse->Unacquire();
-
-	m_Acquired = false;
-	m_Active = false;
-	if (m_lpdimouse){
-		m_lpdimouse->Release();
-	}
-
-	m_lpdimouse = NULL;
-}
-
-int Input::Mouse::getSensitivity() const{
-	return m_MouseSpeed;
-}
-
-void Input::Mouse::setSensitivity(int factor){
-	m_MouseSpeed = factor;
-}
-
-void Input::Mouse::getRelativePosition(LONG *x, LONG *y, LONG *z){
-	*x = m_dx;
-	*y = m_dy;
-	*z = m_dz;
-}
 
 
-void Input::Mouse::setLimits(long x1, long y1, long x2, long y2){
-}
-
-bool Input::Mouse::read(){
-	InputDevice::read();
-	HRESULT hr;
-	DIMOUSESTATE2 dims2; //DirectInput mouse state structure
-
-	if (m_lpdimouse == NULL)
-		return true;
-
-	ZeroMemory( &dims2, sizeof(dims2) );
-	//Get the mouse's state
-	hr = m_lpdimouse->GetDeviceState(sizeof(DIMOUSESTATE2), &dims2);
-	if (FAILED(hr)){
-		//input stream may have been interrupted. need to re-acquire.
-		hr = m_lpdimouse->Acquire();
-		while(hr == DIERR_INPUTLOST)
-			hr = m_lpdimouse->Acquire();
-
-		if(hr == DIERR_OTHERAPPHASPRIO || hr == DIERR_NOTACQUIRED)
-			m_Acquired = false;
-
-		//app may be minimized or in the process of switching, try again later.
-		return true;
-	}
-
-	m_Acquired = true;
-
-	//retrieve mouse information and store in Input::Mouse variables
-	m_dx = dims2.lX * m_MouseSpeed;
-	m_dy = dims2.lY * m_MouseSpeed;
-	m_dz = dims2.lZ * m_MouseSpeed;
-	m_Button[0] = dims2.rgbButtons[0];
-	m_Button[1] = dims2.rgbButtons[1];
-	m_Button[2] = dims2.rgbButtons[2];
-	m_Button[3] = dims2.rgbButtons[3];
-	m_Button[4] = dims2.rgbButtons[4];
-	m_Button[5] = dims2.rgbButtons[5];
-	m_Button[6] = dims2.rgbButtons[6];
-	m_Button[7] = dims2.rgbButtons[7];
-
-	m_MouseAbsX += m_dx;
-    m_MouseAbsY += m_dy;
-
-	return true;
-}
-
-Input::Mouse::Mouse() : InputDevice(), m_lpdimouse(NULL), m_Active(false), m_Acquired(false){
-
-	m_dx = 0;
-	m_dy = 0;
-	m_dz = 0;
-	m_MouseSpeed = 2;
-	m_MouseAbsX = 0;
-	m_MouseAbsY = 0;
-
-	memset(&m_Button,0,sizeof(BYTE) * 8);
-}
-
-Input::Mouse::~Mouse(){
-}
 
 
 Input::Action::Action(const std::string& sName) : m_Name(sName), m_ToggleTime(0), m_Amount(0){
@@ -691,28 +617,38 @@ bool InputManager::deleteAction( const std::string & sActionName){
 	return true;
 }
 
-bool InputManager::init(HINSTANCE main_instance, HWND hwnd){
-	//Create main DirectInput object
-	if (FAILED(DirectInput8Create(main_instance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void **)&m_lpdi,NULL)))
-		return(false);
-	//Give the devices the pointer the DirectInput object just created, InputManager is a friend class of InputDevice.
-	m_Mouse.m_lpdi = m_lpdi;
-	m_Keyboard.m_lpdi = m_lpdi;
-	
-	this->m_MouseInit.hwnd = hwnd;
-	this->m_KeyboardInit.hwnd = hwnd;
+bool InputManager::init(){
+	receiver = new MastEventReceiver();
+	receiver->init();
 
-	//Init keyboard and mouse
-	if (!m_Mouse.init(m_MouseInit))
+	m_Keyboard.receiver = receiver;
+	
+	if (!m_Wiimote.init(m_WiimoteInit))
 		return(false);
 	if (!m_Keyboard.init(m_KeyboardInit))
 		return(false);
-	Input::InputDevice* pMouse = &m_Mouse;
+
 	Input::InputDevice* pKeyboard = &m_Keyboard;
-	m_DeviceMap.insert(make_pair(m_Mouse.getName(), pMouse));
+	Input::InputDevice* pWiimote = &m_Wiimote;
+
+	m_DeviceMap.insert(make_pair(m_Wiimote.getName(), pWiimote));
 	m_DeviceMap.insert(make_pair(m_Keyboard.getName(), pKeyboard));
 	//return success
 	return(true);
+}
+
+void InputManager::resumePolling(){
+	if (receiver){
+		receiver->startEventProcess();
+	}
+
+	
+}
+
+void InputManager::stopPolling(){
+	if (receiver){
+		receiver->endEventProcess();
+	}
 }
 
 Input::InputDevice& InputManager::getDevice(const std::string& name){
@@ -735,18 +671,15 @@ void InputManager::shutdown(){
 	}
 	//have the keyboard and mouse shut themselves down.
 	m_Keyboard.release();
-	m_Mouse.release();
-	//Release directinput object
-	if (m_lpdi)
-		m_lpdi->Release();
-
-	m_lpdi = NULL;
+	m_Wiimote.release();
+	//delete irrilicht input receiver
+	delete receiver;
 }
 
 
 bool InputManager::getInput(){
 
-	m_Mouse.read();
+	m_Wiimote.read();
 	m_Keyboard.read();
 
 	for(m_ActionItr = m_ActionMap.begin(); m_ActionItr != m_ActionMap.end(); ++m_ActionItr)
@@ -765,16 +698,30 @@ void InputManager::resetAllActions(){
 	}
 }
 
-InputManager::InputManager() : m_lpdi(NULL){
+InputManager::InputManager() : receiver(NULL){
 
 }
 
 InputManager::~InputManager(){
 	this->shutdown();
 }
-
 int main(){
-	return 0;
+	
+	InputManager& im = InputManager::getSingleton();
+	im.init();
+	Input::Action* a_action = im.createAction("A_BUTTON", im.getWiimote(), Input::Wiimote::WII_A_BUTTON);
+	Input::Action* minus_action = im.createAction("MINUS_BUTTON", im.getWiimote(), Input::Wiimote::WII_MINUS_BUTTON);
+	while(true){
+		im.getInput();
+		if (a_action->isPressed()){
+			printf("A is pressed");
+		}
+		if (minus_action->isPressed()){
+			printf("Minus was pressed, quitting");
+			break;
+		}
+	}
+	im.shutdown();
 }
 
 std::ostream& operator << (std::ostream& os, const Input::InputDevice& device){
