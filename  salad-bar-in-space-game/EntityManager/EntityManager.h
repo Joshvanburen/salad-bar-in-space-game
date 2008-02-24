@@ -1,7 +1,7 @@
 #pragma once
 #include "singleton.h"
 
-
+class WorldEntity;
 class EntityManager;
 //!namespace containing all Entity related structures used by the EntityManager.
 namespace Entity{
@@ -27,7 +27,7 @@ namespace Entity{
 	private:
 		TypeFactoryMap m_FactoryMap; //!< Maps type strings to the factory pointer to use for that type.
 		//! Creates the worldEntity using the provided factory and returns a reference to it.
-		WorldEntity& loadEntity(EntityFactory* factory);
+		WorldEntity& loadEntity(EntityInfo* entityInfo);
 
 		//! Returns the factory pointer given a type name string.  This should be used by EntityManager while loading Entities in.
 		EntityFactory* getFactory(const std::string& type);
@@ -57,7 +57,8 @@ namespace Entity{
 	* It also contains a pointer to the factory that can create this type of entity.  This is determined by the type.
 	*/
 	class EntityInfo{
-		friend class EntityManager;
+		friend class ::EntityManager;
+		friend class Loader;
 	protected:
 		const std::string& m_Name; //!< The name of the Entity.
 		const EntityFactory* mp_Factory; //!< The pointer to the factory for this entity, can be determined by type string
@@ -90,7 +91,7 @@ class EntityManager :
 	public CSingleton<EntityManager>{
 private:
 
-	Entity::Loader& m_Loader;
+	Entity::Loader m_Loader;
 	static int next_ID; //!< Next available ID to assign to the next WorldEntity that is instantiatated.
 
 	Entity::StrEntityMap m_EntityMap; //!< Maps strings to Entity objects.
@@ -107,7 +108,8 @@ private:
 public:
 	friend CSingleton<EntityManager>;
 
-	bool init(const std::string& XMLEntityDefinition); //!< Initialize the Entity system. Provide the filename of the XML file that has the global definition for entities.
+	//! Initialize the Entity system. Provide the filename of the XML file that has the global definition for entities.  XML file should be <Entities><Entity name="something", file="something.xml", type="something" /></Entities>
+	bool init(const std::string& XMLEntityDefinition); 
 
 	void shutdown();  //!< shutdown any resources used by the EntityManager.
 
