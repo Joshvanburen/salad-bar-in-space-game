@@ -9,8 +9,10 @@ class WorldEntity{
 public:
 	// Constructor
 	WorldEntity();
-	//Overloaded Constructor
+	//Overloaded Constructors
 	WorldEntity(int iID);
+	WorldEntity(int iID, float x, float y, float z);
+
 	// virtual destructor
 	virtual ~WorldEntity(){};
 
