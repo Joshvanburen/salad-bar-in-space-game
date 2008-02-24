@@ -1,6 +1,10 @@
 #include "Common.h"
-#include ".\EntityManager.h"
 #include "irrXML.h"	
+#include ".\EntityManager.h"
+#include "WorldEntity.h"
+
+using namespace irr;
+using namespace io;
 
 Entity::Loader::Loader(){
 }
@@ -43,7 +47,8 @@ EntityFactory* Entity::Loader::getFactory(const std::string& type){
 }
 
 
-WorldEntity& loadEntity(EntityFactory* factory){
+WorldEntity& Entity::Loader::loadEntity(EntityInfo* entityInfo){
+	return entityInfo->mp_Factory->loadEntity(entityInfo->m_XMLFile);
 }
 
 
@@ -102,7 +107,45 @@ EntityManager::~EntityManager(){
 }
 
 bool EntityManager::init(const std::string& XMLEntityDefinition){
+	IrrXMLReader* xml = createIrrXMLReader(XMLEntityDefinition);
 
+	// strings for storing the data we want to get out of the file
+	std::string name;
+	std::string xmlFile;
+	std::string type;
+
+	while(xml && xml->read())
+	{
+		switch(xml->getNodeType())
+		{
+		case EXN_TEXT:
+			//No text nodes
+			break;
+
+		case EXN_ELEMENT:
+			if (!strcmp("entity", xml->getNodeName())){
+				name = xml->getAttributeValue("name");
+				xmlFile = xml->getAttributeValue("file");
+				type= xml->getAttributeValue("type");
+			}
+			break;
+		}
+		Entity::EntityFactory* factory = m_Loader.getFactory(type);
+		if (factory){
+			Entity::EntityInfo* entityInfo = new Entity::EntityInfo(name, xmlFile, factory)
+				if ((m_EntityMap.insert(make_pair(name, entityInfo))).second){
+
+				}
+				else{
+					m_EntityMap.clear();
+					return false;
+				}
+		}
+		else{
+			m_EntityMap.clear();
+			return false;
+		}
+	}
 }
 
 void EntityManager::shutdown(){
@@ -121,11 +164,18 @@ void EntityManager::shutdown(){
 }
 
 WorldEntity& EntityManager::createEntity(const std::string name){
+	//Find the Entity in the Str EntityInfo map for this entity name.
+	Entity::StrEntityMap::iterator entityItr = m_EntityMap.find(name);
+	//If the Entity wasn't found, return false
+	if(entityItr == m_EntityMap.end())
+		return NULL;
+	
+	return(m_Loader.loadEntity(entityItr->second));
 }
 
 bool EntityManager::remove(const int entityID){
 	//Find the Entity in the ID map for this entityID.
-	m_EntityItr = m_IdEntity.find(entityID);
+	m_EntityItr = m_IdEntityMap.find(entityID);
 	//If the Entity wasn't found, return false
 	if(m_EntityItr == m_IdEntityMap.end())
 		return false;
@@ -145,7 +195,7 @@ void EntityManager::removeAll(){
 
 WorldEntity& EntityManager::getEntity(const int entityID) const{
 	//Find the entity in the ID map for this entityID
-	m_EntityItr = m_IdEntity.find(entityID);
+	m_EntityItr = m_IdEntityMap.find(entityID);
 	//If the Entity wasn't found, return NULL
 	if (m_EntityItr == m_IdEntityMap.end())
 		return NULL;
