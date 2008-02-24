@@ -1,8 +1,6 @@
-
-
 #pragma once
 #include "singleton.h"
-#include "irrXML.h"
+
 
 class EntityManager;
 //!namespace containing all Entity related structures used by the EntityManager.
@@ -16,7 +14,7 @@ namespace Entity{
 		friend class ::Loader;
 	private:
 		//! Each child class of EntityFactory should implement the way it wishes to load its WorldEntity object based on the type it is.
-		virtual WorldEntity& loadEntity(const std::string& XMLFilename);
+		virtual WorldEntity& loadEntity(const std::string& XMLFilename) = 0;
 		explicit EntityFactory();
 		virtual ~EntityFactory();
 	};
@@ -27,7 +25,7 @@ namespace Entity{
 	{
 		friend class ::EntityManager;
 	private:
-		TypeFactoryMap mFactoryMap; //!< Maps type strings to the factory pointer to use for that type.
+		TypeFactoryMap m_FactoryMap; //!< Maps type strings to the factory pointer to use for that type.
 		//! Creates the worldEntity using the provided factory and returns a reference to it.
 		WorldEntity& loadEntity(EntityFactory* factory);
 
@@ -35,24 +33,30 @@ namespace Entity{
 		EntityFactory* getFactory(const std::string& type);
 		
 		//! Registers a factory and type into the Loader.  These are hard coded in the EntityManager and might always be.  Factories must be loaded before that type can be created.  There should not be multiple factories for a single type.  The first type given will be the only one registered.  Once a factory is loaded it can be forgotten about and will be deleted by the Loader.
-		void registerFactory(const std:string& type, EntityFactory* factory);
+		bool registerFactory(const std:string& type, EntityFactory* factory);
+		
+		//!Removes the factory associated with the given type.  Returns false if that type did not have a factory.
+		bool remove(const std::string& type);
+
+		//!Removes all registered factories and frees up their memory.
+		void removeAll();
 
 		Loader();
 		
 		~Loader();
 
-		friend std::ostream& operator << (std::ostream& os, const Loader& device);
+		friend std::ostream& operator << (std::ostream& os, const Loader& loader);
 
 	};
 
 
 
-	//! Entity is a data structure for storing the information about an entity loaded in by EntityManager from an XML file. 
-	/*! Entity objects are created internally by the EntityManager, I don't think there is a need to give anyone else access to them.
+	//! EntityInfo is a data structure for storing the information about an entity loaded in by EntityManager from an XML file. 
+	/*! EntityInfo objects are created internally by the EntityManager, I don't think there is a need to give anyone else access to them.
 	* Entity contain the string name to refer to this entity by.  The XML filename this entity's definition is contained in.
 	* It also contains a pointer to the factory that can create this type of entity.  This is determined by the type.
 	*/
-	class Entity{
+	class EntityInfo{
 		friend class EntityManager;
 	protected:
 		const std::string& m_Name; //!< The name of the Entity.
@@ -61,21 +65,21 @@ namespace Entity{
 
 		void destroy(); //!< Releases any memory this entity is taking up so it can be dropped from the system.
 
-		friend std::ostream& operator << (std::ostream& os, const Entity& entity);
+		friend std::ostream& operator << (std::ostream& os, const EntityInfo& entityInfo);
 
-		explicit Entity(const std::string& sName, const std::string& sType, const std::string& sXMLFile);
+		explicit EntityInfo(const std::string& sName, const std::string& sXMLFile, EntityFactory* p_Factory);
 
-		Entity(const Entity& rhs);
+		EntityInfo(const EntityInfo& rhs);
 
-		Entity& operator=(const Action& rhs);
+		EntityInfo& operator=(const EntityInfo& rhs);
 
-		~Entity();
+		~EntityInfo();
 	public:
 		
 		const std::string& getName() const; //!< Returns the name this entity is referred to by.
 	};
 
-	typedef std::map<std::string, Entity*> StrEntityMap; 
+	typedef std::map<std::string, EntityInfo*> StrEntityMap; 
 
 	typedef std::map<int, WorldEntity*> IdEntityMap;
 
@@ -86,6 +90,7 @@ class EntityManager :
 	public CSingleton<EntityManager>{
 private:
 
+	Entity::Loader& m_Loader;
 	static int next_ID; //!< Next available ID to assign to the next WorldEntity that is instantiatated.
 
 	Entity::StrEntityMap m_EntityMap; //!< Maps strings to Entity objects.
@@ -102,15 +107,15 @@ private:
 public:
 	friend CSingleton<EntityManager>;
 
-	bool init(); //!< Initialize the Entity system.
+	bool init(const std::string& XMLEntityDefinition); //!< Initialize the Entity system. Provide the filename of the XML file that has the global definition for entities.
 
 	void shutdown();  //!< shutdown any resources used by the EntityManager.
 
 	//!Retrieves the entity information for an entity named by the given string.  Loads this entity with the correct factory and returns a reference to it.
 	WorldEntity& createEntity(const std::string name); 
-
+	
 	//! Deletes an entity identified by the given ID number.  This can be called to delete an entity since delete should not be called on WorldEntity.  All Entities will be cleaned up when EntityManager is shutdown.
-	void remove(const int entityID);
+	bool remove(const int entityID);
 
 	//! Deletes all currently instantiated entities.  This would be ideal for moving from level to level.  Even the ball should get deleted because it will also be in the next level's definition.
 	void removeAll();
