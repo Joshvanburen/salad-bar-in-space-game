@@ -9,9 +9,12 @@ class WorldEntity{
 public:
 	// Constructor
 	WorldEntity();
+	//Overloaded Constructor
+	WorldEntity(int iID);
 	// virtual destructor
 	virtual ~WorldEntity(){};
 
+	// Every world entity will have a location
 	void setLocation(x, y, z);
 	
 	SceneNode entity();
@@ -19,11 +22,6 @@ public:
 	// get/set ID
 	int getID();
 	void setID( int iID );
-
-private:
-	float x;// Used for location on the x-axis
-	float y;// Used for location on the y-axis
-	float z;// Used for location on the z-axis
 
 	// The update function prototypes take a float fElapsedTime 
 	// which will be how much time has passed since the last time 
@@ -41,8 +39,17 @@ private:
 
 	virtual void load() = 0;
 
-	// Unique ID
-	int id;
+	// There are many WorldEntities that we may wish to pass a change of state to,
+	// so the world Entity should be where the current state object is held. It
+	// provides a virtual function for manipulating the state.
+	virtual void changeState(const std::string name) = 0;
+
+private:
+	float fx;// Used for location on the x-axis
+	float fy;// Used for location on the y-axis
+	float fz;// Used for location on the z-axis
+
+	int id;// Unique ID
 };
 
 #endif
