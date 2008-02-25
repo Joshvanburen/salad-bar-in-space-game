@@ -107,6 +107,10 @@ EntityManager::~EntityManager(){
 }
 
 bool EntityManager::init(const std::string& XMLEntityDefinition){
+
+	//Should register all the factories to each type here!!!!
+
+
 	IrrXMLReader* xml = createIrrXMLReader(XMLEntityDefinition);
 
 	// strings for storing the data we want to get out of the file
