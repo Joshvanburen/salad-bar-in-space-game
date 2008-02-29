@@ -106,10 +106,50 @@ EntityManager::~EntityManager(){
 	this->shutdown();
 }
 
+bool EntityManager::addNewDefinitions(const std::string& XMLEntityDefinition){
+	IrrXMLReader* xml = createIrrXMLReader(XMLEntityDefinition);
+
+	// strings for storing the data we want to get out of the file
+	std::string name;
+	std::string xmlFile;
+	std::string type;
+
+	while(xml && xml->read())
+	{
+		switch(xml->getNodeType())
+		{
+		case EXN_TEXT:
+			//No text nodes
+			break;
+
+		case EXN_ELEMENT:
+			if (!strcmp("entity", xml->getNodeName())){
+				name = xml->getAttributeValue("name");
+				xmlFile = xml->getAttributeValue("file");
+				type= xml->getAttributeValue("type");
+			}
+			break;
+		}
+		Entity::EntityFactory* factory = m_Loader.getFactory(type);
+		if (factory){
+			Entity::EntityInfo* entityInfo = new Entity::EntityInfo(name, xmlFile, factory)
+				if ((m_EntityMap.insert(make_pair(name, entityInfo))).second){
+
+				}
+				else{
+					m_EntityMap.clear();
+					return false;
+				}
+		}
+		else{
+			return false;
+		}
+	}
+}
+
 bool EntityManager::init(const std::string& XMLEntityDefinition){
 
 	//Should register all the factories to each type here!!!!
-
 
 	IrrXMLReader* xml = createIrrXMLReader(XMLEntityDefinition);
 
@@ -163,8 +203,11 @@ void EntityManager::shutdown(){
 		entityItr->second->destroy();
 		delete entityItr->second;
 	}
+
 	//Remove everything inside the loader
 	m_Loader.removeAll();
+
+	m_EntityMap.clear();
 }
 
 WorldEntity& EntityManager::createEntity(const std::string name){
@@ -195,6 +238,7 @@ void EntityManager::removeAll(){
 	{
 		delete m_EntityItr->second;
 	}
+	m_IdEntityMap.clear();
 }
 
 WorldEntity& EntityManager::getEntity(const int entityID) const{
