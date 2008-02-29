@@ -111,6 +111,9 @@ public:
 	//! Initialize the Entity system. Provide the filename of the XML file that has the global definition for entities.  XML file should be <Entities><Entity name="something", file="something.xml", type="something" /></Entities>
 	bool init(const std::string& XMLEntityDefinition); 
 
+	//! Add new entity definitions.  This function is the same as init in that it loads in the entity definitions.  This allows a user of the class to keep different sets of entities in different definitions and only load in parts of them.
+	bool addNewDefinitions(const std::string& XMLEntityDefinition);
+
 	void shutdown();  //!< shutdown any resources used by the EntityManager.
 
 	//!Retrieves the entity information for an entity named by the given string.  Loads this entity with the correct factory and returns a reference to it.

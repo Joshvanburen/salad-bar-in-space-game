@@ -8,13 +8,15 @@ class Level;
 
 
 typedef std::list<std::string> LevelList;
-//! EntityManager provides an easy and organized way of retrieving entities that were defined via an XML file.  It loads in the given XML file for the global defintion of entities.  Given an entity string name, it will then provide an instantiation of an WorldEntity and keep track of global IDs and will keep track of the deletion of the WorldEntity.
+//! LevelManager organizes the transition of levels.  It The current level should be retrieved from LevelManager. It loads in the given XML file for the global defintion of levels.  It tells the entitymanager how to initialize.
 class LevelManager :
 	public CSingleton<LevelManager>{
 private:
+	std::string scenarioDefinition;
+
 	LevelList m_Levels; //!< The list of levels in order for this scenario, XML files to each different level definition.
 	
-	Level& m_CurrentLevel; //!< A handle to the currently instantiated level.
+	Level* m_CurrentLevel; //!< A handle to the currently instantiated level.
 
 	LevelList::iterator m_LevelItr; //!< An iterator for the Level list.   Pointing to the current level during game execution.
 
@@ -44,7 +46,7 @@ public:
 	bool goToNext();
 
 	//! Repeat the current level, re-initializing all the variables to what they were at start.
-	bool repeat();
+	void repeat();
 
 	//! Update the level.  Calls update on the current level.  It also checks if the level has been beaten and the level needs to be changed.  Or if the characater has died and there needs to be a repeat of the current level.
 	void update();

@@ -669,11 +669,15 @@ void InputManager::shutdown(){
 	{
 		delete m_ActionItr->second;
 	}
+	m_ActionMap.clear();
 	//have the keyboard and mouse shut themselves down.
 	m_Keyboard.release();
 	m_Wiimote.release();
 	//delete irrilicht input receiver
-	delete receiver;
+	if (receiver){
+		delete receiver;
+	}
+
 }
 
 
