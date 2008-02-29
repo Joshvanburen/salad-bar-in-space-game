@@ -2,7 +2,10 @@
 #define WORLD_ENTITY_H
 
 #include "irrlicht.h"
-using namespace scene;
+
+namespace scene{
+	class ISceneNode;
+}
 
 class WorldEntity{
 
@@ -25,6 +28,11 @@ public:
 	int getID();
 	void setID( int iID );
 
+	//Returns a pointer to the scene node for this WorldEntity
+	ISceneNode* getSceneNode(){
+		return sceneNode;
+	}
+
 	// The update function prototypes take a float fElapsedTime 
 	// which will be how much time has passed since the last time 
 	// that function was called. This information is useful for 
@@ -46,12 +54,15 @@ public:
 	// provides a virtual function for manipulating the state.
 	virtual void changeState(const std::string name) = 0;
 
+
 private:
 	float fx;// Used for location on the x-axis
 	float fy;// Used for location on the y-axis
 	float fz;// Used for location on the z-axis
 
 	int id;// Unique ID
+
+	ISceneNode* sceneNode; //Scene node of worldEntity.  Assumed to be initialized and added to the scene by factory.
 };
 
 #endif

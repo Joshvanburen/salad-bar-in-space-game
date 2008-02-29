@@ -1,78 +1,71 @@
-/*
-CSCE 552
-Level.h
-Header file for the level class.
-*/
+#pragma once
 
-#ifndef LEVEL_H
-#define LEVEL_H
+#include "Common.h"
 
-//Includes the irrlicht header and iostream
-#include <irrlicht.h>
-#include <iostream>
+namespace scene{
+class ISceneNode;
+class ISceneManager;
+}
 
-//Allows the use of vectors
-#include <vector>
-
-//Irrlicht namespace and standard namespace
-using namespace irr;
-using namespace std;
-
-//Links with the irrlicht library file
-#pragma comment(lib, "Irrlicht.lib")
-
-//Class definition
+typedef std::vector<WorldEntity&> EntityVector;
+//!The Level class holds everything within a specific level.  It loads in all the world entities and updates them.  Each level has its own xml file. 
 class Level
 {
 	//Private methods and variables
 	private:
-			//Scene node
-			scene::ISceneNode* sceneNode;
-			//Scene manager
-			scene::ISceneManager* smgr;
-			//Irrlicht device
-			IrrlichtDevice *device;
-			//Video driver
-			video::IVideoDriver* driver;
-			//Vector to hold all world entities
-			vector<WorldEntity> worldEntities;
-			//Level name
-			string levelName;
-			//Level file name
-			const c8* levelFileName;
-			//Mesh file name
-			const c8* meshFileName;
-			//Filename of music file
-			string musicFile;
-			//Level timer;
-			int time;
+			//!Vector to hold all world entities
+			EntityVector m_WorldEntities;
+			//!Iterator for the world entities
+			EntityVector::iterator m_WorldEntityItr;
+			//!Level name
+			std::string m_LevelName;
+			//!Filename of xml definition for this level.
+			std::string m_XmlFile;
+			//!Level file name
+			std::string m_LevelFile;
+			//!Filename of music file
+			std::string m_MusicFile;
+			//!Level timer;
+			int m_Time;
+			//!Current status of level
+			int m_Status;
+
+			friend std::ostream& operator << (std::ostream& os, const Level& level);
+		
 	//Public methods and variables
 	public:
-			//Constructor
-			Level(string lName, string mName, const c8* lfName, const c8* mfName, vector<WorldEntity> wE);
-			//Draws the level
-			void drawLevel();
-			//Updates the level and all children
+			static const int WAITING_REPEAT;
+			static const int RUNNING;
+			static const int WAITING_START;
+			static const int FINISHED;
+			static const int STOPPED:
+
+			explicit Level();
+			~Level();
+			//! Load the level from the given xml definition.  Loads in all entities from the EntityManager and stores them in the entityvector.
+			/*! Level xml definition format
+			<Level attributes, name, music, time, startingx, starting y, mapfilename>
+				<WorldEntities>
+					<Entity name, xlocation, ylocation, startState/>
+					...
+				</WorldEntities>
+			</Level>
+			*/
+			bool load(const std::string& LevelDefinition);
+			//!Releases all resources used.  Does not need to delete the entities it has, EntityManager does this.
+			void shutdown();
+			//!Updates the level and all children
 			void update();
-			//Gets the level name
-			string getLevelName();
-			//Sets the level name
-			void setLevelName(string lName);
-			//Gets the scene node
-			scene::ISceneNode* getSceneNode();
-			//Sets the scene node
-			void setSceneNode(scene::ISceneNode* node);
-			//Gets the music file name
-			string getMusicFileName();
-			//Sets the music file name
-			void setMusicFileName(string mName);
-			//Gets the current level time
+			//!Gets the level name
+			const std::string& getName();
+			//!Gets the music file name
+			const std::string& getMusicFileName();
+			//!Gets the current level time
 			int getCurrentTime();
-			//Sets the current level time
+			//!Sets the current level time
 			void setCurrentTime(int ctime);
-			//Loads the level
-			void load();
+			//!return the status of the current level.  Used to determine whether to go to now or display restart menu, etc.
+			int status();
+			//!Allows someone else to set the status of this level to FINISHED, WAITING_REPEAT, or any other possible statuses.  This would be accessed by the UserInterface or possibly a finished marker worldentity.
+			void setStatus(int newStatus);
 };
-
-
-#endif
