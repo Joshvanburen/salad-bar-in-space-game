@@ -1,14 +1,14 @@
 #include "WorldEntity.h"
 
 // default constructor
-WorldEntity::WorldEntity(){
+WorldEntity::WorldEntity() : sceneNode(NULL){
 	x = 0;
 	y = 0;
 	z = 0;
 }
 
 // lets user set the id
-WorldEntity::WorldEntity(int iID){
+WorldEntity::WorldEntity(int iID) sceneNode(NULL){
 	setID(iID);
 	x = 0;
 	y = 0;

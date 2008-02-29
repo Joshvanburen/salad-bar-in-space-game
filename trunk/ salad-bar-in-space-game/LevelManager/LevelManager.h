@@ -6,12 +6,17 @@
 
 class Level;
 
-
+namespace Scene{
+	class ISceneManager;
+}
 typedef std::list<std::string> LevelList;
 //! LevelManager organizes the transition of levels.  It The current level should be retrieved from LevelManager. It loads in the given XML file for the global defintion of levels.  It tells the entitymanager how to initialize.
 class LevelManager :
 	public CSingleton<LevelManager>{
 private:
+
+	static scene::ISceneManager* m_Smgr;
+
 	std::string scenarioDefinition;
 
 	LevelList m_Levels; //!< The list of levels in order for this scenario, XML files to each different level definition.
@@ -28,7 +33,7 @@ public:
 	friend CSingleton<LevelManager>;
 
 	//! Initialize the LevelManager system. Provide the filename of the XML file that has the definition of the scenario to play.  Returns false if failed.
-	bool init(const std::string& XMLScenarioDefinition); 
+	bool init(scene::ISceneManager* smgr, const std::string& XMLScenarioDefinition); 
 
 	void shutdown();  //!< shutdown any resources used by the LevelManager. 
 
@@ -53,6 +58,11 @@ public:
 
 	//! Draws the current level.  Basically calls draw on the current level object as of now.
 	void draw();
+
+
+	static scene::ISceneManager* getSceneManager(){
+		return m_Smgr;
+	}
 };
 
 
