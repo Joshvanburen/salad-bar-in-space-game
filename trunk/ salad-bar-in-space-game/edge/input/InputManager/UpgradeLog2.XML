@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="InputManager">
+</Property><Property Name="Solution File" Value="C:\Users\chase\Desktop\game\input\InputManager\InputManager.sln">
+</Property><Property Name="Date" Value="Friday, February 08, 2008">
+</Property><Property Name="Time" Value="11:10 AM">
+</Property><Property Name="Log Number" Value="2">
+</Property></Properties><Event ErrorLevel="1" Project="InputManager" Source="InputManager.vcproj" Description="This application has been updated to include settings related to the User Account Control (UAC) feature of Windows Vista. By default, when run on Windows Vista with UAC enabled, this application is marked to run with the same privileges as the process that launched it. This marking also disables the application from running with virtualization. You can change UAC related settings from the Property Pages of the project.">
+</Event><Event ErrorLevel="0" Project="InputManager" Source="InputManager.vcproj" Description="Project upgraded successfully.">
+</Event><Event ErrorLevel="3" Project="InputManager" Source="InputManager.vcproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="" Source="InputManager.sln" Description="Solution converted successfully">
+</Event><Event ErrorLevel="3" Project="" Source="InputManager.sln" Description="Converted">
+</Event></UpgradeLog>
