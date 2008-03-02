@@ -4,8 +4,8 @@
 #include "singleton.h"
 #include "wiiuse.h"
 #include "irrlicht.h"
-#include "MastEventReceiver.cpp"
 
+class MastEventReceiver;
 class InputManager;
 //!namespace containing all Input related structures used by the InputManager.
 namespace Input{

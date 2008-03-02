@@ -1,5 +1,6 @@
 #include "Common.h"
 #include ".\inputmanager.h"
+#include "MastEventReceiver.cpp"
 #include "wiiuse.h"
 #define WIIUSE_PATH		"wiiuse.dll"
 //Interface methods don't need an implementation, yet.
@@ -37,8 +38,6 @@ bool Input::Wiimote::init(Input::InputDeviceInit &deviceInit){
 	//wiiuse_startup(WIIUSE_PATH);
 
 	moteID = 1;
-
-	int ids[] = { moteID };
 	
 	wiimotes =  wiiuse_init(1);
 
@@ -617,6 +616,9 @@ bool InputManager::deleteAction( const std::string & sActionName){
 	return true;
 }
 
+MastEventReceiver* InputManager::getEventReceiver(){
+	return receiver;
+}
 bool InputManager::init(){
 	receiver = new MastEventReceiver();
 	receiver->init();
@@ -709,24 +711,7 @@ InputManager::InputManager() : receiver(NULL){
 InputManager::~InputManager(){
 	this->shutdown();
 }
-int main(){
-	
-	InputManager& im = InputManager::getSingleton();
-	im.init();
-	Input::Action* a_action = im.createAction("A_BUTTON", im.getWiimote(), Input::Wiimote::WII_A_BUTTON);
-	Input::Action* minus_action = im.createAction("MINUS_BUTTON", im.getWiimote(), Input::Wiimote::WII_MINUS_BUTTON);
-	while(true){
-		im.getInput();
-		if (a_action->isPressed()){
-			printf("A is pressed");
-		}
-		if (minus_action->isPressed()){
-			printf("Minus was pressed, quitting");
-			break;
-		}
-	}
-	im.shutdown();
-}
+
 
 std::ostream& operator << (std::ostream& os, const Input::InputDevice& device){
 	return os << device.getName();

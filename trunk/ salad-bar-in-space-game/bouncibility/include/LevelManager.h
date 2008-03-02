@@ -1,13 +1,18 @@
 #pragma once
-#include <list>
-#include "singleton.h"
+
+#include "Common.h"
 
 
 
 class Level;
-
-namespace Scene{
-	class ISceneManager;
+namespace irr{
+	class IrrlichtDevice;
+	namespace scene{
+		class ISceneManager;
+	}
+	namespace video{
+		class IVideoDriver;
+	}
 }
 typedef std::list<std::string> LevelList;
 //! LevelManager organizes the transition of levels.  It The current level should be retrieved from LevelManager. It loads in the given XML file for the global defintion of levels.  It tells the entitymanager how to initialize.
@@ -15,7 +20,9 @@ class LevelManager :
 	public CSingleton<LevelManager>{
 private:
 
-	static scene::ISceneManager* m_Smgr;
+	static irr::video::IVideoDriver* s_Driver;
+	static irr::scene::ISceneManager* s_Smgr;
+	static irr::IrrlichtDevice* s_Device;
 
 	std::string scenarioDefinition;
 
@@ -33,7 +40,7 @@ public:
 	friend CSingleton<LevelManager>;
 
 	//! Initialize the LevelManager system. Provide the filename of the XML file that has the definition of the scenario to play.  Returns false if failed.
-	bool init(scene::ISceneManager* smgr, const std::string& XMLScenarioDefinition); 
+	bool init(irr::IrrlichtDevice* device, const std::string& XMLScenarioDefinition); 
 
 	void shutdown();  //!< shutdown any resources used by the LevelManager. 
 
@@ -59,9 +66,18 @@ public:
 	//! Draws the current level.  Basically calls draw on the current level object as of now.
 	void draw();
 
+	bool startGame();
 
-	static scene::ISceneManager* getSceneManager(){
-		return m_Smgr;
+	static irr::scene::ISceneManager* getSceneManager(){
+		return s_Smgr;
+	}
+
+	static irr::IrrlichtDevice* getDevice(){
+		return s_Device;
+	}
+
+	static irr::video::IVideoDriver* getDriver(){
+		return s_Driver;
 	}
 };
 

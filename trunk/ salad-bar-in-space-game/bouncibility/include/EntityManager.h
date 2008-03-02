@@ -3,22 +3,38 @@
 
 class WorldEntity;
 class EntityManager;
+
 //!namespace containing all Entity related structures used by the EntityManager.
 namespace Entity{
+
+	class EntityFactory;
+	class Loader;
+	class EntityInfo;
 
 	typedef std::map<std::string, EntityFactory*> TypeFactoryMap; 
 
 	//! Base class for all factories in the system.  Provides a loadEntity method given an XML filename of the entity.
 	class EntityFactory
 	{
-		friend class ::Loader;
-	private:
+		friend class Loader;
+		friend class ::EntityManager;
+	protected:
 		//! Each child class of EntityFactory should implement the way it wishes to load its WorldEntity object based on the type it is.
 		virtual WorldEntity& loadEntity(const std::string& XMLFilename) = 0;
 		explicit EntityFactory();
 		virtual ~EntityFactory();
 	};
 
+
+	class MarkerFactory : public EntityFactory
+	{
+		WorldEntity& loadEntity(const std::string& XMLFilename);
+	};
+
+	class BallFactory : public EntityFactory
+	{
+		WorldEntity& loadEntity(const std::string& XMLFilename);
+	};
 
 	//! Loader is used by EntityManager.  It keeps track of the factories for each type.  Types are currently hard coded.  
 	class Loader
@@ -33,7 +49,7 @@ namespace Entity{
 		EntityFactory* getFactory(const std::string& type);
 		
 		//! Registers a factory and type into the Loader.  These are hard coded in the EntityManager and might always be.  Factories must be loaded before that type can be created.  There should not be multiple factories for a single type.  The first type given will be the only one registered.  Once a factory is loaded it can be forgotten about and will be deleted by the Loader.
-		bool registerFactory(const std:string& type, EntityFactory* factory);
+		bool registerFactory(const std::string& type, EntityFactory* factory);
 		
 		//!Removes the factory associated with the given type.  Returns false if that type did not have a factory.
 		bool remove(const std::string& type);
@@ -45,7 +61,6 @@ namespace Entity{
 		
 		~Loader();
 
-		friend std::ostream& operator << (std::ostream& os, const Loader& loader);
 
 	};
 
@@ -60,9 +75,9 @@ namespace Entity{
 		friend class ::EntityManager;
 		friend class Loader;
 	protected:
-		const std::string& m_Name; //!< The name of the Entity.
-		const EntityFactory* mp_Factory; //!< The pointer to the factory for this entity, can be determined by type string
-		const std:string& m_XMLFile; //!< The xml filename the factory will use to instantiate a worldentity.
+		std::string m_Name; //!< The name of the Entity.
+		EntityFactory* mp_Factory; //!< The pointer to the factory for this entity, can be determined by type string
+		std::string m_XMLFile; //!< The xml filename the factory will use to instantiate a worldentity.
 
 		void destroy(); //!< Releases any memory this entity is taking up so it can be dropped from the system.
 
@@ -84,6 +99,8 @@ namespace Entity{
 
 	typedef std::map<int, WorldEntity*> IdEntityMap;
 
+	class EntityCreationFailed { /* Thrown if entity creation failed. */ };
+	class EntityDoesntExist { /* Thrown if an entity was assumed to have existed but was not found. */ };
 	//end namespace Entity
 };
 //! EntityManager provides an easy and organized way of retrieving entities that were defined via an XML file.  It loads in the given XML file for the global defintion of entities.  Given an entity string name, it will then provide an instantiation of an WorldEntity and keep track of global IDs and will keep track of the deletion of the WorldEntity.
@@ -96,9 +113,9 @@ private:
 
 	Entity::StrEntityMap m_EntityMap; //!< Maps strings to Entity objects.
 
-	Input::IdEntityMap m_IdEntityMap; //!< Maps integers to instantiated world entities.
+	Entity::IdEntityMap m_IdEntityMap; //!< Maps integers to instantiated world entities.
 
-	Input::StrIdEntityMap::iterator m_EntityItr; //!< An iterator for the id entity map.
+	Entity::IdEntityMap::iterator m_EntityItr; //!< An iterator for the id entity map.
 
 
 	EntityManager();
@@ -126,6 +143,6 @@ public:
 	void removeAll();
 
 	//!Returns a reference to an already instantiated WorldEntity object given it's ID, NULL if WorldEntity with ID does not exist.
-	WorldEntity& getEntity(const int entityID) const;
+	WorldEntity& getEntity(const int entityID);
 
 };

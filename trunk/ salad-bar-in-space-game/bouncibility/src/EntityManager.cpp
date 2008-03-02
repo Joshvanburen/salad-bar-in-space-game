@@ -1,10 +1,64 @@
 #include "Common.h"
 #include "irrXML.h"	
+#include "irrlicht.h"
 #include ".\EntityManager.h"
+#include "LevelManager.h"
+#include "ball.h"
 #include "WorldEntity.h"
 
 using namespace irr;
 using namespace io;
+
+
+
+
+WorldEntity& Entity::BallFactory::loadEntity(const std::string& XMLFilename){
+
+	std::cout << "in ball factory opening xml file " << XMLFilename << "\n";
+	irr::io::IrrXMLReader* xml = irr::io::createIrrXMLReader(XMLFilename.c_str());
+
+	// strings for storing the data we want to get out of the file
+	std::string name;
+	std::string meshFile;
+	std::string textureFile;
+
+	while(xml && xml->read())
+	{
+		switch(xml->getNodeType())
+		{
+		case EXN_TEXT:
+			//No text nodes
+			break;
+
+		case EXN_ELEMENT:
+			if (!strcmp("ball", xml->getNodeName())){
+				name = xml->getAttributeValue("name");
+				meshFile = xml->getAttributeValue("mesh");
+				textureFile = xml->getAttributeValue("texture");
+			}
+			break;
+		}
+	}
+	irr::scene::ISceneManager* smgr = LevelManager::getSceneManager();
+	irr::scene::IAnimatedMesh* mesh = smgr->getMesh(meshFile.c_str());	
+	irr::scene::IAnimatedMeshSceneNode* node = smgr->addAnimatedMeshSceneNode( mesh );
+	if (node)
+	{
+		node->setMaterialFlag(irr::video::EMF_LIGHTING, true);
+		node->setMD2Animation ( irr::scene::EMAT_STAND );
+		node->setMaterialTexture( 0, LevelManager::getDriver()->getTexture(textureFile.c_str()) );
+	}
+
+	WorldEntity* entity = new Ball();
+	entity->setSceneNode(node);
+	return *entity;
+}
+
+Entity::EntityFactory::EntityFactory(){
+}
+
+Entity::EntityFactory::~EntityFactory(){
+}
 
 Entity::Loader::Loader(){
 }
@@ -18,7 +72,7 @@ bool Entity::Loader::remove(const std::string& type){
 	Entity::TypeFactoryMap::iterator factoryItr = m_FactoryMap.find(type);
 	//If the type isn't already in the map, return false
 	if(factoryItr == m_FactoryMap.end()){
-		return false
+		return false;
 	}
 	delete factoryItr->second;
 	m_FactoryMap.erase(factoryItr);
@@ -31,12 +85,12 @@ void Entity::Loader::removeAll(){
 
 	for(factoryItr = m_FactoryMap.begin(); factoryItr != factoryItrEnd; ++factoryItr)
 	{
-		delete m_EntityItr->second;
+		delete factoryItr->second;
 	}
 	m_FactoryMap.clear();
 }
 
-EntityFactory* Entity::Loader::getFactory(const std::string& type){
+Entity::EntityFactory* Entity::Loader::getFactory(const std::string& type){
 	//Find the Factory in the map for this type.
 	Entity::TypeFactoryMap::iterator factoryItr = m_FactoryMap.find(type);
 	//If the type isn't already in the map, insert and return true
@@ -48,6 +102,8 @@ EntityFactory* Entity::Loader::getFactory(const std::string& type){
 
 
 WorldEntity& Entity::Loader::loadEntity(EntityInfo* entityInfo){
+	std::cout << "calling factory for " << entityInfo->m_Name << " with xml file " << entityInfo->m_XMLFile << "\n";
+	std::cout.flush();
 	return entityInfo->mp_Factory->loadEntity(entityInfo->m_XMLFile);
 }
 
@@ -65,32 +121,22 @@ bool Entity::Loader::registerFactory(const std::string& type, EntityFactory* fac
 	return false;
 }
 	
-Entity::EntityInfo::destroy(){
+void Entity::EntityInfo::destroy(){
 }
 
-Entity::EntityInfo::EntityInfo(const std::string& sName, const std::string& sType, const std::string& sXMLFile) : m_Name(sName), m_XMLFile(sXMLFile), mp_Factory(p_Factory){
+Entity::EntityInfo::EntityInfo(const std::string& sName, const std::string& sXMLFile,  EntityFactory* p_Factory) : m_Name(sName), m_XMLFile(sXMLFile), mp_Factory(p_Factory){
+
+
 }
 
 Entity::EntityInfo::~EntityInfo(){
 }
 
 const std::string& Entity::EntityInfo::getName() const{
-	return sName;
+	return m_Name;
 }
 
-std::ostream& operator << (std::ostream& os, const Entity::Loader& loader){
-	Entity::TypeFactoryMap::iterator factoryItr;
-	Entity::TypeFactoryMap::iterator factoryItrEnd = loader.m_FactoryMap.end();
-	
-	os << "Have a factory for the following types:\n";
-	for(factoryItr = loader.m_FactoryMap.begin(); factoryItr != factoryItrEnd; ++factoryItr)
-	{
-		os << factoryItr->first << "\n";
-	}
-	return os;
-}
-
-std::ostream& operator << (std::ostream& os, const Entity::Entity& entity){
+std::ostream& operator << (std::ostream& os, const Entity::EntityInfo& entity){
 	return os << entity.getName();
 }
 
@@ -107,7 +153,7 @@ EntityManager::~EntityManager(){
 }
 
 bool EntityManager::addNewDefinitions(const std::string& XMLEntityDefinition){
-	IrrXMLReader* xml = createIrrXMLReader(XMLEntityDefinition);
+	irr::io::IrrXMLReader* xml = irr::io::createIrrXMLReader(XMLEntityDefinition.c_str());
 
 	// strings for storing the data we want to get out of the file
 	std::string name;
@@ -118,11 +164,11 @@ bool EntityManager::addNewDefinitions(const std::string& XMLEntityDefinition){
 	{
 		switch(xml->getNodeType())
 		{
-		case EXN_TEXT:
+		case irr::io::EXN_TEXT:
 			//No text nodes
 			break;
 
-		case EXN_ELEMENT:
+		case irr::io::EXN_ELEMENT:
 			if (!strcmp("entity", xml->getNodeName())){
 				name = xml->getAttributeValue("name");
 				xmlFile = xml->getAttributeValue("file");
@@ -132,7 +178,7 @@ bool EntityManager::addNewDefinitions(const std::string& XMLEntityDefinition){
 		}
 		Entity::EntityFactory* factory = m_Loader.getFactory(type);
 		if (factory){
-			Entity::EntityInfo* entityInfo = new Entity::EntityInfo(name, xmlFile, factory)
+			Entity::EntityInfo* entityInfo = new Entity::EntityInfo(name, xmlFile, factory);
 				if ((m_EntityMap.insert(make_pair(name, entityInfo))).second){
 
 				}
@@ -145,14 +191,21 @@ bool EntityManager::addNewDefinitions(const std::string& XMLEntityDefinition){
 			return false;
 		}
 	}
+	delete xml;
+	return true;
 }
 
 bool EntityManager::init(const std::string& XMLEntityDefinition){
-
+	std::cout << "loading xml file with name " << XMLEntityDefinition << "\n";
 	//Should register all the factories to each type here!!!!
 
-	IrrXMLReader* xml = createIrrXMLReader(XMLEntityDefinition);
+	this->m_Loader.registerFactory("ball", new Entity::BallFactory());
 
+	irr::io::IrrXMLReader* xml = irr::io::createIrrXMLReader(XMLEntityDefinition.c_str());
+
+	if (!xml){
+		std::cout << "There was an error loading the xml file " << XMLEntityDefinition << ".\n";
+	}
 	// strings for storing the data we want to get out of the file
 	std::string name;
 	std::string xmlFile;
@@ -162,34 +215,35 @@ bool EntityManager::init(const std::string& XMLEntityDefinition){
 	{
 		switch(xml->getNodeType())
 		{
-		case EXN_TEXT:
+		case irr::io::EXN_TEXT:
 			//No text nodes
 			break;
 
-		case EXN_ELEMENT:
+		case irr::io::EXN_ELEMENT:
 			if (!strcmp("entity", xml->getNodeName())){
-				name = xml->getAttributeValue("name");
-				xmlFile = xml->getAttributeValue("file");
-				type= xml->getAttributeValue("type");
-			}
-			break;
-		}
-		Entity::EntityFactory* factory = m_Loader.getFactory(type);
-		if (factory){
-			Entity::EntityInfo* entityInfo = new Entity::EntityInfo(name, xmlFile, factory)
-				if ((m_EntityMap.insert(make_pair(name, entityInfo))).second){
+				Entity::EntityFactory* factory = m_Loader.getFactory(xml->getAttributeValue("type"));
+				if (factory){
+					Entity::EntityInfo* entityInfo = new Entity::EntityInfo(xml->getAttributeValue("name"), xml->getAttributeValue("file"), factory);
+					if ((m_EntityMap.insert(make_pair(std::string(xml->getAttributeValue("name")), entityInfo))).second){
+						std::cout << "added entity with name " << std::string(xml->getAttributeValue("name")) << "\n";
 
+						}
+						else{
+							m_EntityMap.clear();
+							return false;
+						}
 				}
 				else{
 					m_EntityMap.clear();
 					return false;
 				}
-		}
-		else{
-			m_EntityMap.clear();
-			return false;
-		}
+					}
+					break;
+				}
+
 	}
+	delete xml;
+	return true;
 }
 
 void EntityManager::shutdown(){
@@ -212,11 +266,13 @@ void EntityManager::shutdown(){
 
 WorldEntity& EntityManager::createEntity(const std::string name){
 	//Find the Entity in the Str EntityInfo map for this entity name.
+	std::cout << "finding entity with name " << name << "\n";
 	Entity::StrEntityMap::iterator entityItr = m_EntityMap.find(name);
 	//If the Entity wasn't found, return false
-	if(entityItr == m_EntityMap.end())
-		return NULL;
-	
+	if(entityItr == m_EntityMap.end()){
+		std::cout << "entity not found. throwing exception!\n";
+		throw Entity::EntityCreationFailed();
+	}
 	return(m_Loader.loadEntity(entityItr->second));
 }
 
@@ -241,11 +297,11 @@ void EntityManager::removeAll(){
 	m_IdEntityMap.clear();
 }
 
-WorldEntity& EntityManager::getEntity(const int entityID) const{
+WorldEntity& EntityManager::getEntity(const int entityID){
 	//Find the entity in the ID map for this entityID
 	m_EntityItr = m_IdEntityMap.find(entityID);
 	//If the Entity wasn't found, return NULL
 	if (m_EntityItr == m_IdEntityMap.end())
-		return NULL;
-	return m_EntityItr->second;
+		throw Entity::EntityDoesntExist();
+	return *(m_EntityItr->second);
 }
