@@ -1,0 +1,3 @@
+<worldentities>
+	<entity name="player_ball", file="res/entities/entity_definitions/player_ball.xml", type="ball" />
+</worldentities>
