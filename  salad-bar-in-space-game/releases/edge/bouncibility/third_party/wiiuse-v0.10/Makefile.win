@@ -1,0 +1,25 @@
+NMAKE_ARGS = -nologo -f Makefile.win
+
+!if "$(debug)" == "1"
+NMAKE_ARGS = $(NMAKE_ARGS) debug=1
+!endif
+
+!if "$(win64)" == "1"
+NMAKE_ARGS = $(NMAKE_ARGS) win64=1
+!endif
+
+all:
+	@cd $(MAKEDIR)/src && $(MAKE) $(NMAKE_ARGS) $*
+	@cd $(MAKEDIR)/example && $(MAKE) $(NMAKE_ARGS) $*
+	@cd $(MAKEDIR)/example-sdl && $(MAKE) $(NMAKE_ARGS) $*
+
+clean:
+	@cd $(MAKEDIR)/src && $(MAKE) $(NMAKE_ARGS) $*
+	@cd $(MAKEDIR)/example && $(MAKE) $(NMAKE_ARGS) $*
+	@cd $(MAKEDIR)/example-sdl && $(MAKE) $(NMAKE_ARGS) $*
+
+distclean:
+	@cd $(MAKEDIR)/src && $(MAKE) $(NMAKE_ARGS) $*
+	@cd $(MAKEDIR)/example && $(MAKE) $(NMAKE_ARGS) $*
+	@cd $(MAKEDIR)/example-sdl && $(MAKE) $(NMAKE_ARGS) $*
+
