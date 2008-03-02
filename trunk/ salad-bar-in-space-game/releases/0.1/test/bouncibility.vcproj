@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\Users\chase\Desktop\game\bouncibility\include;C:\Users\chase\Desktop\game\bouncibility\third_party\irrxml\include;&quot;C:\Users\chase\Desktop\game\bouncibility\third_party\wiiuse-v0.10\src&quot;"
+				AdditionalIncludeDirectories="..\include;..\third_party\irrxml\include;&quot;..\third_party\wiiuse-v0.10\src&quot;"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -62,7 +62,7 @@
 				AdditionalDependencies="irrlicht.lib irrklang.lib wiiuse.lib"
 				OutputFile="..\bin\Demo.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="C:\Users\chase\Desktop\game\bouncibility\lib;&quot;C:\Users\chase\Desktop\game\bouncibility\third_party\wiiuse-v0.10\lib&quot;"
+				AdditionalLibraryDirectories="..\lib;&quot;..\third_party\wiiuse-v0.10\lib&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="0"
 				RandomizedBaseAddress="1"
