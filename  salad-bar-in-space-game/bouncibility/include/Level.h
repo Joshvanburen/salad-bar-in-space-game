@@ -7,7 +7,7 @@ class ISceneNode;
 class ISceneManager;
 }
 
-typedef std::vector<WorldEntity&> EntityVector;
+typedef std::vector<WorldEntity*> EntityVector;
 //!The Level class holds everything within a specific level.  It loads in all the world entities and updates them.  Each level has its own xml file. 
 class Level
 {
@@ -30,6 +30,8 @@ class Level
 			//!Current status of level
 			int m_Status;
 
+			int m_StartingX;
+			int m_StartingY;
 			friend std::ostream& operator << (std::ostream& os, const Level& level);
 		
 	//Public methods and variables
@@ -38,9 +40,9 @@ class Level
 			static const int RUNNING;
 			static const int WAITING_START;
 			static const int FINISHED;
-			static const int STOPPED:
+			static const int STOPPED;
 
-			explicit Level();
+			 explicit Level();
 			~Level();
 			//! Load the level from the given xml definition.  Loads in all entities from the EntityManager and stores them in the entityvector.
 			/*! Level xml definition format

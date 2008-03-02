@@ -1,12 +1,12 @@
 #ifndef WORLD_ENTITY_H
 #define WORLD_ENTITY_H
 
-#include "irrlicht.h"
-
+#include "Common.h"
+namespace irr{
 namespace scene{
 	class ISceneNode;
 }
-
+}
 class WorldEntity{
 
 public:
@@ -20,32 +20,28 @@ public:
 	virtual ~WorldEntity(){};
 
 	// Every world entity will have a location
-	void setLocation(x, y, z);
+	void setLocation(float x, float y, float z);
 	
-	SceneNode entity();
+	irr::scene::ISceneNode* entity();
 
 	// get/set ID
 	int getID();
 	void setID( int iID );
 
 	//Returns a pointer to the scene node for this WorldEntity
-	ISceneNode* getSceneNode(){
+	irr::scene::ISceneNode* getSceneNode(){
 		return sceneNode;
 	}
+
+	void setSceneNode(irr::scene::ISceneNode* sceneNode);
 
 	// The update function prototypes take a float fElapsedTime 
 	// which will be how much time has passed since the last time 
 	// that function was called. This information is useful for 
 	// animation of objects as well as determining collision
-	// of moving objects.	
-	virtual void update(float fElapsedTime) = 0;
+	// of moving objects.	--Chase I think we should have UserInterface or something have a static getCurrentTime method instead of passing it in as a parameter.
+	virtual void update() = 0;
 
-	// The draw function prototypes take a float fElapsedTime 
-	// which will be how much time has passed since the last time 
-	// that function was called. This information is useful for 
-	// animation of objects as well as determining collision
-	// of moving objects.	
-	virtual void draw(float fElapsedTime) = 0;
 
 	virtual void load() = 0;
 
@@ -62,7 +58,7 @@ private:
 
 	int id;// Unique ID
 
-	ISceneNode* sceneNode; //Scene node of worldEntity.  Assumed to be initialized and added to the scene by factory.
+	irr::scene::ISceneNode* sceneNode; //Scene node of worldEntity.  Assumed to be initialized and added to the scene by factory.
 };
 
 #endif
