@@ -1,0 +1,5 @@
+<level name="tutorial1" music="default.mp3" time="50" startingx="100" startingy="100" map="res/levels/example.irr">
+	<entities>
+		<entity name="player_ball" startstate="normal" xloc="500" yloc="400" />
+	</entities>
+</level>
