@@ -102,7 +102,8 @@ int main()
 	To look at the mesh, we place a camera into 3d space at the position
 	(0, 30, -40). The camera looks from there to (0,5,0).
 	*/
-	smgr->addCameraSceneNode(0, irr::core::vector3df(0,30,-40), irr::core::vector3df(0,5,0));
+	smgr->addCameraSceneNodeFPS(0);
+
 
 
 	//Makes the mouse invisible
