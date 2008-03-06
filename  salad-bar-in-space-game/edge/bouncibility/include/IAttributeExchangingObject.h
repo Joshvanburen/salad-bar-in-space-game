@@ -5,7 +5,7 @@
 #ifndef __I_ATTRIBUTE_EXCHANGING_OBJECT_H_INCLUDED__
 #define __I_ATTRIBUTE_EXCHANGING_OBJECT_H_INCLUDED__
 
-#include "IReferenceCounted.h"
+#include "IUnknown.h"
 
 
 namespace irr
@@ -48,19 +48,19 @@ struct SAttributeReadWriteOptions
 
 
 //! An object which is able to serialize and deserialize its attributes into an attributes object
-class IAttributeExchangingObject : public virtual IReferenceCounted
+class IAttributeExchangingObject : public virtual IUnknown
 {
 public:
 
 	//! Writes attributes of the object.
 	//! Implement this to expose the attributes of your scene node animator for 
 	//! scripting languages, editors, debuggers or xml serialization purposes.
-	virtual void serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0) const {}
+	virtual void serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0)	{}
 
 	//! Reads attributes of the object.
 	//! Implement this to set the attributes of your scene node animator for 
 	//! scripting languages, editors, debuggers or xml deserialization purposes.
-	virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options=0) {}
+	virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options=0)	{}
 
 };
 

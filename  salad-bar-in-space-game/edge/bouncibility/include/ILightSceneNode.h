@@ -34,11 +34,8 @@ public:
 
 	//! Gets the light data associated with this ILightSceneNode
 	//! \return Returns the light data.
-	virtual const video::SLight& getLightData() const = 0;
-
-	//! Gets the light data associated with this ILightSceneNode
-	//! \return Returns the light data.
 	virtual video::SLight& getLightData() = 0;
+
 };
 
 } // end namespace scene

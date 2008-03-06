@@ -5,7 +5,7 @@
 #ifndef __I_SCENE_NODE_H_INCLUDED__
 #define __I_SCENE_NODE_H_INCLUDED__
 
-#include "IReferenceCounted.h"
+#include "IUnknown.h"
 #include "ESceneNodeTypes.h"
 #include "ECullingTypes.h"
 #include "EDebugSceneTypes.h"
@@ -35,10 +35,10 @@ namespace scene
 	public:
 
 		//! Constructor
-		ISceneNode(ISceneNode* parent, ISceneManager* mgr, s32 id=-1,
-				const core::vector3df& position = core::vector3df(0,0,0),
-				const core::vector3df& rotation = core::vector3df(0,0,0),
-				const core::vector3df& scale = core::vector3df(1.0f, 1.0f, 1.0f))
+		ISceneNode(	ISceneNode* parent, ISceneManager* mgr, s32 id=-1,
+					const core::vector3df& position = core::vector3df(0,0,0),
+					const core::vector3df& rotation = core::vector3df(0,0,0),
+					const core::vector3df& scale = core::vector3df(1.0f, 1.0f, 1.0f))
 			: RelativeTranslation(position), RelativeRotation(rotation), RelativeScale(scale),
 				Parent(parent), ID(id), SceneManager(mgr), TriangleSelector(0),
 				AutomaticCullingState(EAC_BOX), IsVisible(true),
@@ -49,6 +49,7 @@ namespace scene
 
 			updateAbsolutePosition();
 		}
+
 
 
 		//! Destructor
@@ -331,7 +332,7 @@ namespace scene
 
 		//! Returns amount of materials used by this scene node.
 		//! \return Returns current count of materials used by this scene node.
-		virtual u32 getMaterialCount() const
+		virtual u32 getMaterialCount()
 		{
 			return 0;
 		}
@@ -355,11 +356,11 @@ namespace scene
 		//! \param texture: Texture to be used.
 		void setMaterialTexture(u32 textureLayer, video::ITexture* texture)
 		{
-			if (textureLayer >= video::MATERIAL_MAX_TEXTURES)
+			if (textureLayer>= video::MATERIAL_MAX_TEXTURES)
 				return;
 
 			for (u32 i=0; i<getMaterialCount(); ++i)
-				getMaterial(i).setTexture(textureLayer, texture);
+				getMaterial(i).Textures[textureLayer] = texture;
 		}
 
 
@@ -436,7 +437,7 @@ namespace scene
 
 		//! Enables or disables automatic culling based on the bounding box.
 		/** Automatic culling is enabled by default. Note that not
-		all SceneNodes support culling (e.g. the billboard scene node)
+		all SceneNodes support culling (the billboard scene node for example)
 		and that some nodes always cull their geometry because it is their
 		only reason for existence, for example the OctreeSceneNode.
 		\param state: The culling state to be used. */
@@ -482,7 +483,7 @@ namespace scene
 		//! Returns if this scene node is a debug object.
 		/** Debug objects have some special properties, for example they can be easily
 		excluded from collision detection or from serialization, etc. */
-		bool isDebugObject() const
+		bool isDebugObject()
 		{
 			_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
 			return IsDebugObject;
@@ -545,7 +546,6 @@ namespace scene
 				TriangleSelector->grab();
 		}
 
-
 		//! updates the absolute position based on the relative and the parents position
 		virtual void updateAbsolutePosition()
 		{
@@ -573,7 +573,7 @@ namespace scene
 		//! Writes attributes of the scene node.
 		//! Implement this to expose the attributes of your scene node for
 		//! scripting languages, editors, debuggers or xml serialization purposes.
-		virtual void serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0) const
+		virtual void serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0)
 		{
 			out->addString	("Name", Name.c_str());
 			out->addInt	("Id", ID );

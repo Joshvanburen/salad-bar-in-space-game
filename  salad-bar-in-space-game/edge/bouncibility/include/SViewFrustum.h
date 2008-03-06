@@ -52,7 +52,7 @@ namespace scene
 		};
 
 		//! Default Constructor
-		SViewFrustum() {}
+		SViewFrustum() {};
 
 		//! Copy Constructor
 		SViewFrustum(const SViewFrustum& other);
@@ -63,7 +63,7 @@ namespace scene
 
 		//! This constructor creates a view frustum based on a projection
 		//! and/or view matrix.
-		inline void setFrom(const core::matrix4& mat);
+		void setFrom(const core::matrix4& mat);
 
 		//! transforms the frustum by the matrix
 		//! \param mat: Matrix by which the view frustum is transformed.

@@ -26,7 +26,7 @@ namespace gui
 			: IGUIElement(EGUIET_IMAGE, environment, parent, id, rectangle) {}
 
 		//! destructor
-		virtual ~IGUIImage() {}
+		~IGUIImage() {};
 
 		//! Sets an image
 		virtual void setImage(video::ITexture* image) = 0;
@@ -45,6 +45,7 @@ namespace gui
 
 		//! Returns true if the image is using the alpha channel, false if not
 		virtual bool isAlphaChannelUsed() const = 0;
+
 	};
 
 

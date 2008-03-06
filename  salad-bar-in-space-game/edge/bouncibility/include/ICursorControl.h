@@ -5,7 +5,7 @@
 #ifndef __I_CURSOR_CONTROL_H_INCLUDED__
 #define __I_CURSOR_CONTROL_H_INCLUDED__
 
-#include "IReferenceCounted.h"
+#include "IUnknown.h"
 #include "position2d.h"
 #include "rect.h"
 
@@ -15,7 +15,7 @@ namespace gui
 {
 
 	//! Interface to manipulate the mouse cursor.
-	class ICursorControl : public virtual IReferenceCounted
+	class ICursorControl : public virtual IUnknown
 	{
 	public:
 
@@ -26,7 +26,7 @@ namespace gui
 
 		//! Returns if the cursor is currently visible.
 		/** \return Returns true if the cursor is visible, false if not. */
-		virtual bool isVisible() const = 0;
+		virtual bool isVisible() = 0;
 
 		/** Sets the new position of the cursor. The position must be
 		between (0.0f, 0.0f) and (1.0f, 1.0f), where (0.0f, 0.0f) is 

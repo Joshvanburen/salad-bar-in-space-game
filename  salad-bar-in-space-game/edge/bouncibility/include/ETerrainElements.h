@@ -9,7 +9,6 @@ namespace irr
 {
 namespace scene
 {
-
 	//! enumeration for patch sizes specifying the size of patches in the TerrainSceneNode
 	enum E_TERRAIN_PATCH_SIZE
 	{
