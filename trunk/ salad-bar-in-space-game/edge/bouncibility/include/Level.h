@@ -2,9 +2,16 @@
 
 #include "Common.h"
 
-namespace scene{
-class ISceneNode;
-class ISceneManager;
+namespace irr{
+	namespace scene{
+		class ISceneNode;
+		class ISceneManager;
+		class IMesh;
+	}
+	namespace newton{
+		class IMaterial;
+		class IBody;
+	}
 }
 
 typedef std::vector<WorldEntity*> EntityVector;
@@ -31,7 +38,13 @@ class Level
 			int m_Status;
 
 			int m_StartingX;
+
 			int m_StartingY;
+
+			irr::scene::IMesh* mesh;
+			irr::newton::IMaterial* physics_material;
+			irr::newton::IBody* physics_body;
+
 			friend std::ostream& operator << (std::ostream& os, const Level& level);
 		
 	//Public methods and variables

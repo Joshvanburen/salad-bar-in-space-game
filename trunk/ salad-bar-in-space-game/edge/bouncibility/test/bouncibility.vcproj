@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\include;..\third_party\irrxml\include;&quot;..\third_party\wiiuse-v0.10\src&quot;"
+				AdditionalIncludeDirectories="..\include;..\third_party\irrxml\include;&quot;..\third_party\wiiuse-v0.10\src&quot;;..\third_party\irrnewt\include;..\third_party\newton\sdk"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -59,10 +59,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="irrlicht.lib irrklang.lib wiiuse.lib irrxml.lib"
+				AdditionalDependencies="irrlicht.lib irrklang.lib wiiuse.lib irrxml.lib newton.lib irrnewt.lib"
 				OutputFile="..\bin\Demo.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\lib;&quot;..\third_party\wiiuse-v0.10\lib&quot;;C:\Users\chase\Desktop\game2\edge\bouncibility\third_party\irrxml\lib"
+				AdditionalLibraryDirectories="..\lib;&quot;..\third_party\wiiuse-v0.10\lib&quot;;..\third_party\irrxml\lib;..\third_party\newton\sdk\dll;..\third_party\irrnewt\lib"
 				GenerateDebugInformation="true"
 				SubSystem="0"
 				RandomizedBaseAddress="1"
