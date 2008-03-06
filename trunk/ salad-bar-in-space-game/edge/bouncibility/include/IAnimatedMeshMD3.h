@@ -145,8 +145,10 @@ namespace scene
 #undef PACK_STRUCT
 
 	//! Holding Frame Data for a Mesh
-	struct SMD3MeshBuffer : public IReferenceCounted
+	struct SMD3MeshBuffer : public IUnknown
 	{
+		virtual ~ SMD3MeshBuffer () {}
+
 		SMD3MeshHeader MeshHeader;
 
 		core::array < core::stringc > Shader;
@@ -180,25 +182,30 @@ namespace scene
 		}
 
 		// construct from a position and euler angles in degrees
-		SMD3QuaterionTag ( const core::vector3df &pos, const core::vector3df &angle )
+		SMD3QuaterionTag ( const core::vector3df&pos, const core::vector3df &angle )
 		{
 			position = pos;
-			rotation.set ( angle * core::DEGTORAD );
+			rotation.set ( angle.X * core::DEGTORAD, angle.Y * core::DEGTORAD, angle.Z * core::DEGTORAD );
 		}
 
-		bool operator == ( const SMD3QuaterionTag &other ) const
-		{
-			return Name == other.Name;
-		}
+		virtual ~SMD3QuaterionTag() {}
 
 		core::stringc Name;
 		core::vector3df position;
 		core::quaternion rotation;
+
+		bool operator < ( const SMD3QuaterionTag &other ) const
+		{
+			return Name < other.Name;
+		}
 	};
 
 	// holds a assoziative list of named quaternions
-	struct SMD3QuaterionTagList : public virtual IReferenceCounted
+	struct SMD3QuaterionTagList : public virtual IUnknown
 	{
+		SMD3QuaterionTagList () {}
+		virtual ~SMD3QuaterionTagList () {}
+
 		SMD3QuaterionTag* get ( const core::stringc& name )
 		{
 			SMD3QuaterionTag search ( name );
@@ -218,14 +225,16 @@ namespace scene
 			return Container[index];
 		}
 
+
 		core::array < SMD3QuaterionTag > Container;
 	};
 
 
+
 	//! Holding Frames Buffers and Tag Infos
-	struct SMD3Mesh: public IReferenceCounted
+	struct SMD3Mesh: public IUnknown
 	{
-		~SMD3Mesh()
+		virtual ~SMD3Mesh()
 		{
 			for (u32 i=0; i<Buffer.size(); ++i)
 				Buffer[i]->drop();
@@ -236,6 +245,7 @@ namespace scene
 		core::array < SMD3MeshBuffer * > Buffer;
 		SMD3QuaterionTagList TagList;
 	};
+
 
 
 	//! Interface for using some special functions of MD3 meshes
@@ -249,6 +259,7 @@ namespace scene
 		virtual SMD3QuaterionTagList *getTagList(s32 frame, s32 detailLevel, s32 startFrameLoop, s32 endFrameLoop) = 0;
 
 		virtual SMD3Mesh * getOriginalMesh () = 0;
+
 	};
 
 } // end namespace scene

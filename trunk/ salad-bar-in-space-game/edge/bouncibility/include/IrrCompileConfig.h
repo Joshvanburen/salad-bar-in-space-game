@@ -6,7 +6,7 @@
 #define __IRR_COMPILE_CONFIG_H_INCLUDED__
 
 //! Irrlicht SDK Version
-#define IRRLICHT_SDK_VERSION "1.4"
+#define IRRLICHT_SDK_VERSION "1.3.1"
 
 //! The defines for different operating system are:
 //! _IRR_XBOX_PLATFORM_ for XBox
@@ -103,10 +103,6 @@ define out. */
 //#define _IRR_LINUX_X11_RANDR_
 #endif
 
-//! Define _IRR_COMPILE_WITH_GUI_ to compile the engine with the built-in GUI
-/** Disable this if you are using an external library to draw the GUI. If you disable this then
-you will not be able to use anything provided by the GUI Environment, including loading fonts. */
-#define _IRR_COMPILE_WITH_GUI_
 
 //! Define _IRR_COMPILE_WITH_ZLIB_ to enable compiling the engine using zlib.
 /** This enables the engine to read from compressed .zip archives. If you
@@ -202,7 +198,7 @@ Note that the engine will run in D3D REF for this, which is a lot slower than HA
 
 		BURNINGVIDEO_RENDERER_FAST
 			32 Bit + Per Pixel Perspective Correct + SubPixel/SubTexel Correct + WBuffer +
-			Bilinear Dithering TextureFiltering + WBuffer
+			Bilinear Dithering TextureFilterung + WBuffer
 
 		BURNINGVIDEO_RENDERER_ULTRA_FAST
 			16Bit + SubPixel/SubTexel Correct + ZBuffer
@@ -212,88 +208,6 @@ Note that the engine will run in D3D REF for this, which is a lot slower than HA
 //#define BURNINGVIDEO_RENDERER_FAST
 //#define BURNINGVIDEO_RENDERER_ULTRA_FAST
 
-
-//! Define _IRR_COMPILE_WITH_SKINNED_MESH_SUPPORT_ if you want to use bone based
-/** animated meshes. If you compile without this, you will be unable to load
-B3D, MS3D or X meshes */
-#define _IRR_COMPILE_WITH_SKINNED_MESH_SUPPORT_
-
-#ifdef _IRR_COMPILE_WITH_SKINNED_MESH_SUPPORT_
-//! Define _IRR_COMPILE_WITH_B3D_LOADER_ if you want to use Blitz3D files
-#define _IRR_COMPILE_WITH_B3D_LOADER_
-//! Define _IRR_COMPILE_WITH_B3D_LOADER_ if you want to Milkshape files
-#define _IRR_COMPILE_WITH_MS3D_LOADER_
-//! Define _IRR_COMPILE_WITH_X_LOADER_ if you want to use Microsoft X files
-#define _IRR_COMPILE_WITH_X_LOADER_
-#endif
-
-//! Define _IRR_COMPILE_WITH_IRR_MESH_LOADER_ if you want to load Irrlicht Engine .irrmesh files
-#define _IRR_COMPILE_WITH_IRR_MESH_LOADER_
-
-//! Define _IRR_COMPILE_WITH_MD2_LOADER_ if you want to load Quake 2 animated files
-#define _IRR_COMPILE_WITH_MD2_LOADER_
-//! Define _IRR_COMPILE_WITH_MD3_LOADER_ if you want to load Quake 3 animated files
-#define _IRR_COMPILE_WITH_MD3_LOADER_
-
-//! Define _IRR_COMPILE_WITH_3DS_LOADER_ if you want to load 3D Studio Max files
-#define _IRR_COMPILE_WITH_3DS_LOADER_
-//! Define _IRR_COMPILE_WITH_COLLADA_LOADER_ if you want to load Collada files
-#define _IRR_COMPILE_WITH_COLLADA_LOADER_
-//! Define _IRR_COMPILE_WITH_CSM_LOADER_ if you want to load Cartography Shop files
-#define _IRR_COMPILE_WITH_CSM_LOADER_
-//! Define _IRR_COMPILE_WITH_BSP_LOADER_ if you want to load Quake 3 BSP files
-#define _IRR_COMPILE_WITH_BSP_LOADER_
-//! Define _IRR_COMPILE_WITH_DMF_LOADER_ if you want to load DeleD files
-#define _IRR_COMPILE_WITH_DMF_LOADER_
-//! Define _IRR_COMPILE_WITH_LMTS_LOADER_ if you want to load LMTools files
-#define _IRR_COMPILE_WITH_LMTS_LOADER_
-//! Define _IRR_COMPILE_WITH_MY3D_LOADER_ if you want to load MY3D files
-#define _IRR_COMPILE_WITH_MY3D_LOADER_
-//! Define _IRR_COMPILE_WITH_OBJ_LOADER_ if you want to load Wavefront OBJ files
-#define _IRR_COMPILE_WITH_OBJ_LOADER_
-//! Define _IRR_COMPILE_WITH_OCT_LOADER_ if you want to load FSRad OCT files
-#define _IRR_COMPILE_WITH_OCT_LOADER_
-//! Define _IRR_COMPILE_WITH_OGRE_LOADER_ if you want to load Ogre 3D files
-#define _IRR_COMPILE_WITH_OGRE_LOADER_
-//! Define _IRR_COMPILE_WITH_STL_LOADER_ if you want to load .stl files
-#define _IRR_COMPILE_WITH_STL_LOADER_
-
-//! Define _IRR_COMPILE_WITH_IRR_WRITER_ if you want to write static .irr files
-#define _IRR_COMPILE_WITH_IRR_WRITER_
-//! Define _IRR_COMPILE_WITH_COLLADA_WRITER_ if you want to write Collada files
-#define _IRR_COMPILE_WITH_COLLADA_WRITER_
-//! Define _IRR_COMPILE_WITH_STL_WRITER_ if you want to write .stl files
-#define _IRR_COMPILE_WITH_STL_WRITER_
-
-//! Define _IRR_COMPILE_WITH_BMP_LOADER_ if you want to load .bmp files
-#define _IRR_COMPILE_WITH_BMP_LOADER_
-//! Define _IRR_COMPILE_WITH_JPG_LOADER_ if you want to load .jpg files
-#define _IRR_COMPILE_WITH_JPG_LOADER_
-//! Define _IRR_COMPILE_WITH_PCX_LOADER_ if you want to load .pcx files
-#define _IRR_COMPILE_WITH_PCX_LOADER_
-//! Define _IRR_COMPILE_WITH_PNG_LOADER_ if you want to load .png files
-#define _IRR_COMPILE_WITH_PNG_LOADER_
-//! Define _IRR_COMPILE_WITH_PPM_LOADER_ if you want to load .ppm/.pgm/.pbm files
-#define _IRR_COMPILE_WITH_PPM_LOADER_
-//! Define _IRR_COMPILE_WITH_PSD_LOADER_ if you want to load .psd files
-#define _IRR_COMPILE_WITH_PSD_LOADER_
-//! Define _IRR_COMPILE_WITH_TGA_LOADER_ if you want to load .tga files
-#define _IRR_COMPILE_WITH_TGA_LOADER_
-
-//! Define _IRR_COMPILE_WITH_BMP_WRITER_ if you want to write .bmp files
-#define _IRR_COMPILE_WITH_BMP_WRITER_
-//! Define _IRR_COMPILE_WITH_JPG_WRITER_ if you want to write .jpg files
-#define _IRR_COMPILE_WITH_JPG_WRITER_
-//! Define _IRR_COMPILE_WITH_PCX_WRITER_ if you want to write .pcx files
-#define _IRR_COMPILE_WITH_PCX_WRITER_
-//! Define _IRR_COMPILE_WITH_PNG_WRITER_ if you want to write .png files
-#define _IRR_COMPILE_WITH_PNG_WRITER_
-//! Define _IRR_COMPILE_WITH_PPM_WRITER_ if you want to write .ppm files
-#define _IRR_COMPILE_WITH_PPM_WRITER_
-//! Define _IRR_COMPILE_WITH_PSD_WRITER_ if you want to write .psd files
-#define _IRR_COMPILE_WITH_PSD_WRITER_
-//! Define _IRR_COMPILE_WITH_TGA_WRITER_ if you want to write .tga files
-#define _IRR_COMPILE_WITH_TGA_WRITER_
 
 //! Set FPU settings
 /** Irrlicht should use approximate float and integer fpu techniques

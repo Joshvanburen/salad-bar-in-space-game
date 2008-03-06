@@ -5,7 +5,7 @@
 #ifndef __I_MESH_LOADER_H_INCLUDED__
 #define __I_MESH_LOADER_H_INCLUDED__
 
-#include "IReferenceCounted.h"
+#include "IUnknown.h"
 
 namespace irr
 {
@@ -22,22 +22,22 @@ namespace scene
 currently unsupported file formats (e.g .cob), then implement
 this and add your new Surface loader with 
 ISceneManager::addExternalMeshLoader() to the engine. */
-class IMeshLoader : public virtual IReferenceCounted
+class IMeshLoader : public virtual IUnknown
 {
 public:
 
 	//! destructor
-	virtual ~IMeshLoader() {}
+	virtual ~IMeshLoader() {};
 
 	//! Returns true if the file maybe is able to be loaded by this class.
 	/** This decision should be based only on the file extension (e.g. ".cob") */
-	virtual bool isALoadableFileExtension(const c8* fileName) const = 0;
+	virtual bool isALoadableFileExtension(const c8* fileName) = 0;
 
 	//! Creates/loads an animated mesh from the file.
 	/** \return Pointer to the created mesh. Returns 0 if loading failed.
 	If you no longer need the mesh, you should call IAnimatedMesh::drop().
-	See IReferenceCounted::drop() for more information. */
-	virtual IAnimatedMesh* createMesh(io::IReadFile* file) = 0;
+	See IUnknown::drop() for more information. */
+	virtual IAnimatedMesh* createMesh(irr::io::IReadFile* file) = 0;
 };
 
 

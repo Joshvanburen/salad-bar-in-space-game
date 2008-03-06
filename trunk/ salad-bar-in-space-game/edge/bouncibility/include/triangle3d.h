@@ -79,32 +79,31 @@ namespace core
 				isOnSameSide(p, pointC, pointA, pointB));
 		}
 
-		//! Check if a point is inside the triangle. This method is an
-		//! implementation of the example used in a paper by Kasper
-		//! Fauerby original written by Keidy from Mr-Gamemaker.
-		//! \param p: Point to test. Assumes that this point is already
-		//! on the plane of the triangle.
-		//! \return Returns true if the point is inside the triangle,
-		//! otherwise false.
+		//! Check if a point is inside the triangle. This method is an implementation
+		//! of the example used in a paper by Kasper Fauerby original written
+		//! by Keidy from Mr-Gamemaker.
+		//! \param p: Point to test. Assumes that this point is already on the plane
+		//! of the triangle.
+		//! \return Returns true if the point is inside the triangle, otherwise false.
 		bool isPointInsideFast(const vector3d<T>& p) const
 		{
-			const vector3d<T> f = pointB - pointA;
-			const vector3d<T> g = pointC - pointA;
+			vector3d<T> f = pointB - pointA;
+			vector3d<T> g = pointC - pointA;
 
-			const f32 a = f.dotProduct(f);
-			const f32 b = f.dotProduct(g);
-			const f32 c = g.dotProduct(g);
+			f32 a = f.dotProduct(f);
+			f32 b = f.dotProduct(g);
+			f32 c = g.dotProduct(g);
 
-			const vector3d<T> vp = p - pointA;
-			const f32 d = vp.dotProduct(f);
-			const f32 e = vp.dotProduct(g);
+			f32 ac_bb = (a*c)-(b*b);
+			vector3d<T> vp = p - pointA;
 
+			f32 d = vp.dotProduct(f);
+			f32 e = vp.dotProduct(g);
 			f32 x = (d*c)-(e*b);
 			f32 y = (e*a)-(d*b);
-			const f32 ac_bb = (a*c)-(b*b);
 			f32 z = x+y-ac_bb;
 
-			return (( (IR(z)) & ~((IR(x))|(IR(y))) ) & 0x80000000)!=0;
+			return (( ((u32&)z)& ~(((u32&)x)|((u32&)y))) & 0x80000000)!=0;
 		}
 
 
@@ -179,9 +178,9 @@ namespace core
 		//! false if it is backfacing.
 		bool isFrontFacing(const vector3d<T>& lookDirection) const
 		{
-			const vector3d<T> n = getNormal().normalize();
-			const f32 d = (f32)n.dotProduct(lookDirection);
-			return F32_LOWER_EQUAL_0(d);
+			vector3d<T> n = getNormal();
+			n.normalize();
+			return F32_LOWER_EQUAL_0(n.dotProduct(lookDirection));
 		}
 
 		//! Returns the plane of this triangle.

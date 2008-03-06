@@ -22,7 +22,9 @@ namespace gui
 			: IGUIElement(EGUIET_COLOR_SELECT_DIALOG, environment, parent, id, rectangle) {}
 
 		//! destructor
-		virtual ~IGUIColorSelectDialog() {}
+		virtual ~IGUIColorSelectDialog() {};
+
+
 	};
 
 

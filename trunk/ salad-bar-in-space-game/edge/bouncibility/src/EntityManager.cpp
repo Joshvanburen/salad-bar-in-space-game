@@ -15,6 +15,7 @@ using namespace io;
 WorldEntity& Entity::BallFactory::loadEntity(const std::string& XMLFilename){
 
 	std::cout << "in ball factory opening xml file " << XMLFilename << "\n";
+
 	irr::io::IrrXMLReader* xml = irr::io::createIrrXMLReader(XMLFilename.c_str());
 
 	// strings for storing the data we want to get out of the file

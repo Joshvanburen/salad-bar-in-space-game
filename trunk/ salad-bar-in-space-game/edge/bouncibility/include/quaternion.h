@@ -6,7 +6,6 @@
 #define __IRR_QUATERNION_H_INCLUDED__
 
 #include "irrTypes.h"
-#include "irrMath.h"
 #include "matrix4.h"
 #include "vector3d.h"
 
@@ -21,15 +20,15 @@ class quaternion
 	public:
 
 		//! Default Constructor
-		quaternion() : X(0.0f), Y(0.0f), Z(0.0f), W(1.0f) {}
+		quaternion();
 
 		//! Constructor
-		quaternion(f32 x, f32 y, f32 z, f32 w) : X(x), Y(y), Z(z), W(w) { }
+		quaternion(f32 X, f32 Y, f32 Z, f32 W);
 
-		//! Constructor which converts euler angles (radians) to a quaternion
+		//! Constructor which converts euler angles to a quaternion
 		quaternion(f32 x, f32 y, f32 z);
 
-		//! Constructor which converts euler angles (radians) to a quaternion
+		//! Constructor which converts euler angles to a quaternion
 		quaternion(const vector3df& vec);
 
 		//! Constructor which converts a matrix to a quaternion
@@ -68,11 +67,8 @@ class quaternion
 		//! sets new quaternion
 		inline void set(f32 x, f32 y, f32 z, f32 w);
 
-		//! sets new quaternion based on euler angles (radians)
+		//! sets new quaternion based on euler angles
 		inline void set(f32 x, f32 y, f32 z);
-
-		//! sets new quaternion based on euler angles (radians)
-		inline void set(const core::vector3df& vec);
 
 		//! normalizes the quaternion
 		inline quaternion& normalize();
@@ -100,18 +96,26 @@ class quaternion
 		//! Fills an angle (radians) around an axis (unit vector)
 		void toAngleAxis (f32 &angle, vector3df& axis) const;
 
-		//! Output this quaternion to an euler angle (radians)
 		void toEuler(vector3df& euler) const;
 
 		//! set quaternion to identity
 		void makeIdentity();
 
-		//! sets quaternion to represent a rotation from one angle to another
-		void rotationFromTo(const vector3df& from, const vector3df& to);
-
 		f32 X, Y, Z, W;
 };
 
+
+//! Default Constructor
+inline quaternion::quaternion()
+: X(0.0f), Y(0.0f), Z(0.0f), W(1.0f)
+{
+}
+
+//! Constructor
+inline quaternion::quaternion(f32 x, f32 y, f32 z, f32 w)
+: X(x), Y(y), Z(z), W(w)
+{
+}
 
 //! Constructor which converts euler angles to a quaternion
 inline quaternion::quaternion(f32 x, f32 y, f32 z)
@@ -388,12 +392,6 @@ inline void quaternion::set(f32 x, f32 y, f32 z)
 	normalize();
 }
 
-//! sets new quaternion based on euler angles
-inline void quaternion::set(const core::vector3df& vec)
-{
-	set(vec.X, vec.Y, vec.Z);
-}
-
 //! normalizes the quaternion
 inline quaternion& quaternion::normalize()
 {
@@ -472,9 +470,9 @@ inline void quaternion::fromAngleAxis(f32 angle, const vector3df& axis)
 
 inline void quaternion::toAngleAxis(f32 &angle, core::vector3df &axis) const
 {
-	f32 scale = sqrtf(X*X + Y*Y + Z*Z);
+	f32 scale = sqrt (X*X + Y*Y + Z*Z);
 
-	if (core::iszero(scale) || W > 1.0f || W < -1.0f)
+	if (core::equals(scale,0.0f) || W > 1.0f)
 	{
 		angle = 0.0f;
 		axis.X = 0.0f;
@@ -504,7 +502,7 @@ inline void quaternion::toEuler(vector3df& euler) const
 	euler.X = (f32) (atan2(2.0 * (Y*Z +X*W),(-sqx - sqy + sqz + sqw)));
 
 	// attitude = rotation about y-axis
-	euler.Y = (f32) (asin( clamp(-2.0 * (X*Z - Y*W), -1.0, 1.0) ));
+	euler.Y = (f32) (asin(-2.0 * (X*Z - Y*W)));
 }
 
 inline vector3df quaternion::operator* (const vector3df& v) const
@@ -528,31 +526,6 @@ inline void quaternion::makeIdentity()
 	X = 0.f;
 	Y = 0.f;
 	Z = 0.f;
-}
-
-inline void quaternion::rotationFromTo(const vector3df& from, const vector3df& to)
-{
-	// Based on Stan Melax's article in Game Programming Gems
-	// Copy, since cannot modify local
-	vector3df v0 = from;
-	vector3df v1 = to;
-	v0.normalize();
-	v1.normalize();
-
-	vector3df c = v0.crossProduct(v1);
-
-	f32 d = v0.dotProduct(v1);
-	if (d >= 1.0f) // If dot == 1, vectors are the same
-	{
-		*this=quaternion(0,0,0,1); //IDENTITY;
-	}
-	f32 s = sqrtf( (1+d)*2 ); // optimize inv_sqrt
-	f32 invs = 1 / s;
-
-	X = c.X * invs;
-	Y = c.Y * invs;
-	Z = c.Z * invs;
-	W = s * 0.5f;
 }
 
 

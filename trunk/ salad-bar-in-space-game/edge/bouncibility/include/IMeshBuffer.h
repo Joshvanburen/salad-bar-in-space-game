@@ -5,7 +5,7 @@
 #ifndef __I_MESH_BUFFER_H_INCLUDED__
 #define __I_MESH_BUFFER_H_INCLUDED__
 
-#include "IReferenceCounted.h"
+#include "IUnknown.h"
 #include "SMaterial.h"
 #include "aabbox3d.h"
 #include "S3DVertex.h"
@@ -14,56 +14,50 @@ namespace irr
 {
 namespace scene
 {
+//! Enumeration for all vertex types there are.
+enum E_PRIMITIVE_TYPE
+{
+	//! All vertices are non-connected points.
+	EPT_POINTS=0,
 
-	//! Enumeration for all primitive types there are.
-	enum E_PRIMITIVE_TYPE
-	{
-		//! All vertices are non-connected points.
-		EPT_POINTS=0,
+	//! All vertices form a single connected line.
+	EPT_LINE_STRIP,
 
-		//! All vertices form a single connected line.
-		EPT_LINE_STRIP,
+	//! Just as LINE_STRIP, but the last and the first vertex is also connected.
+	EPT_LINE_LOOP,
 
-		//! Just as LINE_STRIP, but the last and the first vertex is also connected.
-		EPT_LINE_LOOP,
+	//! Every two vertices are connected creating n/2 lines.
+	EPT_LINES,
 
-		//! Every two vertices are connected creating n/2 lines.
-		EPT_LINES,
+	//! After the first two vertices each vertex defines a new triangle.
+	//! Always the two last and the new one form a new triangle.
+	EPT_TRIANGLE_STRIP,
 
-		//! After the first two vertices each vertex defines a new triangle.
-		//! Always the two last and the new one form a new triangle.
-		EPT_TRIANGLE_STRIP,
+	//! After the first two vertices each vertex defines a new triangle.
+	//! All around the common first vertex.
+	EPT_TRIANGLE_FAN,
 
-		//! After the first two vertices each vertex defines a new triangle.
-		//! All around the common first vertex.
-		EPT_TRIANGLE_FAN,
+	//! Explicitly set all vertices for each triangle.
+	EPT_TRIANGLES,
 
-		//! Explicitly set all vertices for each triangle.
-		EPT_TRIANGLES,
+	//! After the first two vertices each further tw vetices create a quad with the preceding two.
+	EPT_QUAD_STRIP,
 
-		//! After the first two vertices each further tw vetices create a quad with the preceding two.
-		EPT_QUAD_STRIP,
+	//! Every four vertices create a quad.
+	EPT_QUADS,
 
-		//! Every four vertices create a quad.
-		EPT_QUADS,
-
-		//! Just as LINE_LOOP, but filled.
-		EPT_POLYGON,
-
-		//! The single vertices are expanded to quad billboards on the GPU.
-		EPT_POINT_SPRITES
-	};
-
-
+	//! Just as LINE_LOOP, but filled.
+	EPT_POLYGON
+};
 
 	//! Struct for holding a mesh with a single material
 	/** SMeshBuffer is a simple implementation of a MeshBuffer. */
-	class IMeshBuffer : public virtual IReferenceCounted
+	class IMeshBuffer : public virtual IUnknown
 	{
 	public:
 
 		//! destructor
-		virtual ~IMeshBuffer() { }
+		virtual ~IMeshBuffer() {}; 
 
 		//! returns the material of this meshbuffer
 		virtual video::SMaterial& getMaterial() = 0;
@@ -73,6 +67,9 @@ namespace scene
 
 		//! returns which type of vertex data is stored.
 		virtual video::E_VERTEX_TYPE getVertexType() const = 0;
+
+		//! returns the byte size (stride, pitch) of the vertex
+		virtual u32 getVertexPitch() const = 0;
 
 		//! returns pointer to vertex data. The data is an array of vertices. Which vertex
 		//! type is used can be determined with getVertexType().
@@ -100,14 +97,6 @@ namespace scene
 		//! set user axis aligned bounding box
 		virtual void setBoundingBox( const core::aabbox3df& box) = 0;
 
-		//! recalculates the bounding box. should be called if the mesh changed.
-		virtual void recalculateBoundingBox() = 0;
-
-		//! append the vertices and indices to the current buffer
-		virtual void append(const void* const vertices, u32 numVertices, const u16* const indices, u32 numIndices) = 0;
-
-		//! append the meshbuffer to the current buffer
-		virtual void append(const IMeshBuffer* const other) = 0;
 	};
 
 } // end namespace scene

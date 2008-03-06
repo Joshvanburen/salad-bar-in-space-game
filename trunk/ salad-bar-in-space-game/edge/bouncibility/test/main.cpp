@@ -31,7 +31,7 @@ irr::IrrlichtDevice *device;
 
 bool init(){
 	InputManager::getSingleton().init();
-	device = irr::createDevice( irr::video::EDT_DIRECT3D9, irr::core::dimension2d<s32>(800, 600), 16,
+	device = irr::createDevice( irr::video::EDT_DIRECT3D9, irr::core::dimension2d<irr::s32>(800, 600), 16,
 		false, false, false, InputManager::getSingleton().getEventReceiver());
 
 	smgr = device->getSceneManager();
@@ -74,7 +74,7 @@ int main()
 	We add a hello world label to the window, using the GUI environment.
 	*/
 	guienv->addStaticText(L"Hello World! This is the Irrlicht Software renderer!",
-		rect<s32>(10,10,260,22), true);
+		rect<irr::s32>(10,10,260,22), true);
 
 	/*
 	To display something interesting, we load a Quake 2 model 

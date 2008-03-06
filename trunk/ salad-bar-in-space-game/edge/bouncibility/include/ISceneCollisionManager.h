@@ -5,7 +5,7 @@
 #ifndef __I_SCENE_COLLISION_MANAGER_H_INCLUDED__
 #define __I_SCENE_COLLISION_MANAGER_H_INCLUDED__
 
-#include "IReferenceCounted.h"
+#include "IUnknown.h"
 #include "vector3d.h"
 #include "triangle3d.h"
 #include "position2d.h"
@@ -22,12 +22,12 @@ namespace scene
 	class ITriangleSelector;
 
 	//!	The Scene Collision Manager provides methods for performing collision tests and picking on scene nodes.
-	class ISceneCollisionManager : public virtual IReferenceCounted
+	class ISceneCollisionManager : public virtual IUnknown
 	{
 	public:
 
 		//! destructor
-		virtual ~ISceneCollisionManager() {}
+		virtual ~ISceneCollisionManager() {};
 
 		//! Finds the collision point of a line and lots of triangles, if there is one.
 		//! \param ray: Line with witch collisions are tested.

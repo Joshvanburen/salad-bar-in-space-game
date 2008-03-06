@@ -23,105 +23,94 @@ class map
 	public:
 
 		RBTree(const KeyTypeRB& k, const ValueTypeRB& v)
-			: LeftChild(0), RightChild(0), Parent(0), Key(k),
-				Value(v), IsRed(true) {}
+			: mLeftChild(0), mRightChild(0), mParent(0), mKey(k),
+				mValue(v), mIsRed(true) {}
 
-		~RBTree() {}
+		virtual ~RBTree(){}
 
-		void setLeftChild(RBTree* p)
-		{
-			LeftChild=p;
-			if (p)
-				p->setParent(this);
-		}
+		void setLeftChild(RBTree* p)	{ mLeftChild=p; if (p) p->setParent(this); }
+		void setRightChild(RBTree* p)	{ mRightChild=p;if (p) p->setParent(this); }
+		void setParent(RBTree* p)		{ mParent=p; }
 
-		void setRightChild(RBTree* p)
-		{
-			RightChild=p;
-			if (p)
-				p->setParent(this);
-		}
+		void setValue(const ValueTypeRB& v)	{ mValue = v; }
 
-		void setParent(RBTree* p)		{ Parent=p; }
+		void setRed()					{ mIsRed = true; }
+		void setBlack()					{ mIsRed = false; }
 
-		void setValue(const ValueTypeRB& v)	{ Value = v; }
+		RBTree* getLeftChild() const	{ return mLeftChild; }
+		RBTree* getRightChild() const	{ return mRightChild; }
+		RBTree* getParent() const		{ return mParent; }
 
-		void setRed()			{ IsRed = true; }
-		void setBlack()			{ IsRed = false; }
-
-		RBTree* getLeftChild() const	{ return LeftChild; }
-		RBTree* getRightChild() const	{ return RightChild; }
-		RBTree* getParent() const	{ return Parent; }
-
-		ValueTypeRB getValue() const
-		{
+		ValueTypeRB getValue() const	
+		{ 
 			_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
-			return Value;
+			return mValue; 
 		}
 
-		KeyTypeRB getKey() const
-		{
+		KeyTypeRB getKey() const		
+		{ 
 			_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
-			return Key;
+			return mKey; 
 		}
 
-		bool isRoot() const
-		{
+
+		bool isRoot() const				
+		{ 
 			_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
-			return Parent==0;
+			return mParent==0;
 		}
 
 		bool isLeftChild() const
 		{
 			_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
-			return (Parent != 0) && (Parent->getLeftChild()==this);
+			return mParent!=0 && mParent->getLeftChild()==this;
 		}
 
-		bool isRightChild() const
+		bool isRightChild() const		
 		{
 			_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
-			return (Parent!=0) && (Parent->getRightChild()==this);
+			return mParent!=0 && mParent->getRightChild()==this;
 		}
 
-		bool isLeaf() const
-		{
+		bool isLeaf() const				
+		{ 
 			_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
-			return (LeftChild==0) && (RightChild==0);
+			return mLeftChild==0 && mRightChild==0;
 		}
 
-		unsigned int getLevel() const
-		{
-			if (isRoot())
+		unsigned int getLevel() const	
+		{ 
+			if (isRoot()) 
 				return 1;
-			else
+			else 
 				return getParent()->getLevel() + 1;
 		}
 
 
-		bool isRed()	const
-		{
+		bool isRed()	const	
+		{ 
 			_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
-			return  IsRed;
+			return  mIsRed;
 		}
 
 		bool isBlack()	const
-		{
+		{ 
 			_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
-			return !IsRed;
+			return !mIsRed;
 		}
 
 	private:
 		RBTree();
 
-		RBTree*		LeftChild;
-		RBTree*		RightChild;
+		RBTree*		mLeftChild;
+		RBTree*		mRightChild;
 
-		RBTree*		Parent;
+		RBTree*		mParent;
 
-		KeyTypeRB	Key;
-		ValueTypeRB	Value;
+		KeyTypeRB	mKey;
+		ValueTypeRB	mValue;
 
-		bool IsRed;
+		bool mIsRed;
 	};
 
 	public:
@@ -133,40 +122,40 @@ class map
 	{
 	public:
 
-		Iterator() : Root(0), Cur(0) {}
+		Iterator() : mRoot(0), mCur(0) {}
 
 		// Constructor(Node*)
-		Iterator(Node* root) : Root(root)
+		Iterator(Node* root):mRoot(root)
 		{
 			reset();
 		}
 
 		// Copy constructor
-		Iterator(const Iterator& src) : Root(src.Root), Cur(src.Cur) {}
+		Iterator(const Iterator& src) : mRoot(src.mRoot), mCur(src.mCur){}
 
 		void reset(bool atLowest=true)
 		{
 			if (atLowest)
-				Cur = getMin(Root);
+				mCur = getMin(mRoot);
 			else
-				Cur = getMax(Root);
+				mCur = getMax(mRoot);
 		}
 
 		bool atEnd() const
 		{
 			_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
-			return Cur==0;
+			return mCur==0;
 		}
 
 		Node* getNode()
 		{
-			return Cur;
+			return mCur;
 		}
 
 		Iterator& operator=(const Iterator& src)
 		{
-			Root = src.Root;
-			Cur = src.Cur;
+			mRoot = src.mRoot;
+			mCur = src.mCur;
 			return (*this);
 		}
 
@@ -191,7 +180,7 @@ class map
 			if (atEnd())
 				throw "Iterator at end";
 
-			return *Cur;
+			return *mCur;
 		}
 
 	private:
@@ -213,20 +202,20 @@ class map
 		void inc()
 		{
 			// Already at end?
-			if (Cur==0)
+			if (mCur==0)
 				return;
 
-			if (Cur->getRightChild())
+			if (mCur->getRightChild())
 			{
 				// If current node has a right child, the next higher node is the
 				// node with lowest key beneath the right child.
-				Cur = getMin(Cur->getRightChild());
+				mCur = getMin(mCur->getRightChild());
 			}
-			else if (Cur->isLeftChild())
+			else if (mCur->isLeftChild())
 			{
 				// No right child? Well if current node is a left child then
 				// the next higher node is the parent
-				Cur = Cur->getParent();
+				mCur = mCur->getParent();
 			}
 			else
 			{
@@ -235,29 +224,29 @@ class map
 				// The next higher node is the parent of the first non-right
 				// child (ie either a left child or the root) up in the
 				// hierarchy. Root's parent is 0.
-				while(Cur->isRightChild())
-					Cur = Cur->getParent();
-				Cur = Cur->getParent();
+				while(mCur->isRightChild())
+					mCur = mCur->getParent();
+				mCur = mCur->getParent();
 			}
 		}
 
 		void dec()
 		{
 			// Already at end?
-			if (Cur==0)
+			if (mCur==0)
 				return;
 
-			if (Cur->getLeftChild())
+			if (mCur->getLeftChild())
 			{
 				// If current node has a left child, the next lower node is the
 				// node with highest key beneath the left child.
-				Cur = getMax(Cur->getLeftChild());
+				mCur = getMax(mCur->getLeftChild());
 			}
-			else if (Cur->isRightChild())
+			else if (mCur->isRightChild())
 			{
 				// No left child? Well if current node is a right child then
 				// the next lower node is the parent
-				Cur = Cur->getParent();
+				mCur = mCur->getParent();
 			}
 			else
 			{
@@ -267,14 +256,14 @@ class map
 				// child (ie either a right child or the root) up in the
 				// hierarchy. Root's parent is 0.
 
-				while(Cur->isLeftChild())
-					Cur = Cur->getParent();
-				Cur = Cur->getParent();
+				while(mCur->isLeftChild())
+					mCur = mCur->getParent();
+				mCur = mCur->getParent();
 			}
 		}
 
-		Node* Root;
-		Node* Cur;
+		Node* mRoot;
+		Node* mCur;
 	}; // Iterator
 
 
@@ -289,38 +278,38 @@ class map
 	public:
 
 
-	ParentFirstIterator() : Root(0), Cur(0)
+	ParentFirstIterator():mRoot(0),mCur(0)
 	{
 	}
 
 
-	explicit ParentFirstIterator(Node* root) : Root(root), Cur(0)
+	explicit ParentFirstIterator(Node* root):mRoot(root),mCur(0)
 	{
 		reset();
 	}
 
 	void reset()
 	{
-		Cur = Root;
+		mCur = mRoot;
 	}
 
 
 	bool atEnd() const
 	{
 		_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
-		return Cur==0;
+		return mCur==0;
 	}
 
 	Node* getNode()
 	{
-		return Cur;
+		return mCur;
 	}
 
 
 	ParentFirstIterator& operator=(const ParentFirstIterator& src)
 	{
-		Root = src.Root;
-		Cur = src.Cur;
+		mRoot = src.mRoot;
+		mCur = src.mCur;
 		return (*this);
 	}
 
@@ -348,41 +337,41 @@ class map
 	void inc()
 	{
 		// Already at end?
-		if (Cur==0)
+		if (mCur==0)
 			return;
 
 		// First we try down to the left
-		if (Cur->getLeftChild())
+		if (mCur->getLeftChild())
 		{
-			Cur = Cur->getLeftChild();
+			mCur = mCur->getLeftChild();
 		}
-		else if (Cur->getRightChild())
+		else if (mCur->getRightChild())
 		{
 			// No left child? The we go down to the right.
-			Cur = Cur->getRightChild();
+			mCur = mCur->getRightChild();
 		}
 		else
 		{
 			// No children? Move up in the hierarcy until
 			// we either reach 0 (and are finished) or
 			// find a right uncle.
-			while (Cur!=0)
+			while (mCur!=0)
 			{
 				// But if parent is left child and has a right "uncle" the parent
 				// has already been processed but the uncle hasn't. Move to
 				// the uncle.
-				if (Cur->isLeftChild() && Cur->getParent()->getRightChild())
+				if (mCur->isLeftChild() && mCur->getParent()->getRightChild())
 				{
-					Cur = Cur->getParent()->getRightChild();
+					mCur = mCur->getParent()->getRightChild();
 					return;
 				}
-				Cur = Cur->getParent();
+				mCur = mCur->getParent();
 			}
 		}
 	}
 
-	Node* Root;
-	Node* Cur;
+	Node* mRoot;
+	Node* mCur;
 
 	}; // ParentFirstIterator
 
@@ -396,33 +385,33 @@ class map
 	{
 	public:
 
-		ParentLastIterator() : Root(0), Cur(0) {}
+		ParentLastIterator():mRoot(0),mCur(0){}
 
-		explicit ParentLastIterator(Node* root) : Root(root), Cur(0)
+		explicit ParentLastIterator(Node* root) : mRoot(root), mCur(0)
 		{
 			reset();
 		}
 
 		void reset()
 		{
-			Cur = getMin(Root);
+			mCur = getMin(mRoot);
 		}
 
 		bool atEnd() const
 		{
 			_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
-			return Cur==0;
+			return mCur==0;
 		}
 
 		Node* getNode()
 		{
-			return Cur;
+			return mCur;
 		}
 
 		ParentLastIterator& operator=(const ParentLastIterator& src)
 		{
-			Root = src.Root;
-			Cur = src.Cur;
+			mRoot = src.mRoot;
+			mCur = src.mCur;
 			return (*this);
 		}
 
@@ -459,7 +448,7 @@ class map
 		void inc()
 		{
 			// Already at end?
-			if (Cur==0)
+			if (mCur==0)
 				return;
 
 			// Note: Starting point is the node as far down to the left as possible.
@@ -467,17 +456,17 @@ class map
 			// If current node has an uncle to the right, go to the
 			// node as far down to the left from the uncle as possible
 			// else just go up a level to the parent.
-			if (Cur->isLeftChild() && Cur->getParent()->getRightChild())
+			if (mCur->isLeftChild() && mCur->getParent()->getRightChild())
 			{
-				Cur = getMin(Cur->getParent()->getRightChild());
+				mCur = getMin(mCur->getParent()->getRightChild());
 			}
 			else
-				Cur = Cur->getParent();
+				mCur = mCur->getParent();
 		}
 
 
-		Node* Root;
-		Node* Cur;
+		Node* mRoot;
+		Node* mCur;
 	}; // ParentLastIterator
 
 
@@ -499,13 +488,13 @@ class map
 		void operator=(const ValueType& value)
 		{
 			// Just use the Set method, it handles already exist/not exist situation
-			Tree.set(Key,value);
+			mTree.set(mKey,value);
 		}
 
 		// ValueType operator
 		operator ValueType()
 		{
-			Node* node = Tree.find(Key);
+			Node* node = mTree.find(mKey);
 
 			// Not found
 			if (node==0)
@@ -517,17 +506,17 @@ class map
 
 	private:
 
-		AccessClass(map& tree, const KeyType& key) : Tree(tree), Key(key) {}
+		AccessClass(map& tree, const KeyType& key):mTree(tree),mKey(key){}
 
 		AccessClass();
 
-		map& Tree;
-		const KeyType& Key;
+		map& mTree;
+		const KeyType& mKey;
 	}; // AccessClass
 
 
 	// Constructor.
-	map() : Root(0), Size(0) {}
+	map() : mRoot(0),mSize(0) {}
 
 	// Destructor
 	~map()
@@ -619,7 +608,7 @@ class map
 			}
 		}
 		// Color the root black
-		Root->setBlack();
+		mRoot->setBlack();
 		return true;
 	}
 
@@ -673,7 +662,7 @@ class map
 		// p is now gone from the tree in the sense that
 		// no one is pointing at it, so return it.
 
-		--Size;
+		mSize--;
 		return p;
 	}
 
@@ -716,7 +705,7 @@ class map
 		// no one is pointing at it. Let's get rid of it.
 		delete p;
 
-		--Size;
+		mSize--;
 		return true;
 	}
 
@@ -732,8 +721,8 @@ class map
 				// else iterator will get quite confused.
 			delete p;
 		}
-		Root = 0;
-		Size= 0;
+		mRoot = 0;
+		mSize= 0;
 	}
 
 	//! Is the tree empty?
@@ -741,7 +730,7 @@ class map
 	bool isEmpty() const
 	{
 		_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
-		return Root == 0;
+		return mRoot == 0;
 	}
 
 	//! Search for a node with the specified key.
@@ -749,7 +738,7 @@ class map
 	//! \return Returns 0 if node couldn't be found.
 	Node* find(const KeyType& keyToFind) const
 	{
-		Node* pNode = Root;
+		Node* pNode = mRoot;
 
 		while(pNode!=0)
 		{
@@ -771,13 +760,13 @@ class map
 	//! 0 if the tree is empty.
 	Node* getRoot() const
 	{
-		return Root;
+		return mRoot;
 	}
 
 	//! Returns the number of nodes in the tree.
 	u32 size() const
 	{
-		return Size;
+		return mSize;
 	}
 
 	//------------------------------
@@ -815,7 +804,7 @@ class map
 	// Public Operators
 	//------------------------------
 
-	//! operator [] for access to elements
+	//! operator [] for accesss to elements
 	//! for example myMap["key"]
 	AccessClass operator[](const KeyType& k)
 	{
@@ -828,15 +817,15 @@ class map
 	//------------------------------
 	//! Copy constructor and assignment operator deliberately
 	//! defined but not implemented. The tree should never be
-	//! copied, pass along references to it instead.
+	//! copied, pass along references to it instead (or use auto_ptr to it).
 	explicit map(const map& src);
 	map& operator = (const map& src);
 
 	void setRoot(Node* newRoot)
 	{
-		Root = newRoot;
-		if (Root != 0)
-			Root->setParent(0);
+		mRoot = newRoot;
+		if (mRoot!=0)
+			mRoot->setParent(0);
 	}
 
 	//! Insert a node into the tree without using any fancy balancing logic.
@@ -845,14 +834,14 @@ class map
 	{
 		bool result=true; // Assume success
 
-		if (Root==0)
+		if (mRoot==0)
 		{
 			setRoot(newNode);
-			Size = 1;
+			mSize = 1;
 		}
 		else
 		{
-			Node* pNode = Root;
+			Node* pNode = mRoot;
 			KeyType keyNew = newNode->getKey();
 			while (pNode)
 			{
@@ -888,7 +877,7 @@ class map
 			}
 
 			if (result)
-				++Size;
+				mSize++;
 		}
 
 		_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
@@ -935,8 +924,9 @@ class map
 	//------------------------------
 	// Private Members
 	//------------------------------
-	Node* Root; // The top node. 0 if empty.
-	u32 Size; // Number of nodes in the tree
+	Node* mRoot; // The top node. 0 if empty.
+	u32 mSize; // Number of nodes in the tree
+
 };
 
 } // end namespace core

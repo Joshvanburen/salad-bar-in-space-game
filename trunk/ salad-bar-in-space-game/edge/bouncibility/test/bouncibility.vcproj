@@ -59,10 +59,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="irrlicht.lib irrklang.lib wiiuse.lib"
+				AdditionalDependencies="irrlicht.lib irrklang.lib wiiuse.lib irrxml.lib"
 				OutputFile="..\bin\Demo.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\lib;&quot;..\third_party\wiiuse-v0.10\lib&quot;"
+				AdditionalLibraryDirectories="..\lib;&quot;..\third_party\wiiuse-v0.10\lib&quot;;C:\Users\chase\Desktop\game2\edge\bouncibility\third_party\irrxml\lib"
 				GenerateDebugInformation="true"
 				SubSystem="0"
 				RandomizedBaseAddress="1"
@@ -74,6 +74,7 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
+				EmbedManifest="false"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -226,6 +227,10 @@
 			</File>
 			<File
 				RelativePath="..\include\LevelManager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\MastEventReceiver.cpp"
 				>
 			</File>
 			<File

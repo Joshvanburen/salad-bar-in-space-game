@@ -22,18 +22,10 @@
 // Change this to the path where your Irrlicht Header Files are.
 #include "irrlicht.h"
 
-using namespace std;
-using namespace irr;
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
-
 /// ==============================
 /// MastEventReceiver
 /// ==============================
-class MastEventReceiver : public IEventReceiver
+class MastEventReceiver : public irr::IEventReceiver
 {
 
    protected:
@@ -47,7 +39,7 @@ class MastEventReceiver : public IEventReceiver
    keyStatesENUM mouseButtonState[2]; //Left(0), Middle(1) and Right(2) Buttons.
 
    // Keyboard key states.
-   keyStatesENUM keyState[KEY_KEY_CODES_COUNT];
+   keyStatesENUM keyState[irr::KEY_KEY_CODES_COUNT];
 
    // Mouse X/Y coordinates and Wheel data.
    struct mouseData
@@ -60,14 +52,14 @@ class MastEventReceiver : public IEventReceiver
 
    processStateENUM processState; // STARTED = handling events, ENDED = not handling events
 
-   virtual bool OnEvent(const SEvent& event)
+   virtual bool OnEvent(irr::SEvent event)
    {
       bool eventprocessed = false;
 
       //////////////////////////////
       // Keyboard Input Event
       //////////////////////////////
-      if (event.EventType == EET_KEY_INPUT_EVENT)
+	  if (event.EventType == irr::EET_KEY_INPUT_EVENT)
       {
          if (processState == STARTED)
          {
@@ -104,25 +96,25 @@ class MastEventReceiver : public IEventReceiver
       // Mouse Input Event
       //////////////////////////////
 
-      if (event.EventType == EET_MOUSE_INPUT_EVENT)
+	  if (event.EventType == irr::EET_MOUSE_INPUT_EVENT)
       {
          if (processState == STARTED)
          {
             //Mouse changed position
-            if (event.MouseInput.Event == EMIE_MOUSE_MOVED)
+			 if (event.MouseInput.Event == irr::EMIE_MOUSE_MOVED)
             {
                mouse.Y = event.MouseInput.Y;
                mouse.X = event.MouseInput.X;
             }
 
             //Wheel moved.
-            if (event.MouseInput.Event == EMIE_MOUSE_WHEEL)
+			 if (event.MouseInput.Event == irr::EMIE_MOUSE_WHEEL)
             {
                mouse.wheel += event.MouseInput.Wheel;
             }
 
             //Left Mouse Button Pressed
-            if (event.MouseInput.Event == EMIE_LMOUSE_PRESSED_DOWN)
+			 if (event.MouseInput.Event == irr::EMIE_LMOUSE_PRESSED_DOWN)
             {
                //
                if (mouseButtonState[0] == UP || mouseButtonState[0] == RELEASED)
@@ -136,7 +128,7 @@ class MastEventReceiver : public IEventReceiver
             }
 
             //Left Mouse Button Rleased
-            if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
+			if (event.MouseInput.Event == irr::EMIE_LMOUSE_LEFT_UP)
             {
                //
                if (mouseButtonState[0] != UP)
@@ -146,7 +138,7 @@ class MastEventReceiver : public IEventReceiver
             }
 
             //Middle Mouse Button Pressed
-            if (event.MouseInput.Event == EMIE_MMOUSE_PRESSED_DOWN)
+			if (event.MouseInput.Event == irr::EMIE_MMOUSE_PRESSED_DOWN)
             {
                //
                if (mouseButtonState[1] == UP || mouseButtonState[1] == RELEASED)
@@ -160,7 +152,7 @@ class MastEventReceiver : public IEventReceiver
             }
 
             //Middle Mouse Button Rleased
-            if (event.MouseInput.Event == EMIE_MMOUSE_LEFT_UP)
+			if (event.MouseInput.Event == irr::EMIE_MMOUSE_LEFT_UP)
             {
                //
                if (mouseButtonState[1] != UP)
@@ -170,7 +162,7 @@ class MastEventReceiver : public IEventReceiver
             }
 
             //Right Mouse Button Pressed
-            if (event.MouseInput.Event == EMIE_RMOUSE_PRESSED_DOWN)
+			if (event.MouseInput.Event == irr::EMIE_RMOUSE_PRESSED_DOWN)
             {
                //
                if (mouseButtonState[2] == UP || mouseButtonState[2] == RELEASED)
@@ -184,7 +176,7 @@ class MastEventReceiver : public IEventReceiver
             }
 
             //Right Mouse Button Rleased
-            if (event.MouseInput.Event == EMIE_RMOUSE_LEFT_UP)
+			if (event.MouseInput.Event == irr::EMIE_RMOUSE_LEFT_UP)
             {
                //
                if (mouseButtonState[2] != UP)
@@ -427,7 +419,7 @@ class MastEventReceiver : public IEventReceiver
 
       processState = STARTED;
       //Keyboard Key States
-      for (int i = 0; i < KEY_KEY_CODES_COUNT; i++)
+      for (int i = 0; i < irr::KEY_KEY_CODES_COUNT; i++)
       {
          if (keyState[i] == RELEASED)
          {
@@ -460,7 +452,7 @@ class MastEventReceiver : public IEventReceiver
    void init()
    {
       //KeyBoard States.
-      for (int i = 0; i <= KEY_KEY_CODES_COUNT; i++)
+      for (int i = 0; i <= irr::KEY_KEY_CODES_COUNT; i++)
       {
          keyState[i] = UP;
       }
