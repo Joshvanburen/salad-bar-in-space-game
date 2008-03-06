@@ -3,10 +3,16 @@
 
 #include "Common.h"
 namespace irr{
-namespace scene{
-	class ISceneNode;
+	namespace newton{
+		class IMaterial;
+		class IBody;
+	}
+	namespace scene{
+		class ISceneNode;
+		class IAnimatedMesh;
+	}
 }
-}
+
 class WorldEntity{
 
 public:
@@ -17,7 +23,7 @@ public:
 	WorldEntity(int iID, float x, float y, float z);
 
 	// virtual destructor
-	virtual ~WorldEntity(){};
+	virtual ~WorldEntity();
 
 	// Every world entity will have a location
 	void setLocation(float x, float y, float z);
@@ -34,6 +40,25 @@ public:
 	}
 
 	void setSceneNode(irr::scene::ISceneNode* sceneNode);
+
+
+	irr::newton::IBody* getPhysicsBody(){
+		return physics_body;
+	}
+
+	irr::newton::IMaterial* getBodyMaterial(){
+		return physics_material;
+	}
+
+	irr::scene::IAnimatedMesh* getMesh(){
+		return mesh;
+	}
+
+	void setPhysicsBody(irr::newton::IBody* newBody);
+
+	void setBodyMaterial(irr::newton::IMaterial* newMaterial);
+
+	void setMesh(irr::scene::IAnimatedMesh* newMesh);
 
 	// The update function prototypes take a float fElapsedTime 
 	// which will be how much time has passed since the last time 
@@ -59,6 +84,10 @@ private:
 	int id;// Unique ID
 
 	irr::scene::ISceneNode* sceneNode; //Scene node of worldEntity.  Assumed to be initialized and added to the scene by factory.
+	irr::scene::IAnimatedMesh* mesh;
+	irr::newton::IMaterial* physics_material;
+	irr::newton::IBody* physics_body;
+
 };
 
 #endif

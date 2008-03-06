@@ -191,7 +191,7 @@ inline irr::core::vector3d<irr::f64> Vec64FromVec32(irr::core::vector3df v) {
 }
 
 inline irr::core::vector3df Vec32FromVec64(irr::core::vector3d<irr::f64> v) {
-	return irr::core::vector3df(v.X,v.Y,v.Z);
+	return irr::core::vector3df(static_cast<irr::f32>(v.X),static_cast<irr::f32>(v.Y),static_cast<irr::f32>(v.Z));
 }
 //end
 

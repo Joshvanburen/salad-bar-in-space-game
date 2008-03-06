@@ -13,6 +13,9 @@ namespace irr{
 	namespace video{
 		class IVideoDriver;
 	}
+	namespace newton{
+		class IWorld;
+	}
 }
 typedef std::list<std::string> LevelList;
 //! LevelManager organizes the transition of levels.  It The current level should be retrieved from LevelManager. It loads in the given XML file for the global defintion of levels.  It tells the entitymanager how to initialize.
@@ -23,6 +26,8 @@ private:
 	static irr::video::IVideoDriver* s_Driver;
 	static irr::scene::ISceneManager* s_Smgr;
 	static irr::IrrlichtDevice* s_Device;
+
+	static irr::newton::IWorld* s_World;
 
 	std::string scenarioDefinition;
 
@@ -78,6 +83,11 @@ public:
 
 	static irr::video::IVideoDriver* getDriver(){
 		return s_Driver;
+	}
+
+
+	static irr::newton::IWorld* getPhysicsWorld(){
+		return s_World;
 	}
 };
 

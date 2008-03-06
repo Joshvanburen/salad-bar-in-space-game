@@ -3,6 +3,7 @@
 #include "EntityManager.h"
 #include "irrlicht.h"
 #include "Level.h"
+#include "irrnewt.hpp"
 #include "LevelManager.h"
 
 using namespace irr;
@@ -12,6 +13,7 @@ using namespace io;
 irr::scene::ISceneManager* LevelManager::s_Smgr = NULL;
 irr::IrrlichtDevice* LevelManager::s_Device = NULL;
 irr::video::IVideoDriver* LevelManager::s_Driver = NULL;
+irr::newton::IWorld* LevelManager::s_World = NULL;
 
 LevelManager::LevelManager() : m_CurrentLevel(NULL){
 
@@ -41,6 +43,8 @@ bool LevelManager::init(irr::IrrlichtDevice* device, const std::string& XMLScena
 	s_Driver = device->getVideoDriver();
 
 
+	//initialize physics world
+	s_World = newton::createPhysicsWorld(s_Device);
 
 	scenarioDefinition =  XMLScenarioDefinition;
 	EntityManager::getSingleton().init("./res/entities/global.xml");
@@ -91,6 +95,7 @@ void LevelManager::shutdown(){
 		delete m_CurrentLevel;
 	}
 
+	s_World->destroyWorld();
 	m_CurrentLevel = NULL;
 
 	m_Levels.clear();

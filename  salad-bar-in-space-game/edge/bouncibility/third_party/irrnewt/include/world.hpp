@@ -281,7 +281,7 @@ namespace irr{
 			void setBodyLeaveWorldEvent( void (*new_leave_world_event_callback) (irr::newton::IBody* body));
 
 			//!set the update frma rate
-			inline void setFrameRate(irr::u32 frame_rate) {this->update_fps = frame_rate;}
+			inline void setFrameRate(irr::u32 frame_rate) {this->update_fps = static_cast<irr::f32>(frame_rate);}
 
 			//!get the update frma rate
 			inline irr::f32 getFrameRate() {return this->update_fps;}

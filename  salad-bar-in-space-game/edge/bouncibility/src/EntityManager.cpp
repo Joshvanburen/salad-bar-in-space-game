@@ -3,13 +3,12 @@
 #include "irrlicht.h"
 #include ".\EntityManager.h"
 #include "LevelManager.h"
+#include "irrnewt.hpp"
 #include "ball.h"
 #include "WorldEntity.h"
 
 using namespace irr;
 using namespace io;
-
-
 
 
 WorldEntity& Entity::BallFactory::loadEntity(const std::string& XMLFilename){
@@ -22,7 +21,7 @@ WorldEntity& Entity::BallFactory::loadEntity(const std::string& XMLFilename){
 	std::string name;
 	std::string meshFile;
 	std::string textureFile;
-
+	std::string startState;
 	while(xml && xml->read())
 	{
 		switch(xml->getNodeType())
@@ -36,6 +35,7 @@ WorldEntity& Entity::BallFactory::loadEntity(const std::string& XMLFilename){
 				name = xml->getAttributeValue("name");
 				meshFile = xml->getAttributeValue("mesh");
 				textureFile = xml->getAttributeValue("texture");
+				startState = xml->getAttributeValue("start_state");
 			}
 			break;
 		}
@@ -45,13 +45,33 @@ WorldEntity& Entity::BallFactory::loadEntity(const std::string& XMLFilename){
 	irr::scene::IAnimatedMeshSceneNode* node = smgr->addAnimatedMeshSceneNode( mesh );
 	if (node)
 	{
-		node->setMaterialFlag(irr::video::EMF_LIGHTING, true);
+		node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 		node->setMD2Animation ( irr::scene::EMAT_STAND );
 		node->setMaterialTexture( 0, LevelManager::getDriver()->getTexture(textureFile.c_str()) );
 	}
 
 	WorldEntity* entity = new Ball();
+
+	//create physics for ball
+
+	if (mesh){
+		std::cout << "the mesh is not null\n";
+	}
+	entity->setMesh(mesh);
+	irr::newton::IMaterial* material = LevelManager::getPhysicsWorld()->createMaterial();
+	entity->setBodyMaterial(material);
+	irr::newton::SBodyFromNode physics_node;
+	physics_node.Node = node;
+	physics_node.Type = irr::newton::EBT_PRIMITIVE_ELLIPSOID;
+
+	irr::newton::ICharacterController* body = LevelManager::getPhysicsWorld()->createCharacterController(LevelManager::getPhysicsWorld()->createBody(physics_node));
+	body->setRotationUpdate(true);
+	body->setContinuousCollisionMode(true);
+
+	entity->setPhysicsBody(body);
 	entity->setSceneNode(node);
+
+	//entity->changeState(startState)
 	return *entity;
 }
 

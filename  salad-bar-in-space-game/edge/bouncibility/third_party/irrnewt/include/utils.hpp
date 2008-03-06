@@ -87,9 +87,9 @@ namespace irr{
 
 			//generate a random vector using mersenne twinster algorithm
 			inline irr::core::vector3df randomVector() {return core::vector3df(
-				this->randomS32(),
-				this->randomS32(),
-				this->randomS32()
+				static_cast<irr::f32>(this->randomS32()),
+				static_cast<irr::f32>(this->randomS32()),
+				static_cast<irr::f32>(this->randomS32())
 				);
 			}
 
