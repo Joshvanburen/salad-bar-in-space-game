@@ -1,0 +1,8 @@
+<area shape="rect" href="$class_input_1_1_action.html#753c68f9826edf6c2e79f84b3594dad4" title="Adds an additional key or mouse code to trigger this action." alt="" coords="239,18,391,45">
+<area shape="rect" href="$class_input_manager.html#56c1d32f7d6cd3648526e65709c1b8fa" title="Initialize the input system." alt="" coords="253,81,376,108">
+<area shape="rect" href="$_inputmanager_8cpp.html#813a48808012d276ad4f25a5dbae7fff" title="operator\&lt;\&lt;" alt="" coords="273,132,356,158">
+<area shape="rect" href="$class_input_1_1_action.html#c3497ccb03e4f52b26ae4afd29738560" title="Input::Action::Action" alt="" coords="441,5,580,32">
+<area shape="rect" href="$main_8cpp.html#ee8048628ff2b5c026c9e15acdcaacb8" title="init" alt="" coords="492,106,529,133">
+<area shape="rect" href="$class_input_1_1_keyboard.html#6c895cc85fb33b082b36231898535857" title="init() should be overridden by the derived class, it is called in registerDevice()..." alt="" coords="631,56,767,82">
+<area shape="rect" href="$class_input_1_1_wiimote.html#0e01345d08e26f5e9d499a453a51ced0" title="init() should be overridden by the derived class, it is called in registerDevice()..." alt="" coords="633,157,764,184">
+<area shape="rect" href="$main_8cpp.html#e66f6b31b5ad750f1fe042a706a4e3d4" title="main" alt="" coords="675,106,723,133">

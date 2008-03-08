@@ -1,0 +1,1 @@
+<area shape="rect" href="$class_ball.html" title="{Ball\n|&#45; size\l&#45; weight\l&#45; attack\l&#45; velocity\l&#45; currentState\l&#45; bouncibility\l&#45; move_force\l&#45; jump_force\l&#45; gravity_force\l|+ Ball()\l+ ~Ball()\l+ load()\l+ update()\l+ draw()\l+ changeState()\l+ changeVelocity()\l+ jump()\l}" alt="" coords="8,550,139,870">

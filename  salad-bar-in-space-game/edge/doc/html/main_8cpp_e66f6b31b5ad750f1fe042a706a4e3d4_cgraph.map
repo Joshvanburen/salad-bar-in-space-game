@@ -1,0 +1,40 @@
+<area shape="rect" href="$class_input_manager.html#82618a716d57b8dcfa0fc87fd4a8b901" title="Gets input from all the devices and notifies all Actions. Currently unsure if this..." alt="" coords="123,56,275,83">
+<area shape="rect" href="$class_c_singleton.html#76b01ad6bedf1f5313a828ce3035ae6b" title="Gets a reference to the instance of the singleton class." alt="" coords="905,259,1172,285">
+<area shape="rect" href="$main_8cpp.html#ee8048628ff2b5c026c9e15acdcaacb8" title="init" alt="" coords="180,433,217,460">
+<area shape="rect" href="$class_input_manager.html#c1a6a1ca8b35c660320a8c98a047f0d0" title="Starts the irrilicth keyboard input system to poll the keyboard. Should be called..." alt="" coords="104,661,293,688">
+<area shape="rect" href="$class_level_manager.html#adc5e9780ea5d38bcc0a858b53ce3572" title="shutdown any resources used by the LevelManager." alt="" coords="117,712,280,739">
+<area shape="rect" href="$class_input_manager.html#1095125a4982c934faa19d177b0abde2" title="shutdown any resources used by the InputManager." alt="" coords="664,611,827,637">
+<area shape="rect" href="$class_input_manager.html#97f9ceae13d6dfb1cd4d6bd0df5b9198" title="Stops the irrilicht keyboard input system from polling the keyboard. Should be called..." alt="" coords="113,763,284,789">
+<area shape="rect" href="$class_level_manager.html#9d2f08b1644329b51be563f113991c3d" title="Update the level. Calls update on the current level. It also checks if the level..." alt="" coords="125,813,272,840">
+<area shape="rect" href="$class_input_1_1_keyboard.html#d28f6f70b95a83989b4389583006bc03" title="read() is called for all devices when getInput() is called in the InputManager. Only..." alt="" coords="392,5,536,32">
+<area shape="rect" href="$class_input_1_1_wiimote.html#98969f71ccbefcb1e2f681b4d6ba2363" title="read() is called for all devices when getInput() is called in the InputManager. Only..." alt="" coords="395,56,533,83">
+<area shape="rect" href="$class_input_1_1_input_device.html#dcce067d8d22b66e226d24cd00f14793" title="read() is called for all devices when getInput() is called in the InputManager. Only..." alt="" coords="668,5,823,32">
+<area shape="rect" href="$class_input_1_1_wiimote.html#3b240805ca849d91f2494c52c0feb59b" title="Input::Wiimote::handle_ctrl_status" alt="" coords="636,107,855,133">
+<area shape="rect" href="$class_input_1_1_wiimote.html#c843cb13b844161582b3ea35ffaa7a1e" title="Input::Wiimote::handle_event" alt="" coords="652,56,839,83">
+<area shape="rect" href="$class_level_manager.html#3f1ce54834adb960a5b14479fd0a71d7" title="Initialize the LevelManager system. Provide the filename of the XML file that has..." alt="" coords="401,560,527,587">
+<area shape="rect" href="$class_input_manager.html#56c1d32f7d6cd3648526e65709c1b8fa" title="Initialize the input system." alt="" coords="403,408,525,435">
+<area shape="rect" href="$class_level_manager.html#5d39fdf1f272ccfb5a8fb898a970e2c4" title="LevelManager::startGame" alt="" coords="380,283,548,309">
+<area shape="rect" href="$class_entity_manager.html#1d1254a497aeaecddd512db6b76582cd" title="Add new entity definitions. This function is the same as init in that it loads in..." alt="" coords="636,661,855,688">
+<area shape="rect" href="$class_entity_manager.html#52ecdb78de6f3ac7ec75629df546e90f" title="Initialize the Entity system. Provide the filename of the XML file that has the global..." alt="" coords="680,712,811,739">
+<area shape="rect" href="$class_entity_1_1_loader.html#16daef119d065ec413dcfcb975537481" title="Returns the factory pointer given a type name string. This should be used by EntityManager..." alt="" coords="953,661,1124,688">
+<area shape="rect" href="$class_entity_1_1_loader.html#6c612adfb9a0fee09a03c975a3964229" title="Registers a factory and type into the Loader. These are hard coded in the EntityManager..." alt="" coords="940,712,1137,739">
+<area shape="rect" href="$class_input_1_1_input_device.html#2b61eb712f46d515722c60158ac3dd0f" title="Input::InputDevice::getName" alt="" coords="653,408,837,435">
+<area shape="rect" href="$class_input_1_1_keyboard.html#6c895cc85fb33b082b36231898535857" title="init() should be overridden by the derived class, it is called in registerDevice()..." alt="" coords="677,509,813,536">
+<area shape="rect" href="$class_input_1_1_wiimote.html#0e01345d08e26f5e9d499a453a51ced0" title="init() should be overridden by the derived class, it is called in registerDevice()..." alt="" coords="680,459,811,485">
+<area shape="rect" href="$class_mast_event_receiver.html#c908356a8786584cb1491a70ffad6fd7" title="MastEventReceiver::init" alt="" coords="668,357,823,384">
+<area shape="rect" href="$class_input_1_1_keyboard.html#8edc69583627bce0aacf66717e4240cb" title="release() should be overridden by derived class, it is called by InputManager." alt="" coords="957,535,1120,561">
+<area shape="rect" href="$class_input_1_1_input_device.html#611b89adf7cc7600bdaeb37ef8dda51f" title="release() should be overridden by derived class, it is called by InputManager." alt="" coords="1221,509,1395,536">
+<area shape="rect" href="$class_input_1_1_wiimote.html#ed5698766b655d5d28e6cc1a059058fe" title="release() should be overridden by derived class, it is called by InputManager." alt="" coords="961,484,1116,511">
+<area shape="rect" href="$class_level.html#874bc0b76f9ffd38ad1b6a3289e64b28" title="Load the level from the given xml definition. Loads in all entities from the EntityManager..." alt="" coords="704,157,787,184">
+<area shape="rect" href="$class_world_entity.html#78caa6140616d2a8963a0dd0140601fc" title="WorldEntity::changeState" alt="" coords="953,157,1124,184">
+<area shape="rect" href="$class_entity_manager.html#a6f5279851fc4362a9baed5b4d6a1e9f" title="Retrieves the entity information for an entity named by the given string. Loads this..." alt="" coords="947,208,1131,235">
+<area shape="rect" href="$class_level_manager.html#175e1bac6656b82c7ea680d304b4bd1e" title="LevelManager::getSceneManager" alt="" coords="932,56,1145,83">
+<area shape="rect" href="$class_world_entity.html#246a68e479ff5059858a753f8a2c5c8d" title="WorldEntity::setLocation" alt="" coords="957,107,1120,133">
+<area shape="rect" href="$class_entity_1_1_loader.html#57f9d991256d8ad2ae0c509ca31e3864" title="Creates the worldEntity using the provided factory and returns a reference to it..." alt="" coords="1224,208,1392,235">
+<area shape="rect" href="$class_entity_1_1_entity_factory.html#e1bacbc631488f64e142b62fc7f93514" title="Each child class of EntityFactory should implement the way it wishes to load its..." alt="" coords="1443,208,1651,235">
+<area shape="rect" href="$class_mast_event_receiver.html#5bea5e6659cbe6eed80ab79d77924536" title="MastEventReceiver::startEventProcess" alt="" coords="341,661,587,688">
+<area shape="rect" href="$class_level.html#9579baae8703d15e4390c47b745a5aa7" title="Releases all resources used. Does not need to delete the entities it has, EntityManager..." alt="" coords="408,712,520,739">
+<area shape="rect" href="$class_input_manager.html#4aba4f5561d5bb22f9108a486104f9df" title="Resets all the registered actions, useful for beginning a level with nothing pressed..." alt="" coords="941,611,1136,637">
+<area shape="rect" href="$class_mast_event_receiver.html#0dee37f8d2948c9bc50e0ca59765cd45" title="MastEventReceiver::endEventProcess" alt="" coords="344,763,584,789">
+<area shape="rect" href="$class_level.html#9fd2b16f453fc77ada538abd27d9a1f7" title="return the status of the current level. Used to determine whether to go to now or..." alt="" coords="417,813,511,840">
+<area shape="rect" href="$class_level.html#62e412eaad753d2baa2f94239cb80e41" title="Updates the level and all children." alt="" coords="416,864,512,891">

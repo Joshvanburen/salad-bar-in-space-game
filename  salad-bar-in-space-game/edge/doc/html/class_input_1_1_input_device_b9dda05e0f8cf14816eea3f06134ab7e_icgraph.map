@@ -1,0 +1,5 @@
+<area shape="rect" href="$class_input_1_1_keyboard.html#f215fd50bfc68a140b479169f7bd8bf8" title="buttonStatus() returns if the button represented by the sent code is in a pressed..." alt="" coords="268,5,463,32">
+<area shape="rect" href="$class_input_1_1_keyboard.html#d6cbc02c50fd0ec0b5d9c5d428ce57ed" title="Input::Keyboard::operator()" alt="" coords="520,44,696,71">
+<area shape="rect" href="$class_input_1_1_wiimote.html#081a594fcd6b0d76d696d07db710c34e" title="buttonStatus() returns if the button represented by the sent code is in a pressed..." alt="" coords="272,107,459,133">
+<area shape="rect" href="$class_input_1_1_wiimote.html#6d10b888c9a125e916e2b38e86c15b93" title="Input::Wiimote::operator()" alt="" coords="524,120,692,147">
+<area shape="rect" href="$class_input_1_1_action.html#382dbafc8f393bc57c5d0be2e0877d1a" title="Used by InputManager to check if this Action&#39;s button was pressed." alt="" coords="259,208,472,235">
