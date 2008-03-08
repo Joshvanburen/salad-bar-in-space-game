@@ -1,0 +1,7 @@
+<area shape="rect" href="$class_level_manager.html#aa571c209f5db748d24d9c16968f7c17" title="Go to the next level. Handles the updating of UserInterface, etc. Returns false if..." alt="" coords="169,5,332,32">
+<area shape="rect" href="$class_level_manager.html#88973f5a755e051a86661ed99d6e688b" title="Repeat the current level, re&#45;initializing all the variables to what they were at..." alt="" coords="179,56,323,82">
+<area shape="rect" href="$class_level_manager.html#adc5e9780ea5d38bcc0a858b53ce3572" title="shutdown any resources used by the LevelManager." alt="" coords="169,106,332,133">
+<area shape="rect" href="$class_level.html#249eac1e8f19ff44134efa5e986feaca" title="Level::~Level" alt="" coords="203,157,299,184">
+<area shape="rect" href="$main_8cpp.html#e66f6b31b5ad750f1fe042a706a4e3d4" title="main" alt="" coords="456,56,504,82">
+<area shape="rect" href="$class_level_manager.html#944351c2984b102f0c6da76ffd639eab" title="Reset the system, as if init had just been called." alt="" coords="412,106,548,133">
+<area shape="rect" href="$class_level_manager.html#72ca9c27cc6b85143e20f83c520d1215" title="LevelManager::~LevelManager" alt="" coords="383,157,577,184">

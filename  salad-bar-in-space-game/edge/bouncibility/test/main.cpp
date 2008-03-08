@@ -126,10 +126,11 @@ int main()
 		everything is presented on the screen.
 		*/
 		InputManager::getSingleton().stopPolling();
+		InputManager::getSingleton().getInput();
+		LevelManager::getSingleton().update();
 		driver->beginScene(true, true, SColor(255,100,101,140));
-
-		smgr->drawAll();
-		guienv->drawAll();
+			smgr->drawAll();
+			guienv->drawAll();
 		driver->endScene();
 
 		InputManager::getSingleton().resumePolling();
@@ -145,6 +146,8 @@ int main()
 	http://irrlicht.sourceforge.net//docu/classirr_1_1IUnknown.html#a3
 	for more information.
 	*/
+	InputManager::getSingleton().shutdown();
+	LevelManager::getSingleton().shutdown();
 	device->drop();
 
 	return 0;

@@ -150,6 +150,7 @@ Level& LevelManager::getCurrentLevel() const{
 void LevelManager::update(){
 	//need to check if there needs to a level change.
 	//isCompleted should return Level::WAITING_REPEAT or Level::FINISHED or Level::RUNNING or Level::WAITING_START
+	s_World->update();
 	m_CurrentLevel->update();
 
 	int status = m_CurrentLevel->status();
