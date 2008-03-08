@@ -1,0 +1,10 @@
+<area shape="rect" href="$class_level.html#874bc0b76f9ffd38ad1b6a3289e64b28" title="Load the level from the given xml definition. Loads in all entities from the EntityManager..." alt="" coords="324,56,407,83">
+<area shape="rect" href="$class_entity_1_1_ball_factory.html#3ae57e75300371d7eab884a10d0028b3" title="Each child class of EntityFactory should implement the way it wishes to load its..." alt="" coords="268,107,463,134">
+<area shape="rect" href="$class_level_manager.html#aa571c209f5db748d24d9c16968f7c17" title="Go to the next level. Handles the updating of UserInterface, etc. Returns false if..." alt="" coords="516,6,679,32">
+<area shape="rect" href="$class_level_manager.html#88973f5a755e051a86661ed99d6e688b" title="Repeat the current level, re&#45;initializing all the variables to what they were at..." alt="" coords="525,56,669,83">
+<area shape="rect" href="$class_level_manager.html#5d39fdf1f272ccfb5a8fb898a970e2c4" title="LevelManager::startGame" alt="" coords="513,107,681,134">
+<area shape="rect" href="$main_8cpp.html#ee8048628ff2b5c026c9e15acdcaacb8" title="init" alt="" coords="732,107,769,134">
+<area shape="rect" href="$class_input_1_1_keyboard.html#6c895cc85fb33b082b36231898535857" title="init() should be overridden by the derived class, it is called in registerDevice()..." alt="" coords="820,31,956,58">
+<area shape="rect" href="$class_input_1_1_wiimote.html#0e01345d08e26f5e9d499a453a51ced0" title="init() should be overridden by the derived class, it is called in registerDevice()..." alt="" coords="823,82,953,108">
+<area shape="rect" href="$main_8cpp.html#e66f6b31b5ad750f1fe042a706a4e3d4" title="main" alt="" coords="864,132,912,159">
+<area shape="rect" href="$class_input_manager.html#56c1d32f7d6cd3648526e65709c1b8fa" title="Initialize the input system." alt="" coords="1007,82,1129,108">

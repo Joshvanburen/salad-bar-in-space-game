@@ -1,0 +1,22 @@
+<area shape="rect" href="$class_c_singleton.html#76b01ad6bedf1f5313a828ce3035ae6b" title="Gets a reference to the instance of the singleton class." alt="" coords="583,52,849,78">
+<area shape="rect" href="$class_level_manager.html#3f1ce54834adb960a5b14479fd0a71d7" title="Initialize the LevelManager system. Provide the filename of the XML file that has..." alt="" coords="116,153,241,180">
+<area shape="rect" href="$class_input_manager.html#56c1d32f7d6cd3648526e65709c1b8fa" title="Initialize the input system." alt="" coords="117,330,240,357">
+<area shape="rect" href="$class_level_manager.html#5d39fdf1f272ccfb5a8fb898a970e2c4" title="LevelManager::startGame" alt="" coords="95,229,263,256">
+<area shape="rect" href="$class_entity_manager.html#1d1254a497aeaecddd512db6b76582cd" title="Add new entity definitions. This function is the same as init in that it loads in..." alt="" coords="313,128,532,154">
+<area shape="rect" href="$class_entity_manager.html#52ecdb78de6f3ac7ec75629df546e90f" title="Initialize the Entity system. Provide the filename of the XML file that has the global..." alt="" coords="357,178,488,205">
+<area shape="rect" href="$class_entity_1_1_loader.html#16daef119d065ec413dcfcb975537481" title="Returns the factory pointer given a type name string. This should be used by EntityManager..." alt="" coords="631,102,801,129">
+<area shape="rect" href="$class_entity_1_1_loader.html#6c612adfb9a0fee09a03c975a3964229" title="Registers a factory and type into the Loader. These are hard coded in the EntityManager..." alt="" coords="617,153,815,180">
+<area shape="rect" href="$class_input_1_1_input_device.html#2b61eb712f46d515722c60158ac3dd0f" title="Input::InputDevice::getName" alt="" coords="331,381,515,408">
+<area shape="rect" href="$class_input_1_1_keyboard.html#6c895cc85fb33b082b36231898535857" title="init() should be overridden by the derived class, it is called in registerDevice()..." alt="" coords="355,432,491,458">
+<area shape="rect" href="$class_input_1_1_wiimote.html#0e01345d08e26f5e9d499a453a51ced0" title="init() should be overridden by the derived class, it is called in registerDevice()..." alt="" coords="357,280,488,306">
+<area shape="rect" href="$class_mast_event_receiver.html#c908356a8786584cb1491a70ffad6fd7" title="MastEventReceiver::init" alt="" coords="345,330,500,357">
+<area shape="rect" href="$class_input_1_1_keyboard.html#8edc69583627bce0aacf66717e4240cb" title="release() should be overridden by derived class, it is called by InputManager." alt="" coords="635,457,797,484">
+<area shape="rect" href="$class_input_1_1_input_device.html#611b89adf7cc7600bdaeb37ef8dda51f" title="release() should be overridden by derived class, it is called by InputManager." alt="" coords="899,432,1072,458">
+<area shape="rect" href="$class_input_1_1_wiimote.html#ed5698766b655d5d28e6cc1a059058fe" title="release() should be overridden by derived class, it is called by InputManager." alt="" coords="639,406,793,433">
+<area shape="rect" href="$class_level.html#874bc0b76f9ffd38ad1b6a3289e64b28" title="Load the level from the given xml definition. Loads in all entities from the EntityManager..." alt="" coords="381,229,464,256">
+<area shape="rect" href="$class_world_entity.html#78caa6140616d2a8963a0dd0140601fc" title="WorldEntity::changeState" alt="" coords="631,356,801,382">
+<area shape="rect" href="$class_entity_manager.html#a6f5279851fc4362a9baed5b4d6a1e9f" title="Retrieves the entity information for an entity named by the given string. Loads this..." alt="" coords="624,204,808,230">
+<area shape="rect" href="$class_level_manager.html#175e1bac6656b82c7ea680d304b4bd1e" title="LevelManager::getSceneManager" alt="" coords="609,254,823,281">
+<area shape="rect" href="$class_world_entity.html#246a68e479ff5059858a753f8a2c5c8d" title="WorldEntity::setLocation" alt="" coords="635,305,797,332">
+<area shape="rect" href="$class_entity_1_1_loader.html#57f9d991256d8ad2ae0c509ca31e3864" title="Creates the worldEntity using the provided factory and returns a reference to it..." alt="" coords="901,204,1069,230">
+<area shape="rect" href="$class_entity_1_1_entity_factory.html#e1bacbc631488f64e142b62fc7f93514" title="Each child class of EntityFactory should implement the way it wishes to load its..." alt="" coords="1120,204,1328,230">

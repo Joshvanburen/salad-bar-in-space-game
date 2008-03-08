@@ -41,23 +41,24 @@ WorldEntity& Entity::BallFactory::loadEntity(const std::string& XMLFilename){
 		}
 	}
 	irr::scene::ISceneManager* smgr = LevelManager::getSceneManager();
-	irr::scene::IAnimatedMesh* mesh = smgr->getMesh(meshFile.c_str());	
-	irr::scene::IAnimatedMeshSceneNode* node = smgr->addAnimatedMeshSceneNode( mesh );
+	//irr::scene::IAnimatedMesh* mesh = smgr->getMesh(meshFile.c_str());	
+	//irr::scene::IAnimatedMeshSceneNode* node = smgr->addAnimatedMeshSceneNode( mesh );
+	irr::scene::ISceneNode* node = smgr->addSphereSceneNode(22);
 	if (node)
 	{
+		node->setScale(core::vector3df(1.0f,1.0f,1.0f));
 		node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-		node->setMD2Animation ( irr::scene::EMAT_STAND );
-		node->setMaterialTexture( 0, LevelManager::getDriver()->getTexture(textureFile.c_str()) );
+		//node->setMD2Animation ( irr::scene::EMAT_STAND );
+		//node->setMaterialTexture( 0, LevelManager::getDriver()->getTexture(textureFile.c_str()) );
 	}
+	node->setPosition(core::vector3df(-150,50,0));
 
 	WorldEntity* entity = new Ball();
 
 	//create physics for ball
 
-	if (mesh){
-		std::cout << "the mesh is not null\n";
-	}
-	entity->setMesh(mesh);
+
+	entity->setMesh(NULL);
 	irr::newton::IMaterial* material = LevelManager::getPhysicsWorld()->createMaterial();
 	entity->setBodyMaterial(material);
 	irr::newton::SBodyFromNode physics_node;
@@ -67,6 +68,11 @@ WorldEntity& Entity::BallFactory::loadEntity(const std::string& XMLFilename){
 	irr::newton::ICharacterController* body = LevelManager::getPhysicsWorld()->createCharacterController(LevelManager::getPhysicsWorld()->createBody(physics_node));
 	body->setRotationUpdate(true);
 	body->setContinuousCollisionMode(true);
+
+	body->setMaterial(material);
+
+	
+	body->addForceContinuous(irr::core::vector3df(0,-2.0f,0));
 
 	entity->setPhysicsBody(body);
 	entity->setSceneNode(node);

@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<physics>
+  <materials>
+    <material name = "player_ball" />
+    <material name="level" />
+  </materials>
+  <collisions>
+    <collision material1="player_ball" material2="level" softness="0.3" static_friction="1.0" kinetic_friction="0.9" elasticity="0.8" />
+    <callback script="some_script_name" material1="player_ball" material2="level" />
+  </collisions>
+</physics>

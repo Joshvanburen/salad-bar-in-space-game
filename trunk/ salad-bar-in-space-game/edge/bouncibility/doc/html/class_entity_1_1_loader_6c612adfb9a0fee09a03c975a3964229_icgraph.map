@@ -1,0 +1,8 @@
+<area shape="rect" href="$class_entity_manager.html#52ecdb78de6f3ac7ec75629df546e90f" title="Initialize the Entity system. Provide the filename of the XML file that has the global..." alt="" coords="251,107,381,133">
+<area shape="rect" href="$class_level_manager.html#3f1ce54834adb960a5b14479fd0a71d7" title="Initialize the LevelManager system. Provide the filename of the XML file that has..." alt="" coords="429,107,555,133">
+<area shape="rect" href="$main_8cpp.html#ee8048628ff2b5c026c9e15acdcaacb8" title="init" alt="" coords="653,81,691,108">
+<area shape="rect" href="$class_level_manager.html#944351c2984b102f0c6da76ffd639eab" title="Reset the system, as if init had just been called." alt="" coords="604,132,740,159">
+<area shape="rect" href="$class_input_1_1_keyboard.html#6c895cc85fb33b082b36231898535857" title="init() should be overridden by the derived class, it is called in registerDevice()..." alt="" coords="791,5,927,32">
+<area shape="rect" href="$class_input_1_1_wiimote.html#0e01345d08e26f5e9d499a453a51ced0" title="init() should be overridden by the derived class, it is called in registerDevice()..." alt="" coords="793,56,924,83">
+<area shape="rect" href="$main_8cpp.html#e66f6b31b5ad750f1fe042a706a4e3d4" title="main" alt="" coords="835,107,883,133">
+<area shape="rect" href="$class_input_manager.html#56c1d32f7d6cd3648526e65709c1b8fa" title="Initialize the input system." alt="" coords="977,56,1100,83">
