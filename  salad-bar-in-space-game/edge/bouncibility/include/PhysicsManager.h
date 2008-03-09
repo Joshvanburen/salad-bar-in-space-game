@@ -52,7 +52,7 @@ class PhysicsManager :
 	public CSingleton<PhysicsManager>{
 private:
 
-	static irr::newton::IWorld* s_World;
+	irr::newton::IWorld* m_World;
 
 	float m_Gravity;
 
@@ -91,10 +91,15 @@ public:
 	//! Return a pointer to the material referred to by the given name.
 	irr::newton::IMaterial* getMaterial(const std::string& name);
 
+	void update(); //!< Updates the physics world and handles anything else that needs to happen each iteration of the main loop.
+
 	void shutdown();  //!< shutdown any resources used by the LevelManager. 
 	
 	void clear(); //!< Clears entity callbacks that have been registered, also unloads all materials except global.  Should be called between levels.
 
+	irr::newton::IWorld* getPhysicsWorld(){
+		return m_World;
+	}
 	
 };
 

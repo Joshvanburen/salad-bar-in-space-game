@@ -1,8 +1,0 @@
-<area shape="rect" href="$class_level_manager.html#3f1ce54834adb960a5b14479fd0a71d7" title="Initialize the LevelManager system. Provide the filename of the XML file that has..." alt="" coords="212,69,337,96">
-<area shape="rect" href="$class_level_manager.html#adc5e9780ea5d38bcc0a858b53ce3572" title="shutdown any resources used by the LevelManager." alt="" coords="193,132,356,158">
-<area shape="rect" href="$class_entity_manager.html#1d1254a497aeaecddd512db6b76582cd" title="Add new entity definitions. This function is the same as init in that it loads in..." alt="" coords="432,5,651,32">
-<area shape="rect" href="$class_c_singleton.html#76b01ad6bedf1f5313a828ce3035ae6b" title="Gets a reference to the instance of the singleton class." alt="" coords="405,56,677,82">
-<area shape="rect" href="$class_entity_manager.html#52ecdb78de6f3ac7ec75629df546e90f" title="Initialize the Entity system. Provide the filename of the XML file that has the global..." alt="" coords="476,106,607,133">
-<area shape="rect" href="$class_entity_1_1_loader.html#16daef119d065ec413dcfcb975537481" title="Returns the factory pointer given a type name string. This should be used by EntityManager..." alt="" coords="739,30,909,57">
-<area shape="rect" href="$class_entity_1_1_loader.html#6c612adfb9a0fee09a03c975a3964229" title="Registers a factory and type into the Loader. These are hard coded in the EntityManager..." alt="" coords="725,106,923,133">
-<area shape="rect" href="$class_level.html#9579baae8703d15e4390c47b745a5aa7" title="Releases all resources used. Does not need to delete the entities it has, EntityManager..." alt="" coords="485,157,597,184">

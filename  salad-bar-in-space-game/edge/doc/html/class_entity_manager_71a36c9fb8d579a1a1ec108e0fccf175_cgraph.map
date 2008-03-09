@@ -1,3 +1,0 @@
-<area shape="rect" href="$class_entity_manager.html#38bbb81e997e7adf2f8ecbb183355a0d" title="shutdown any resources used by the EntityManager." alt="" coords="259,31,427,57">
-<area shape="rect" href="$class_entity_1_1_loader.html#b9756a289d5344fa846ee57a14f6cd2a" title="Removes all registered factories and frees up their memory." alt="" coords="477,5,643,32">
-<area shape="rect" href="$class_entity_manager.html#1acff1aa6c224e4755cf67a3163c4677" title="Deletes all currently instantiated entities. This would be ideal for moving from..." alt="" coords="476,56,644,83">

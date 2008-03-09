@@ -1,3 +1,0 @@
-<area shape="rect" href="$class_input_1_1_wiimote.html#98969f71ccbefcb1e2f681b4d6ba2363" title="read() is called for all devices when getInput() is called in the InputManager. Only..." alt="" coords="275,5,413,32">
-<area shape="rect" href="$class_input_manager.html#82618a716d57b8dcfa0fc87fd4a8b901" title="Gets input from all the devices and notifies all Actions. Currently unsure if this..." alt="" coords="463,5,615,32">
-<area shape="rect" href="$main_8cpp.html#e66f6b31b5ad750f1fe042a706a4e3d4" title="main" alt="" coords="665,5,713,32">

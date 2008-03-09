@@ -1,6 +1,0 @@
-<area shape="rect" href="$class_input_1_1_input_device.html#b9dda05e0f8cf14816eea3f06134ab7e" title="buttonStatus() returns if the button represented by the sent code is in a pressed..." alt="" coords="297,6,503,32">
-<area shape="rect" href="$class_input_manager.html#c86d8a02962b3c26bfb8c8cad8fa6f37" title="Returns a reference to the device in the devicemap with the given name." alt="" coords="319,56,481,83">
-<area shape="rect" href="$class_c_singleton.html#76b01ad6bedf1f5313a828ce3035ae6b" title="Gets a reference to the instance of the singleton class." alt="" coords="267,107,533,134">
-<area shape="rect" href="$class_input_1_1_action.html#aa589cef247177f166cedd48824aa660" title="Presses the button." alt="" coords="587,183,720,210">
-<area shape="rect" href="$class_input_1_1_action.html#b1d29ae5ef9d4481007fdce558ad0978" title="Releases the button." alt="" coords="581,246,725,272">
-<area shape="rect" href="$class_input_1_1_action.html#c185af1e7f22f0c6630705052bf83b83" title="Taps the button. (Presses and Releases the button)." alt="" coords="340,208,460,235">
