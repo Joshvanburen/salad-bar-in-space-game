@@ -1,7 +1,0 @@
-<area shape="rect" href="$class_input_1_1_keyboard.html#6c895cc85fb33b082b36231898535857" title="init() should be overridden by the derived class, it is called in registerDevice()..." alt="" coords="229,56,365,82">
-<area shape="rect" href="$class_input_manager.html#1095125a4982c934faa19d177b0abde2" title="shutdown any resources used by the InputManager." alt="" coords="216,106,379,133">
-<area shape="rect" href="$class_input_manager.html#56c1d32f7d6cd3648526e65709c1b8fa" title="Initialize the input system." alt="" coords="463,5,585,32">
-<area shape="rect" href="$main_8cpp.html#ee8048628ff2b5c026c9e15acdcaacb8" title="init" alt="" coords="671,56,708,82">
-<area shape="rect" href="$class_input_1_1_wiimote.html#0e01345d08e26f5e9d499a453a51ced0" title="init() should be overridden by the derived class, it is called in registerDevice()..." alt="" coords="757,30,888,57">
-<area shape="rect" href="$main_8cpp.html#e66f6b31b5ad750f1fe042a706a4e3d4" title="main" alt="" coords="799,81,847,108">
-<area shape="rect" href="$class_input_manager.html#f518290877dd183606709d5852db5491" title="InputManager::~InputManager" alt="" coords="428,157,620,184">

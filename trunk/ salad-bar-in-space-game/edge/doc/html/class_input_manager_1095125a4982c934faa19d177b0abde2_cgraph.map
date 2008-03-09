@@ -1,4 +1,0 @@
-<area shape="rect" href="$class_input_1_1_wiimote.html#ed5698766b655d5d28e6cc1a059058fe" title="release() should be overridden by derived class, it is called by InputManager." alt="" coords="237,6,392,32">
-<area shape="rect" href="$class_input_1_1_keyboard.html#8edc69583627bce0aacf66717e4240cb" title="release() should be overridden by derived class, it is called by InputManager." alt="" coords="233,56,396,83">
-<area shape="rect" href="$class_input_manager.html#4aba4f5561d5bb22f9108a486104f9df" title="Resets all the registered actions, useful for beginning a level with nothing pressed..." alt="" coords="217,107,412,134">
-<area shape="rect" href="$class_input_1_1_input_device.html#611b89adf7cc7600bdaeb37ef8dda51f" title="release() should be overridden by derived class, it is called by InputManager." alt="" coords="461,31,635,58">

@@ -13,7 +13,6 @@ using namespace io;
 irr::scene::ISceneManager* LevelManager::s_Smgr = NULL;
 irr::IrrlichtDevice* LevelManager::s_Device = NULL;
 irr::video::IVideoDriver* LevelManager::s_Driver = NULL;
-irr::newton::IWorld* LevelManager::s_World = NULL;
 
 LevelManager::LevelManager() : m_CurrentLevel(NULL){
 
@@ -43,8 +42,7 @@ bool LevelManager::init(irr::IrrlichtDevice* device, const std::string& XMLScena
 	s_Driver = device->getVideoDriver();
 
 
-	//initialize physics world
-	s_World = newton::createPhysicsWorld(s_Device);
+
 
 	scenarioDefinition =  XMLScenarioDefinition;
 	EntityManager::getSingleton().init("./res/entities/global.xml");
@@ -95,7 +93,6 @@ void LevelManager::shutdown(){
 		delete m_CurrentLevel;
 	}
 
-	s_World->destroyWorld();
 	m_CurrentLevel = NULL;
 
 	m_Levels.clear();
@@ -150,7 +147,6 @@ Level& LevelManager::getCurrentLevel() const{
 void LevelManager::update(){
 	//need to check if there needs to a level change.
 	//isCompleted should return Level::WAITING_REPEAT or Level::FINISHED or Level::RUNNING or Level::WAITING_START
-	s_World->update();
 	m_CurrentLevel->update();
 
 	int status = m_CurrentLevel->status();
