@@ -119,6 +119,7 @@ PhysicsManager::~PhysicsManager(){
 }
 
 bool PhysicsManager::init(irr::IrrlichtDevice* device){
+	std::cout << "initializing physics...\n";
 	m_Device = device;
 	m_World = irr::newton::createPhysicsWorld(device);
 
@@ -130,7 +131,9 @@ bool PhysicsManager::init(irr::IrrlichtDevice* device){
 }
 
 bool PhysicsManager::readInXML(const std::string& XMLMaterialDefinition){
+	std::cout << "Reading in XML Material definition " << XMLMaterialDefinition << "\n";
 	irr::io::IrrXMLReader* xml = irr::io::createIrrXMLReader(XMLMaterialDefinition.c_str());
+
 
 	if (!xml){
 		std::cout << "There was an error loading the xml file " << XMLMaterialDefinition << ".\n";
@@ -166,6 +169,7 @@ bool PhysicsManager::readInXML(const std::string& XMLMaterialDefinition){
 					std::cout << "Material with name: " << name << "already exists. Continuing...\n";
 				}
 				else{
+					std::cout << "inserting material " << name << "\n";
 					m_MaterialMap.insert(std::make_pair(name, material));
 				}
 
@@ -177,6 +181,7 @@ bool PhysicsManager::readInXML(const std::string& XMLMaterialDefinition){
 				kinetic_friction = xml->getAttributeValueAsFloat("kinetic_friction");
 				softness = xml->getAttributeValueAsFloat("softness");
 				elasticity = xml->getAttributeValueAsFloat("elasticity");
+				std::cout << "Setting collision properties between " << material1 << " and " << material2 << ": softness = " << softness << ", elasticity = " << elasticity << ", kinetic_friction = " << kinetic_friction << ", static_friction = " << static_friction << "\n";
 				material = this->getMaterial(material1);
 				second_material = this->getMaterial(material2);
 				material->setFriction(second_material, static_friction, kinetic_friction);
