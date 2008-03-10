@@ -1,3 +1,4 @@
 <worldentities>
 	<entity name="player_ball" file="./res/entities/definitions/player_ball.xml" type="ball"/>
+	<entity name="player_large_ball" file="./res/entities/definitions/player_large_ball.xml" type="ball"/>
 </worldentities>
