@@ -6,6 +6,8 @@
 #include "Common.h"
 #include "EntityManager.h"
 #include "InputManager.h"
+#include "irrnewt.hpp"
+#include "PhysicsManager.h"
 #include "LevelManager.h"
 #include "Level.h"
 #include "WorldEntity.h"
@@ -31,10 +33,13 @@ irr::IrrlichtDevice *device;
 
 bool init(){
 	InputManager::getSingleton().init();
-	device = irr::createDevice( irr::video::EDT_DIRECT3D9, irr::core::dimension2d<irr::s32>(800, 600), 16,
-		false, false, false, InputManager::getSingleton().getEventReceiver());
+	device = irr::createDevice( irr::video::EDT_OPENGL, irr::core::dimension2d<irr::s32>(1024, 768), 16,
+		true, false, false, InputManager::getSingleton().getEventReceiver());
 
 	smgr = device->getSceneManager();
+
+	
+	PhysicsManager::getSingleton().init(device);
 
 	LevelManager::getSingleton().init(device, "./res/scenarios/tutorial.xml");
 
@@ -127,6 +132,7 @@ int main()
 		*/
 		InputManager::getSingleton().stopPolling();
 		InputManager::getSingleton().getInput();
+		PhysicsManager::getSingleton().update();
 		LevelManager::getSingleton().update();
 		driver->beginScene(true, true, SColor(255,100,101,140));
 			smgr->drawAll();

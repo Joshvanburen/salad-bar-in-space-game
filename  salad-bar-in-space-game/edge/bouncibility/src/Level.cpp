@@ -2,8 +2,10 @@
 #include <irrlicht.h>
 #include "Common.h"
 #include "EntityManager.h"
+#include "irrnewt.hpp"
 #include "LevelManager.h"
 #include "WorldEntity.h"
+#include "PhysicsManager.h"
 #include "irrlicht.h"
 #include "Level.h"
 
@@ -20,7 +22,7 @@ const int Level::FINISHED = 4;
 const int Level::STOPPED = 5;
 
 //Constructor
-Level::Level(){
+Level::Level() : m_SceneNode(NULL), m_Mesh(NULL), m_Physics_Body(NULL){
 	m_Status = Level::WAITING_START;
 	m_Time = 0;
 	m_StartingX = 0;
@@ -82,6 +84,7 @@ bool Level::load(const std::string& LevelDefinition)
 				m_StartingX = xml->getAttributeValueAsInt("startingx");
 				m_StartingY = xml->getAttributeValueAsInt("startingy");
 				m_LevelFile = xml->getAttributeValue("map");
+				PhysicsManager::getSingleton().setGravity(xml->getAttributeValueAsFloat("gravity"));
 
 			}
 			else if (!strcmp("entity", xml->getNodeName())){
@@ -109,9 +112,19 @@ bool Level::load(const std::string& LevelDefinition)
 
 	//Load in level now that we have the variables.
 	LevelManager::getSingleton().getSceneManager()->loadScene(m_LevelFile.c_str());
+
+	this->m_SceneNode = (irr::scene::IMeshSceneNode*)(LevelManager::getSingleton().getSceneManager()->getSceneNodeFromName("level_main"));
+	m_Mesh = m_SceneNode->getMesh();
 	
-	//Adds a firt person shooter camera scene node
-	LevelManager::getSingleton().getSceneManager()->addCameraSceneNodeFPS();
+	irr::newton::SBodyFromNode mapData;
+
+	mapData.Node = this->m_SceneNode;
+
+	mapData.Mesh = this->m_Mesh;
+
+	mapData.Type = newton::EBT_TREE;
+
+	m_Physics_Body = PhysicsManager::getSingleton().getPhysicsWorld()->createBody(mapData);
 
 	delete xml;
 	return true;

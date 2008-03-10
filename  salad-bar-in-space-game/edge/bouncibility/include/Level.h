@@ -41,9 +41,11 @@ class Level
 
 			int m_StartingY;
 
-			irr::scene::IMesh* mesh;
-			irr::newton::IMaterial* physics_material;
-			irr::newton::IBody* physics_body;
+			irr::scene::IMeshSceneNode* m_SceneNode;
+
+			irr::scene::IMesh* m_Mesh;
+
+			irr::newton::IBody* m_Physics_Body;
 
 			friend std::ostream& operator << (std::ostream& os, const Level& level);
 		

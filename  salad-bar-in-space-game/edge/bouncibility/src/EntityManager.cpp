@@ -4,6 +4,7 @@
 #include ".\EntityManager.h"
 #include "LevelManager.h"
 #include "irrnewt.hpp"
+#include "PhysicsManager.h"
 #include "ball.h"
 #include "WorldEntity.h"
 
@@ -22,6 +23,13 @@ WorldEntity& Entity::BallFactory::loadEntity(const std::string& XMLFilename){
 	std::string meshFile;
 	std::string textureFile;
 	std::string startState;
+	int physics_enabled = 0;
+	int gravity_enabled = 0;
+	std::string materialName;
+	irr::newton::IMaterial* material;
+	float radius = 1;
+	WorldEntity* entity = NULL;
+
 	while(xml && xml->read())
 	{
 		switch(xml->getNodeType())
@@ -35,49 +43,61 @@ WorldEntity& Entity::BallFactory::loadEntity(const std::string& XMLFilename){
 				name = xml->getAttributeValue("name");
 				meshFile = xml->getAttributeValue("mesh");
 				textureFile = xml->getAttributeValue("texture");
-				startState = xml->getAttributeValue("start_state");
+				//startState = xml->getAttributeValue("start_state");
+				physics_enabled = xml->getAttributeValueAsInt("enable_physics");
+				radius = xml->getAttributeValueAsFloat("radius");
+
+				irr::scene::ISceneNode* node = LevelManager::getSceneManager()->addSphereSceneNode(irr::f32(radius));
+
+				if (node){
+					node->setScale(irr::core::vector3df(1.0f, 1.0f, 1.0f));
+					node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
+				}
+
+				entity = new Ball();
+
+				entity->setMesh(NULL);
+
+				entity->setSceneNode(node);
+
+				if (physics_enabled){
+					gravity_enabled = xml->getAttributeValueAsInt("enable_gravity");
+					materialName = xml->getAttributeValue("material");
+
+
+					material = PhysicsManager::getSingleton().getMaterial(materialName);
+
+
+					irr::newton::SBodyFromNode physics_node;
+					physics_node.Node = node;
+					physics_node.Type = irr::newton::EBT_PRIMITIVE_ELLIPSOID;
+
+					irr::newton::ICharacterController* body = PhysicsManager::getSingleton().getPhysicsWorld()->createCharacterController(PhysicsManager::getSingleton().getPhysicsWorld()->createBody(physics_node));
+					body->setRotationUpdate(true);
+					body->setContinuousCollisionMode(true);
+
+					body->setMaterial(material);
+
+					body->setUserData(entity);
+
+					if (gravity_enabled){
+						body->addForceContinuous(irr::core::vector3df(0,PhysicsManager::getSingleton().getGravity(),0));
+					}
+
+					entity->setPhysicsBody(body);
+
+			
+				}
+	
+
+			//entity->changeState(startState)
+							
 			}
 			break;
 		}
 	}
-	irr::scene::ISceneManager* smgr = LevelManager::getSceneManager();
-	//irr::scene::IAnimatedMesh* mesh = smgr->getMesh(meshFile.c_str());	
-	//irr::scene::IAnimatedMeshSceneNode* node = smgr->addAnimatedMeshSceneNode( mesh );
-	irr::scene::ISceneNode* node = smgr->addSphereSceneNode(22);
-	if (node)
-	{
-		node->setScale(core::vector3df(1.0f,1.0f,1.0f));
-		node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-		//node->setMD2Animation ( irr::scene::EMAT_STAND );
-		//node->setMaterialTexture( 0, LevelManager::getDriver()->getTexture(textureFile.c_str()) );
-	}
-	node->setPosition(core::vector3df(-150,50,0));
-
-	WorldEntity* entity = new Ball();
-
-	//create physics for ball
 
 
-	entity->setMesh(NULL);
-	irr::newton::IMaterial* material = LevelManager::getPhysicsWorld()->createMaterial();
-	entity->setBodyMaterial(material);
-	irr::newton::SBodyFromNode physics_node;
-	physics_node.Node = node;
-	physics_node.Type = irr::newton::EBT_PRIMITIVE_ELLIPSOID;
-
-	irr::newton::ICharacterController* body = LevelManager::getPhysicsWorld()->createCharacterController(LevelManager::getPhysicsWorld()->createBody(physics_node));
-	body->setRotationUpdate(true);
-	body->setContinuousCollisionMode(true);
-
-	body->setMaterial(material);
-
-	
-	body->addForceContinuous(irr::core::vector3df(0,-2.0f,0));
-
-	entity->setPhysicsBody(body);
-	entity->setSceneNode(node);
-
-	//entity->changeState(startState)
 	return *entity;
 }
 

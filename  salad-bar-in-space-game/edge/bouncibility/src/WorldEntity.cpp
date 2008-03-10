@@ -2,14 +2,14 @@
 #include "irrnewt.hpp"
 #include "irrlicht.h"
 // default constructor
-WorldEntity::WorldEntity() : sceneNode(NULL), mesh(NULL), physics_material(NULL), physics_body(NULL){
+WorldEntity::WorldEntity() : m_SceneNode(NULL), m_Mesh(NULL), m_Physics_Body(NULL){
 	fx = 0;
 	fy = 0;
 	fz = 0;
 }
 
 // lets user set the id
-WorldEntity::WorldEntity(int iID): sceneNode(NULL), mesh(NULL), physics_material(NULL), physics_body(NULL){
+WorldEntity::WorldEntity(int iID): m_SceneNode(NULL), m_Mesh(NULL), m_Physics_Body(NULL){
 	setID(iID);
 	fx = 0;
 	fy = 0;
@@ -32,22 +32,19 @@ void WorldEntity::setID( int iID ){
 int WorldEntity::getID(){
 	return id;
 }
-void WorldEntity::setBodyMaterial(irr::newton::IMaterial* newMaterial){
-	physics_material = newMaterial;
-}
 void WorldEntity::setMesh(irr::scene::IAnimatedMesh* newMesh){
-	mesh = newMesh;
-}
-void WorldEntity::setPhysicsBody(irr::newton::IBody* newBody){
-	physics_body = newBody;
+	//Need to do something here to update everything else with the current mesh.  Especially the scene node.
+	m_Mesh = newMesh;
 }
 // Sets location of entity
 void WorldEntity::setLocation( float x, float y, float z){
 	fx = x;
 	fy = y;
 	fz = z;
-}
 
-void WorldEntity::setSceneNode(irr::scene::ISceneNode* sceneNode){
-	this->sceneNode = sceneNode;
+	if (m_Physics_Body){
+		//m_SceneNode->setPosition(irr::core::vector3df(fx, fy, fz));
+		m_Physics_Body->setPosition(irr::core::vector3df(fx, fy, fz));
+	}
+
 }

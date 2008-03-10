@@ -2,6 +2,7 @@
 #define WORLD_ENTITY_H
 
 #include "Common.h"
+#include "singleton.h"
 namespace irr{
 	namespace newton{
 		class IMaterial;
@@ -12,10 +13,14 @@ namespace irr{
 		class IAnimatedMesh;
 	}
 }
+namespace Entity{
+	class EntityFactory;
+}
 
 class WorldEntity{
-
+	friend class Entity::EntityFactory;
 public:
+
 	// Constructor
 	WorldEntity();
 	//Overloaded Constructors
@@ -30,36 +35,33 @@ public:
 	
 	irr::scene::ISceneNode* entity();
 
-	//! Method called by PhysicsManager if this node said it was interested in hearing about collision between material1 and material2
-	virtual void collide(const std::string& material1, const std::string& material2);
-
 	// get/set ID
 	int getID();
 	void setID( int iID );
 
 	//Returns a pointer to the scene node for this WorldEntity
 	irr::scene::ISceneNode* getSceneNode(){
-		return sceneNode;
+		return m_SceneNode;
 	}
 
-	void setSceneNode(irr::scene::ISceneNode* sceneNode);
+	void setSceneNode(irr::scene::ISceneNode* node){
+		m_SceneNode = node;
+	}
+
+	void setPhysicsBody(irr::newton::IBody* body){
+		m_Physics_Body = body;
+	}
 
 
 	irr::newton::IBody* getPhysicsBody(){
-		return physics_body;
+		return m_Physics_Body;
 	}
 
-	irr::newton::IMaterial* getBodyMaterial(){
-		return physics_material;
-	}
 
 	irr::scene::IAnimatedMesh* getMesh(){
-		return mesh;
+		return m_Mesh;
 	}
 
-	void setPhysicsBody(irr::newton::IBody* newBody);
-
-	void setBodyMaterial(irr::newton::IMaterial* newMaterial);
 
 	void setMesh(irr::scene::IAnimatedMesh* newMesh);
 
@@ -86,10 +88,11 @@ protected:
 
 	int id;// Unique ID
 
-	irr::scene::ISceneNode* sceneNode; //Scene node of worldEntity.  Assumed to be initialized and added to the scene by factory.
-	irr::scene::IAnimatedMesh* mesh;
-	irr::newton::IMaterial* physics_material;
-	irr::newton::IBody* physics_body;
+	irr::scene::ISceneNode* m_SceneNode; //Scene node of worldEntity.  Assumed to be initialized and added to the scene by factory.
+
+	irr::scene::IAnimatedMesh* m_Mesh;
+
+	irr::newton::IBody* m_Physics_Body;
 
 };
 
