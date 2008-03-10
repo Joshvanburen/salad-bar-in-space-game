@@ -1,0 +1,1 @@
+<ball name="player_large_ball" mesh="res/sydney.md2" texture="res/textures/bowling_ball_texture.jpg" enable_physics="1" material="player_ball" enable_gravity="1" radius="14.5"/>
