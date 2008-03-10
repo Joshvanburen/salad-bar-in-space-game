@@ -3,5 +3,35 @@
 	<entities>
 		<entity name="player_ball" startstate="normal" xloc="-150" yloc="150" />
 		<entity name="player_ball" startstate="normal" xloc="-90" yloc="150" />
+		<entity name="player_ball" startstate="normal" xloc="-10" yloc="300" />
+		<entity name="player_ball" startstate="normal" xloc="-20" yloc="300" />
+		<entity name="player_ball" startstate="normal" xloc="40" yloc="300" />
+		<entity name="player_ball" startstate="normal" xloc="0" yloc="200" />
+		<entity name="player_ball" startstate="normal" xloc="-10" yloc="500" />
+		<entity name="player_ball" startstate="normal" xloc="-20" yloc="200" />
+		<entity name="player_ball" startstate="normal" xloc="30" yloc="400" />
+		<entity name="player_ball" startstate="normal" xloc="60" yloc="300" />
+		<entity name="player_ball" startstate="normal" xloc="-30" yloc="200" />
+		<entity name="player_ball" startstate="normal" xloc="50" yloc="600" />
+		<entity name="player_ball" startstate="normal" xloc="-10" yloc="700" />
+		<entity name="player_ball" startstate="normal" xloc="-10" yloc="800" />
+		<entity name="player_ball" startstate="normal" xloc="-10" yloc="900" />
+		<entity name="player_ball" startstate="normal" xloc="-10" yloc="1000" />
+		<entity name="player_ball" startstate="normal" xloc="-10" yloc="1100" />
+		<entity name="player_ball" startstate="normal" xloc="-10" yloc="1200" />
+		<entity name="player_ball" startstate="normal" xloc="-10" yloc="1300" />
+		<entity name="player_ball" startstate="normal" xloc="-10" yloc="1400" />
+		<entity name="player_ball" startstate="normal" xloc="-10" yloc="1500" />
+		<entity name="player_ball" startstate="normal" xloc="-10" yloc="1600" />
+		<entity name="player_ball" startstate="normal" xloc="-10" yloc="1700" />
+		<entity name="player_ball" startstate="normal" xloc="-10" yloc="1800" />
+		<entity name="player_ball" startstate="normal" xloc="-10" yloc="1900" />
+		<entity name="player_ball" startstate="normal" xloc="-10" yloc="2000" />
+		<entity name="player_ball" startstate="normal" xloc="120" yloc="2100" />
+		<entity name="player_ball" startstate="normal" xloc="130" yloc="1000" />
+		<entity name="player_ball" startstate="normal" xloc="120" yloc="1200" />
+		<entity name="player_ball" startstate="normal" xloc="135" yloc="1300" />
+		<entity name="player_ball" startstate="normal" xloc="140" yloc="2000" />
+		<entity name="player_ball" startstate="normal" xloc="140" yloc="3000" />
 	</entities>
 </level>
