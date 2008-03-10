@@ -1,0 +1,2 @@
+<area shape="rect" href="$class_entity_1_1_loader.html#16daef119d065ec413dcfcb975537481" title="Returns the factory pointer given a type name string. This should be used by EntityManager..." alt="" coords="197,5,368,32">
+<area shape="rect" href="$class_entity_1_1_loader.html#6c612adfb9a0fee09a03c975a3964229" title="Registers a factory and type into the Loader. These are hard coded in the EntityManager..." alt="" coords="184,56,381,83">

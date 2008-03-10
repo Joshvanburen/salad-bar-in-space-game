@@ -1,0 +1,5 @@
+<scenario>
+	<entities file="res/entities/tutorial.xml" />
+  <level file="res/levels/tutorial1.xml" />
+  <physics file="res/physics/tutorial.xml" />
+</scenario>
