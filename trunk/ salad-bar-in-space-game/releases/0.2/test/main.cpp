@@ -34,7 +34,7 @@ irr::IrrlichtDevice *device;
 bool init(){
 	InputManager::getSingleton().init();
 	device = irr::createDevice( irr::video::EDT_OPENGL, irr::core::dimension2d<irr::s32>(1024, 768), 16,
-		true, false, false, InputManager::getSingleton().getEventReceiver());
+		false, false, false, InputManager::getSingleton().getEventReceiver());
 
 	smgr = device->getSceneManager();
 
@@ -154,6 +154,7 @@ int main()
 	*/
 	InputManager::getSingleton().shutdown();
 	LevelManager::getSingleton().shutdown();
+	PhysicsManager::getSingleton().shutdown();
 	device->drop();
 
 	return 0;

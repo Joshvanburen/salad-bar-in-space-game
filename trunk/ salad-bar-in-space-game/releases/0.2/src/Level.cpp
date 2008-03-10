@@ -65,6 +65,7 @@ bool Level::load(const std::string& LevelDefinition)
 	int entityX;
 	int entityY;
 	std::string entityStartState;
+	std::string materialName;
 
 	m_XmlFile = LevelDefinition;
 
@@ -85,6 +86,7 @@ bool Level::load(const std::string& LevelDefinition)
 				m_StartingY = xml->getAttributeValueAsInt("startingy");
 				m_LevelFile = xml->getAttributeValue("map");
 				PhysicsManager::getSingleton().setGravity(xml->getAttributeValueAsFloat("gravity"));
+				materialName = xml->getAttributeValue("material");
 
 			}
 			else if (!strcmp("entity", xml->getNodeName())){
@@ -125,6 +127,8 @@ bool Level::load(const std::string& LevelDefinition)
 	mapData.Type = newton::EBT_TREE;
 
 	m_Physics_Body = PhysicsManager::getSingleton().getPhysicsWorld()->createBody(mapData);
+
+	m_Physics_Body->setMaterial(PhysicsManager::getSingleton().getMaterial(materialName));
 
 	delete xml;
 	return true;
