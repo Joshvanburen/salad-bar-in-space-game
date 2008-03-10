@@ -4,6 +4,7 @@
 #include "irrlicht.h"
 #include "Level.h"
 #include "irrnewt.hpp"
+#include "PhysicsManager.h"
 #include "LevelManager.h"
 
 using namespace irr;
@@ -73,6 +74,10 @@ bool LevelManager::init(irr::IrrlichtDevice* device, const std::string& XMLScena
 			if (!strcmp("level", xml->getNodeName())){
 				xmlFile = xml->getAttributeValue("file");
 				m_Levels.push_back(xmlFile);
+			}
+			if (!strcmp("physics", xml->getNodeName())){
+				xmlFile = xml->getAttributeValue("file");
+				PhysicsManager::getSingleton().addNewDefinitions(xmlFile);
 			}
 			break;
 		}

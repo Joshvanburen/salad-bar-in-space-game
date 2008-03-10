@@ -10,182 +10,143 @@ using namespace irr;
 using namespace io;
 
 
-WorldEntity& Entity::BallFactory::loadEntity(const std::string& XMLFilename){
 
-	std::cout << "in ball factory opening xml file " << XMLFilename << "\n";
 
-	irr::io::IrrXMLReader* xml = irr::io::createIrrXMLReader(XMLFilename.c_str());
 
-	// strings for storing the data we want to get out of the file
-	std::string name;
-	std::string meshFile;
-	std::string textureFile;
-	std::string startState;
-	while(xml && xml->read())
-	{
-		switch(xml->getNodeType())
-		{
-		case EXN_TEXT:
-			//No text nodes
-			break;
 
-		case EXN_ELEMENT:
-			if (!strcmp("ball", xml->getNodeName())){
-				name = xml->getAttributeValue("name");
-				meshFile = xml->getAttributeValue("mesh");
-				textureFile = xml->getAttributeValue("texture");
-				startState = xml->getAttributeValue("start_state");
-			}
-			break;
-		}
+
+Physics::WorldEntityCollisionCallback::WorldEntityCollisionCallback(const std::string& material1, const std::string& material2) : IMaterialCollisionCallback(), entity1(NULL), entity2(NULL), m_Material1(material1), m_Material2(material2){
+
+
+}
+
+Physics::WorldEntityCollisionCallback::WorldEntityCollisionCallback(const std::string& material1, const std::string& material2, SomethingForScripts* script) : IMaterialCollisionCallback(), entity1(NULL), entity2(NULL), m_Material1(material1), m_Material2(material2){
+	m_CollisionHandlerScripts.insert(script);
+}
+
+Physics::WorldEntityCollisionCallback::~WorldEntityCollisionCallback(){
+
+}
+
+void Physics::WorldEntityCollisionCallback::ContactEnd(irr::newton::IMaterialPair* material_pair){
+	Physics::ScriptList::iterator scriptItrEnd = m_CollisionHandlerScripts.end();
+	Physics::ScriptList::iterator scriptItr;
+
+	for (scriptItr = m_CollisionHandlerScripts.begin(); scriptItr != scriptItrEnd; ++scriptItr){
+		//Call the script collision function with entity1 and entity2 pointers.
 	}
-	irr::scene::ISceneManager* smgr = LevelManager::getSceneManager();
-	//irr::scene::IAnimatedMesh* mesh = smgr->getMesh(meshFile.c_str());	
-	//irr::scene::IAnimatedMeshSceneNode* node = smgr->addAnimatedMeshSceneNode( mesh );
-	irr::scene::ISceneNode* node = smgr->addSphereSceneNode(22);
-	if (node)
-	{
-		node->setScale(core::vector3df(1.0f,1.0f,1.0f));
-		node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-		//node->setMD2Animation ( irr::scene::EMAT_STAND );
-		//node->setMaterialTexture( 0, LevelManager::getDriver()->getTexture(textureFile.c_str()) );
+}
+
+int  Physics::WorldEntityCollisionCallback::ContactBegin (irr::newton::IMaterialPair *material_pair, irr::newton::IBody *body0, irr::newton::IBody *body1){
+
+	//Each bodies user data is assumed to hold a pointer to a WorldEntity object.  This must be casted from a void* pointer.
+
+	entity1 = (WorldEntity*)body0->getUserData();
+
+	entity2 = (WorldEntity*)body1->getUserData();
+
+	return 1;
+}
+
+int  Physics::WorldEntityCollisionCallback::ContactProcess (irr::newton::IMaterialPairAndContact *material_pair_and_contact){
+
+	//Save anything relevant about the points that are in contact.
+
+	return 1;
+
+}
+void Physics::WorldEntityCollisionCallback::addHandler(SomethingForScripts* script){
+	Physics::ScriptList::iterator scriptItrEnd = m_CollisionHandlerScripts.end();
+	Physics::ScriptList::iterator scriptItr;
+
+	scriptItr = m_CollisionHandlerScripts.find(script);
+
+	if (scriptItr != scriptItrEnd){
+		throw DuplicateScript();
 	}
-	node->setPosition(core::vector3df(-150,50,0));
 
-	WorldEntity* entity = new Ball();
-
-	//create physics for ball
-
-
-	entity->setMesh(NULL);
-	irr::newton::IMaterial* material = LevelManager::getPhysicsWorld()->createMaterial();
-	entity->setBodyMaterial(material);
-	irr::newton::SBodyFromNode physics_node;
-	physics_node.Node = node;
-	physics_node.Type = irr::newton::EBT_PRIMITIVE_ELLIPSOID;
-
-	irr::newton::ICharacterController* body = LevelManager::getPhysicsWorld()->createCharacterController(LevelManager::getPhysicsWorld()->createBody(physics_node));
-	body->setRotationUpdate(true);
-	body->setContinuousCollisionMode(true);
-
-	body->setMaterial(material);
-
-	
-	body->addForceContinuous(irr::core::vector3df(0,-2.0f,0));
-
-	entity->setPhysicsBody(body);
-	entity->setSceneNode(node);
-
-	//entity->changeState(startState)
-	return *entity;
+	m_CollisionHandlerScripts.insert(script);
 }
 
-Entity::EntityFactory::EntityFactory(){
+
+irr::newton::IMaterial* PhysicsManager::getMaterial(const std::string& name){
+	//Find the entity in the ID map for this entityID
+	m_MaterialItr = m_MaterialMap.find(name);
+	//If the material wasn't found, throw exception
+	if (m_MaterialItr == m_MaterialMap.end())
+		throw Physics::MaterialDoesntExist();
+	return m_MaterialItr->second;
 }
 
-Entity::EntityFactory::~EntityFactory(){
-}
+void PhysicsManager::shutdown(){
 
-Entity::Loader::Loader(){
-}
+	Physics::StrCollisionCallbackMap::iterator callbackItrEnd = m_CallbackMap.end();
 
-Entity::Loader::~Loader(){
-	removeAll();
-}
-	
-bool Entity::Loader::remove(const std::string& type){
-	//Find the Factory in the map for this type.
-	Entity::TypeFactoryMap::iterator factoryItr = m_FactoryMap.find(type);
-	//If the type isn't already in the map, return false
-	if(factoryItr == m_FactoryMap.end()){
-		return false;
+	for(m_CallbackItr = m_CallbackMap.begin(); m_CallbackItr != callbackItrEnd; ++m_CallbackItr){
+		delete (*m_CallbackItr).second;
 	}
-	delete factoryItr->second;
-	m_FactoryMap.erase(factoryItr);
-	return true;
-}
 
-void Entity::Loader::removeAll(){
-	Entity::TypeFactoryMap::iterator factoryItr;
-	Entity::TypeFactoryMap::iterator factoryItrEnd = m_FactoryMap.end();
+	m_CallbackMap.clear();
 
-	for(factoryItr = m_FactoryMap.begin(); factoryItr != factoryItrEnd; ++factoryItr)
-	{
-		delete factoryItr->second;
+	m_MaterialMap.clear();
+	if (m_World){
+		m_World->destroyWorld();
+		m_World = NULL;
 	}
-	m_FactoryMap.clear();
-}
-
-Entity::EntityFactory* Entity::Loader::getFactory(const std::string& type){
-	//Find the Factory in the map for this type.
-	Entity::TypeFactoryMap::iterator factoryItr = m_FactoryMap.find(type);
-	//If the type isn't already in the map, insert and return true
-	if(factoryItr == m_FactoryMap.end()){
-		return NULL;
-	}
-	return factoryItr->second;
-}
-
-
-WorldEntity& Entity::Loader::loadEntity(EntityInfo* entityInfo){
-	std::cout << "calling factory for " << entityInfo->m_Name << " with xml file " << entityInfo->m_XMLFile << "\n";
-	std::cout.flush();
-	return entityInfo->mp_Factory->loadEntity(entityInfo->m_XMLFile);
-}
-
-
-
-bool Entity::Loader::registerFactory(const std::string& type, EntityFactory* factory){
-	//Find the Factory in the map for this type.
-	Entity::TypeFactoryMap::iterator factoryItr = m_FactoryMap.find(type);
-	//If the type isn't already in the map, insert and return true
-	if(factoryItr == m_FactoryMap.end()){
-		m_FactoryMap.insert(make_pair(type, factory));
-		return true;
-	}
-	//Type was already associated with some factory
-	return false;
 }
 	
-void Entity::EntityInfo::destroy(){
+void PhysicsManager::update(){
+	
+	m_World->update();
+	
 }
 
-Entity::EntityInfo::EntityInfo(const std::string& sName, const std::string& sXMLFile,  EntityFactory* p_Factory) : m_Name(sName), m_XMLFile(sXMLFile), mp_Factory(p_Factory){
+void PhysicsManager::clear(){
 
+	this->shutdown();
 
-}
+	this->init(m_Device);
 
-Entity::EntityInfo::~EntityInfo(){
-}
-
-const std::string& Entity::EntityInfo::getName() const{
-	return m_Name;
-}
-
-std::ostream& operator << (std::ostream& os, const Entity::EntityInfo& entity){
-	return os << entity.getName();
-}
-
-
-int EntityManager::next_ID = 1;
-
-
-EntityManager::EntityManager(){
 
 }
 
-EntityManager::~EntityManager(){
+PhysicsManager::PhysicsManager() : m_World(NULL), m_Gravity(0), m_Device(NULL){
+	
+}
+
+PhysicsManager::~PhysicsManager(){
 	this->shutdown();
 }
 
-bool EntityManager::addNewDefinitions(const std::string& XMLEntityDefinition){
-	irr::io::IrrXMLReader* xml = irr::io::createIrrXMLReader(XMLEntityDefinition.c_str());
+bool PhysicsManager::init(irr::IrrlichtDevice* device){
+	m_Device = device;
+	m_World = irr::newton::createPhysicsWorld(device);
+
+	m_MaterialDefinition = "./res/physics/global.xml";
+
+	return readInXML(m_MaterialDefinition);
+
+
+}
+
+bool PhysicsManager::readInXML(const std::string& XMLMaterialDefinition){
+	irr::io::IrrXMLReader* xml = irr::io::createIrrXMLReader(XMLMaterialDefinition.c_str());
+
+	if (!xml){
+		std::cout << "There was an error loading the xml file " << XMLMaterialDefinition << ".\n";
+	}
 
 	// strings for storing the data we want to get out of the file
 	std::string name;
-	std::string xmlFile;
-	std::string type;
-
+	std::string material1;
+	std::string material2;
+	irr::newton::IMaterial* material;
+	irr::newton::IMaterial* second_material;
+	float softness = 0;
+	float kinetic_friction = 0;
+	float static_friction = 0;
+	float elasticity = 0;
+	std::string scriptName;
 	while(xml && xml->read())
 	{
 		switch(xml->getNodeType())
@@ -195,141 +156,79 @@ bool EntityManager::addNewDefinitions(const std::string& XMLEntityDefinition){
 			break;
 
 		case irr::io::EXN_ELEMENT:
-			if (!strcmp("entity", xml->getNodeName())){
+			if (!strcmp("material", xml->getNodeName())){
 				name = xml->getAttributeValue("name");
-				xmlFile = xml->getAttributeValue("file");
-				type= xml->getAttributeValue("type");
+				material = m_World->createMaterial();
+
+				m_MaterialItr = m_MaterialMap.find(name);
+				//If the material is already in the map, print out and continue;
+				if (m_MaterialItr != m_MaterialMap.end()){
+					std::cout << "Material with name: " << name << "already exists. Continuing...\n";
+				}
+				else{
+					m_MaterialMap.insert(std::make_pair(name, material));
+				}
+
+			}
+			else if (!strcmp("collision", xml->getNodeName())){
+				material1 = xml->getAttributeValue("material1");
+				material2 = xml->getAttributeValue("material2");
+				static_friction = xml->getAttributeValueAsFloat("static_friction");
+				kinetic_friction = xml->getAttributeValueAsFloat("kinetic_friction");
+				softness = xml->getAttributeValueAsFloat("softness");
+				elasticity = xml->getAttributeValueAsFloat("elasticity");
+				material = this->getMaterial(material1);
+				second_material = this->getMaterial(material2);
+				material->setFriction(second_material, static_friction, kinetic_friction);
+				material->setElasticity(second_material, elasticity);
+				material->setSoftness(second_material, softness);
+			}
+			else if (!strcmp("callback", xml->getNodeName())){
+				material1 = xml->getAttributeValue("material1");
+				material2 = xml->getAttributeValue("material2");
+				scriptName = xml->getAttributeValue("script");
+				//TODO
+				//Create script pointer here, perhaps from scriptmanager
+				//Add this script as an observer to a collision of these materials.
+				//this->addObserver(scriptpointer, material1, material2);
 			}
 			break;
 		}
-		Entity::EntityFactory* factory = m_Loader.getFactory(type);
-		if (factory){
-			Entity::EntityInfo* entityInfo = new Entity::EntityInfo(name, xmlFile, factory);
-				if ((m_EntityMap.insert(make_pair(name, entityInfo))).second){
-
-				}
-				else{
-					m_EntityMap.clear();
-					return false;
-				}
-		}
-		else{
-			return false;
-		}
-	}
-	delete xml;
-	return true;
-}
-
-bool EntityManager::init(const std::string& XMLEntityDefinition){
-	std::cout << "loading xml file with name " << XMLEntityDefinition << "\n";
-	//Should register all the factories to each type here!!!!
-
-	this->m_Loader.registerFactory("ball", new Entity::BallFactory());
-
-	irr::io::IrrXMLReader* xml = irr::io::createIrrXMLReader(XMLEntityDefinition.c_str());
-
-	if (!xml){
-		std::cout << "There was an error loading the xml file " << XMLEntityDefinition << ".\n";
-	}
-	// strings for storing the data we want to get out of the file
-	std::string name;
-	std::string xmlFile;
-	std::string type;
-
-	while(xml && xml->read())
-	{
-		switch(xml->getNodeType())
-		{
-		case irr::io::EXN_TEXT:
-			//No text nodes
-			break;
-
-		case irr::io::EXN_ELEMENT:
-			if (!strcmp("entity", xml->getNodeName())){
-				Entity::EntityFactory* factory = m_Loader.getFactory(xml->getAttributeValue("type"));
-				if (factory){
-					Entity::EntityInfo* entityInfo = new Entity::EntityInfo(xml->getAttributeValue("name"), xml->getAttributeValue("file"), factory);
-					if ((m_EntityMap.insert(make_pair(std::string(xml->getAttributeValue("name")), entityInfo))).second){
-						std::cout << "added entity with name " << std::string(xml->getAttributeValue("name")) << "\n";
-
-						}
-						else{
-							m_EntityMap.clear();
-							return false;
-						}
-				}
-				else{
-					m_EntityMap.clear();
-					return false;
-				}
-					}
-					break;
-				}
 
 	}
 	delete xml;
+
 	return true;
 }
+bool PhysicsManager::addNewDefinitions(const std::string& XMLMaterialDefinition){
 
-void EntityManager::shutdown(){
-	//Remove all instantiated entities
-	removeAll();
-	//Remove all EntityInfo
-	Entity::StrEntityMap::iterator entityItrEnd = m_EntityMap.end();
-	Entity::StrEntityMap::iterator entityItr;
-	for(entityItr = m_EntityMap.begin(); entityItr != entityItrEnd; ++entityItr)
-	{
-		entityItr->second->destroy();
-		delete entityItr->second;
+	return readInXML(XMLMaterialDefinition);
+
+}
+
+bool PhysicsManager::addObserver(SomethingForScripts* script, const std::string& material1, const std::string& material2){
+
+	std::string key;
+	if (material1.compare(material2) <= 0){
+		key = material1 + material2;
+	}
+	else{
+		key = material2 + material1;
 	}
 
-	//Remove everything inside the loader
-	m_Loader.removeAll();
-
-	m_EntityMap.clear();
-}
-
-WorldEntity& EntityManager::createEntity(const std::string name){
-	//Find the Entity in the Str EntityInfo map for this entity name.
-	std::cout << "finding entity with name " << name << "\n";
-	Entity::StrEntityMap::iterator entityItr = m_EntityMap.find(name);
-	//If the Entity wasn't found, return false
-	if(entityItr == m_EntityMap.end()){
-		std::cout << "entity not found. throwing exception!\n";
-		throw Entity::EntityCreationFailed();
-	}
-	return(m_Loader.loadEntity(entityItr->second));
-}
-
-bool EntityManager::remove(const int entityID){
-	//Find the Entity in the ID map for this entityID.
-	m_EntityItr = m_IdEntityMap.find(entityID);
-	//If the Entity wasn't found, return false
-	if(m_EntityItr == m_IdEntityMap.end())
-		return false;
-
-	delete m_EntityItr->second;
-	m_IdEntityMap.erase(m_EntityItr);
-	return true;
-}
-
-void EntityManager::removeAll(){
-	Entity::IdEntityMap::iterator entityItrEnd = m_IdEntityMap.end();
-	for(m_EntityItr = m_IdEntityMap.begin(); m_EntityItr != entityItrEnd; ++m_EntityItr)
-	{
-		delete m_EntityItr->second;
-	}
-	m_IdEntityMap.clear();
-}
-
-WorldEntity& EntityManager::getEntity(const int entityID){
 	//Find the entity in the ID map for this entityID
-	m_EntityItr = m_IdEntityMap.find(entityID);
-	//If the Entity wasn't found, return NULL
-	if (m_EntityItr == m_IdEntityMap.end())
-		throw Entity::EntityDoesntExist();
-	return *(m_EntityItr->second);
-}
+	m_CallbackItr = m_CallbackMap.find(key);
+	//If the Entity wasn't found, add new entry.
+	if (m_CallbackItr == m_CallbackMap.end()){
+		Physics::WorldEntityCollisionCallback* callback = new Physics::WorldEntityCollisionCallback(material1, material2, script);
+		irr::newton::IMaterial* material = this->getMaterial(material1);
+		irr::newton::IMaterial* second_material = this->getMaterial(material2);
+		material->setCollisionCallback(second_material, callback);
+		m_CallbackMap.insert(std::make_pair(key, callback));
 
-irr::newton::IMaterial* PhysicsManager::getMaterial(const std::string& name);
+	}
+	else{
+		(*m_CallbackItr).second->addHandler(script);
+	}
+	return true;
+}
