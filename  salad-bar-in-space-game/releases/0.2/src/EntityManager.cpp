@@ -60,6 +60,7 @@ WorldEntity& Entity::BallFactory::loadEntity(const std::string& XMLFilename){
 
 				entity->setSceneNode(node);
 
+				node->setMaterialTexture(0,LevelManager::getSingleton().getDriver()->getTexture(textureFile.c_str()));
 				if (physics_enabled){
 					gravity_enabled = xml->getAttributeValueAsInt("enable_gravity");
 					materialName = xml->getAttributeValue("material");
