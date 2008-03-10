@@ -32,6 +32,16 @@
 		<entity name="player_ball" startstate="normal" xloc="120" yloc="1200" />
 		<entity name="player_ball" startstate="normal" xloc="135" yloc="1300" />
 		<entity name="player_ball" startstate="normal" xloc="140" yloc="2000" />
-		<entity name="player_ball" startstate="normal" xloc="140" yloc="3000" />
+		<entity name="player_ball" startstate="normal" xloc="40" yloc="3000" />
+		<entity name="player_ball" startstate="normal" xloc="50" yloc="3000" />
+		<entity name="player_ball" startstate="normal" xloc="60" yloc="3000" />
+		<entity name="player_ball" startstate="normal" xloc="70" yloc="3000" />
+		<entity name="player_ball" startstate="normal" xloc="80" yloc="3000" />
+		<entity name="player_ball" startstate="normal" xloc="90" yloc="3000" />
+		<entity name="player_ball" startstate="normal" xloc="100" yloc="3000" />
+		<entity name="player_ball" startstate="normal" xloc="110" yloc="3000" />
+		<entity name="player_ball" startstate="normal" xloc="-30" yloc="3000" />
+		<entity name="player_ball" startstate="normal" xloc="-40" yloc="3000" />
+		<entity name="player_ball" startstate="normal" xloc="-60" yloc="3000" />
 	</entities>
 </level>
