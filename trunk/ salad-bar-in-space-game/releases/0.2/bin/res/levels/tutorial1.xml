@@ -14,7 +14,7 @@
 		<entity name="player_ball" startstate="normal" xloc="-30" yloc="200" />
 		<entity name="player_ball" startstate="normal" xloc="50" yloc="600" />
 		<entity name="player_ball" startstate="normal" xloc="-10" yloc="700" />
-		<entity name="player_large_ball" startstate="normal" xloc="-10" yloc="800" />
+		<entity name="player_large_ball" startstate="normal" xloc="-30" yloc="600" />
 		<entity name="player_ball" startstate="normal" xloc="-10" yloc="900" />
 		<entity name="player_ball" startstate="normal" xloc="-10" yloc="1000" />
 		<entity name="player_ball" startstate="normal" xloc="-10" yloc="1100" />
@@ -43,5 +43,38 @@
 		<entity name="player_ball" startstate="normal" xloc="-30" yloc="3000" />
 		<entity name="player_ball" startstate="normal" xloc="-40" yloc="3000" />
 		<entity name="player_ball" startstate="normal" xloc="-60" yloc="3000" />
+				<entity name="player_ball" startstate="normal" xloc="40" yloc="4000" />
+		<entity name="player_ball" startstate="normal" xloc="50" yloc="4000" />
+		<entity name="player_ball" startstate="normal" xloc="60" yloc="4000" />
+		<entity name="player_ball" startstate="normal" xloc="70" yloc="4000" />
+		<entity name="player_ball" startstate="normal" xloc="80" yloc="4000" />
+		<entity name="player_ball" startstate="normal" xloc="90" yloc="4000" />
+		<entity name="player_ball" startstate="normal" xloc="100" yloc="4000" />
+		<entity name="player_ball" startstate="normal" xloc="110" yloc="4000" />
+		<entity name="player_ball" startstate="normal" xloc="-30" yloc="4000" />
+		<entity name="player_ball" startstate="normal" xloc="-40" yloc="4000" />
+		<entity name="player_ball" startstate="normal" xloc="-60" yloc="4000" />
+				<entity name="player_ball" startstate="normal" xloc="40" yloc="5000" />
+		<entity name="player_ball" startstate="normal" xloc="50" yloc="5000" />
+		<entity name="player_ball" startstate="normal" xloc="60" yloc="5000" />
+		<entity name="player_ball" startstate="normal" xloc="70" yloc="5000" />
+		<entity name="player_ball" startstate="normal" xloc="80" yloc="5000" />
+		<entity name="player_ball" startstate="normal" xloc="90" yloc="5000" />
+		<entity name="player_ball" startstate="normal" xloc="100" yloc="5000" />
+		<entity name="player_ball" startstate="normal" xloc="110" yloc="5000" />
+		<entity name="player_ball" startstate="normal" xloc="-30" yloc="5000" />
+		<entity name="player_ball" startstate="normal" xloc="-40" yloc="5000" />
+		<entity name="player_ball" startstate="normal" xloc="-60" yloc="5000" />
+				<entity name="player_ball" startstate="normal" xloc="40" yloc="6000" />
+		<entity name="player_ball" startstate="normal" xloc="50" yloc="6000" />
+		<entity name="player_ball" startstate="normal" xloc="60" yloc="6000" />
+		<entity name="player_ball" startstate="normal" xloc="70" yloc="6000" />
+		<entity name="player_ball" startstate="normal" xloc="80" yloc="6000" />
+		<entity name="player_ball" startstate="normal" xloc="90" yloc="6000" />
+		<entity name="player_ball" startstate="normal" xloc="100" yloc="6000" />
+		<entity name="player_ball" startstate="normal" xloc="110" yloc="6000" />
+		<entity name="player_ball" startstate="normal" xloc="-30" yloc="6000" />
+		<entity name="player_ball" startstate="normal" xloc="-40" yloc="6000" />
+		<entity name="player_ball" startstate="normal" xloc="-60" yloc="20000" />
 	</entities>
 </level>
