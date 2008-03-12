@@ -94,7 +94,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			OutputDirectory="..\bin"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="2"
@@ -117,12 +117,20 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="2"
+				Optimization="3"
+				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="1"
+				WholeProgramOptimization="true"
+				AdditionalIncludeDirectories="..\include;..\third_party\irrxml\include;&quot;..\third_party\wiiuse-v0.10\src&quot;;..\third_party\irrnewt\include;..\third_party\newton\sdk;..\third_party\irrlicht\include;..\third_party\irrklang\include"
+				ExceptionHandling="1"
 				RuntimeLibrary="2"
+				BufferSecurityCheck="false"
 				EnableFunctionLevelLinking="true"
+				EnableEnhancedInstructionSet="1"
 				WarningLevel="3"
-				DebugInformationFormat="3"
+				DebugInformationFormat="0"
+				CallingConvention="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -135,9 +143,14 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="irrlicht.lib irrklang.lib wiiuse.lib irrxml.lib newton.lib irrnewt.lib"
+				OutputFile="..\bin\Demo.exe"
+				AdditionalLibraryDirectories="..\lib;&quot;..\third_party\wiiuse-v0.10\lib&quot;;..\third_party\irrxml\lib;..\third_party\newton\sdk\dll;..\third_party\irrnewt\lib;..\third_party\irrklang\lib;..\third_party\irrlicht\lib"
+				IgnoreAllDefaultLibraries="false"
 				GenerateDebugInformation="true"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				OptimizeForWindows98="0"
 				TargetMachine="1"
 			/>
 			<Tool

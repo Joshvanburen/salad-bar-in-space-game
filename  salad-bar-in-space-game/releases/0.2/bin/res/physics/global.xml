@@ -5,7 +5,8 @@
     <material name="level" />
   </materials>
   <collisions>
-    <collision material1="player_ball" material2="level" softness="0.8" static_friction="0.5" kinetic_friction="0.4" elasticity="0.5" />
+    <collision material1="player_ball" material2="level" softness="0.8" static_friction="0.7" kinetic_friction="0.5" elasticity="0.9" />
+	<collision material1="player_ball" material2="player_ball" softness="0.8" static_friction="0.7" kinetic_friction="0.5" elasticity="1.0" />
     <callback script="some_script_name" material1="player_ball" material2="level" />
   </collisions>
 </physics>
