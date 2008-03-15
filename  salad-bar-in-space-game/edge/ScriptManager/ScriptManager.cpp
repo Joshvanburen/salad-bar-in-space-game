@@ -11,7 +11,8 @@ void MessageCallback(const asSMessageInfo *msg, void *param)
 	std::cout << msg->section << " (" << msg->row << ", " << msg->col << ") : " << type << " : " << msg->message << "\n";
 }
 
-bool ScriptManager::init(){
+
+bool ScriptManager::init(const std::string& XMLScriptDefinition){
 	engine = asCreateScriptEngine(ANGELSCRIPT_VERSION);
 	if( engine == 0 )
 	{
