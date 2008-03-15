@@ -149,6 +149,7 @@ namespace Input{
 	* can be used to append each key to a previous string.
 	*/
 	class Keyboard : public InputDevice{
+	public:
 		static const int KEY_A;
 		static const int KEY_B;
 		static const int KEY_C;
