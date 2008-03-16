@@ -13,11 +13,22 @@
 // Allows the use of vectors
 #include <vector>
 
-// Irrlicht namespace
+// Include InputManager and ball classes
+#include <InputManager>
+#include <ball>
+
+// Irrlicht namespaces
 using namespace irr;
+using namespace core;
+using namespace scene;
+using namespace video;
+using namespace io;
+using namespace gui;
 
 // Links with the irrlicht library file
+#ifdef _IRR_WINDOWS_
 #pragma comment(lib, "Irrlicht.lib")
+#endif
 
 // Class definition
 class UserInterface
@@ -36,16 +47,54 @@ class UserInterface
 			vector<Power> powers;
 			/**** Time? ****/
 			/**** High Scores? ****/
-			/* I was told to include Ball as well, I'm not sure what the
-			 * purpose of this is, or whether it should a variable or a method
-			 */
+			// Pointers to keyboard and wiimote devices
+			Input::InputDevice *keyboard = InputManager::getKeyboard();
+			Input::InputDevice *wiimote = InputManager::getWiimote();
+			// Create pointers to Wiimote actions
+			//*****ACTIONS FOR ANALOG**********//
+			Input::Action *wmGrow = InputManager::createAction(
+							grow, *wiimote, WII_MOVE_HANDS_OUTWARD, BEHAVIOR_DETECT_PRESS),
+						  *wmShrink = InputManager::createAction(
+							shrink, *wiimote, WII_MOVE_HANDS_INWARD, BEHAVIOR_DETECT_PRESS),
+						  *wmNormalJump = InputManager::createAction(
+							normalJump, *wiimote, WII_RIGHT_HAND_UP, BEHAVIOR_DETECT_PRESS),
+						  *wmBigJump = InputManager::createAction(
+							bigJump, *wiimote, WII_BOTH_HANDS_DOWN, BEHAVIOR_DETECT_PRESS),
+						  *wmRightMomentum = InputManager::createAction(
+							rightMomentum, *wiimote, WII_RIGHT_HAND_RIGHT, BEHAVIOR_DETECT_PRESS),
+						  *wmLeftMomentum = InputManager::createAction(
+							leftMomentum, *wiimote, WII_RIGHT_HAND_LEFT, BEHAVIOR_DETECT_PRESS),
+						  *wmHarden = InputManager::createAction(
+							harden, *wiimote, WII_Z_BUTTON, BEHAVIOR_DETECT_PRESS),
+						  *wmHeliumize = InputManager::createAction(
+							heliumize, *wiimote, WII_C_BUTTON, BEHAVIOR_DETECT_PRESS),
+						  *wmGrowSpikes = InputManager::createAction(
+							growSpikes, *wiimote, WII_B_BUTTON, BEHAVIOR_DETECT_PRESS);
+			// Create pointers to Keyboard actions
+			//************NORMAL DIRECTIONS/MOVEMENTS*************//
+			Input::Action *kbGrow = InputManager::createAction(
+							kbGrow, *keyboard, KEY_1, BEHAVIOR_DETECT_PRESS),
+						  *kbShrink = InputManager::createAction(
+							kbShrink, *keyboard, KEY_2, BEHAVIOR_DETECT_PRESS),
+						  *kbNormalJump = InputManager::createAction(
+							kbNormalJump, *keyboard, KEY_W, BEHAVIOR_DETECT_PRESS),
+						  *kbBigJump = InputManager::createAction(
+							kbBigJump, *keyboard, KEY_S, BEHAVIOR_DETECT_PRESS),
+						  *kbRightMomentum = InputManager::createAction(
+							kbRightMomentum, *keyboard, KEY_E, BEHAVIOR_DETECT_PRESS),
+						  *kbLeftMomentum = InputManager::createAction(
+							kbLeftMomentum, *keyboard, KEY_Q, BEHAVIOR_DETECT_PRESS),
+						  *kbHarden = InputManager::createAction(
+							kbHarden, *keyboard, KEY_3, BEHAVIOR_DETECT_PRESS),
+						  *kbHeliumize = InputManager::createAction(
+							kbHeliumize, *keyboard, KEY_4, BEHAVIOR_DETECT_PRESS),
+						  *kbGrowSpikes = InputManager::createAction(
+							kbGrowSpikes, *keyboard, KEY_SPACE, BEHAVIOR_DETECT_PRESS);
+			
 	// Public methods and variables
 	public:
 			// Takes input and passes required action to Ball class
-			/**** Do we have an input class? ****/
-			void passInput(Input input);
-			// Constructor
-			/**** Do I need one of these? ****/
+			void passInput();
 			// Draws the User Interface
 			void drawUI();
 			// Updates the User Interface
