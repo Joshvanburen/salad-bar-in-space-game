@@ -14,6 +14,16 @@ void MessageCallback(const asSMessageInfo *msg, void *param)
 	std::cout << msg->section << " (" << msg->row << ", " << msg->col << ") : " << type << " : " << msg->message << "\n";
 }
 
+Scripting::MaterialCollisionFunction::MaterialCollisionFunction(){
+	this->m_Signature = "void collide()";
+}
+
+void Scripting::MaterialCollisionFunction::callFunction() {
+
+	ScriptFunction::callFunction();
+
+}
+
 Scripting::ScriptFunction::ScriptFunction() : m_ID(-1), m_pContext(NULL){
 	 m_Signature = "void main()";
 }
@@ -71,7 +81,7 @@ Scripting::ScriptFunction::ScriptFunction(const ScriptFunction& rhs){
 
 
 
-Scripting::Script::Script(const std::string& sName, const std::string& sFilename) : m_pContext(NULL){
+Scripting::Script::Script(const std::string& sName, const std::string& sFilename) : loaded(false), m_pContext(NULL){
 	m_Name = sName;
 	m_Filename = sFilename;
 }
@@ -81,70 +91,76 @@ Scripting::Script::~Script(){
 }
 
 int Scripting::Script::load(){
-	FILE					*stream = NULL;
-	std::string				txt;
-	int						size = 0;
+	if (!loaded){
 
-	txt.clear();
+		FILE					*stream = NULL;
+		std::string				txt;
+		int						size = 0;
 
-	stream = fopen(m_Filename.c_str(), "rb");
-	if (!stream)
-	{
-		throw Scripting::ScriptLoadingFailure();
-	}
+		txt.clear();
 
-	fseek(stream, 0, SEEK_END);
-	size = (int)ftell(stream);
-	fseek(stream, 0, SEEK_SET);
+		stream = fopen(m_Filename.c_str(), "rb");
+		if (!stream)
+		{
+			throw Scripting::ScriptLoadingFailure();
+		}
 
-	txt.resize(size);
+		fseek(stream, 0, SEEK_END);
+		size = (int)ftell(stream);
+		fseek(stream, 0, SEEK_SET);
 
-	fread(&txt[0], size, 1, stream);
-	fclose(stream);
-	stream = NULL;
+		txt.resize(size);
 
-	if (ScriptManager::getEngine()->AddScriptSection(m_Filename.c_str(), m_Name.c_str(), &txt[0], size, 0) < 0)
-	{
-		throw Scripting::ScriptLoadingFailure();
+		fread(&txt[0], size, 1, stream);
+		fclose(stream);
+		stream = NULL;
 
-	}
+		if (ScriptManager::getEngine()->AddScriptSection(m_Filename.c_str(), m_Name.c_str(), &txt[0], size, 0) < 0)
+		{
+			throw Scripting::ScriptLoadingFailure();
 
-	if (ScriptManager::getEngine()->Build(m_Filename.c_str()) < 0)
-	{
-		throw Scripting::ScriptLoadingFailure();
+		}
+
+		if (ScriptManager::getEngine()->Build(m_Filename.c_str()) < 0)
+		{
+			throw Scripting::ScriptLoadingFailure();
+			
+		}
+
+		m_pContext = ScriptManager::getEngine()->CreateContext();
+
+		if (!m_pContext)
+		{
+			throw Scripting::ScriptLoadingFailure();
 		
+		}
 	}
-
-	m_pContext = ScriptManager::getEngine()->CreateContext();
-
-	if (!m_pContext)
-	{
-		throw Scripting::ScriptLoadingFailure();
-	
-	}
-
+	loaded = true;
 	return 0;
 }
 
 void Scripting::Script::unload(){
 	
-	Scripting::StrFunctionMap::iterator functionItrEnd = m_FunctionMap.end();
+	if (loaded){
+		Scripting::StrFunctionMap::iterator functionItrEnd = m_FunctionMap.end();
 
-	for (m_FunctionItr = m_FunctionMap.begin(); m_FunctionItr != functionItrEnd; ++m_FunctionItr){
-		delete m_FunctionItr->second;
+		for (m_FunctionItr = m_FunctionMap.begin(); m_FunctionItr != functionItrEnd; ++m_FunctionItr){
+			delete m_FunctionItr->second;
+		}
+
+		m_FunctionMap.clear();
+
+		ScriptManager::getEngine()->Discard(m_Filename.c_str());
+
+		if (m_pContext){
+			this->m_pContext->Release();
+			m_pContext = NULL;
+		}
 	}
-
-	m_FunctionMap.clear();
-
-	ScriptManager::getEngine()->Discard(m_Filename.c_str());
-
-	if (m_pContext){
-		this->m_pContext->Release();
-		m_pContext = NULL;
-	}
+	loaded = false;
 }
 
-Scripting::ScriptFunction& Scripting::Script::addFunction(const std::string& name){
+Scripting::ScriptFunction* Scripting::Script::addFunction(const std::string& name){
 
 	m_FunctionItr = m_FunctionMap.find(name);
 
@@ -153,8 +169,7 @@ Scripting::ScriptFunction& Scripting::Script::addFunction(const std::string& nam
 		function->m_pContext = this->m_pContext;
 		function->m_ID = ScriptManager::getEngine()->GetFunctionIDByDecl(m_Filename.c_str(), function->m_Signature.c_str());
 		m_FunctionMap.insert(std::make_pair(name,function));
-		
-		return *function;
+		return function;
 	}
 	else{
 		throw FunctionAlreadyRegistered();
@@ -175,7 +190,7 @@ void Scripting::Script::removeFunction(const std::string& name){
 	m_FunctionMap.erase(m_FunctionItr);
 }
 
-Scripting::ScriptFunction& Scripting::Script::getFunction(const std::string& name){
+Scripting::ScriptFunction* Scripting::Script::getFunction(const std::string& name){
 	m_FunctionItr = m_FunctionMap.find(name);
 
 	//If the function wasn't found, throw exception
@@ -183,7 +198,7 @@ Scripting::ScriptFunction& Scripting::Script::getFunction(const std::string& nam
 		throw Scripting::FunctionDoesntExist();
 	}
 
-	return *((*m_FunctionItr).second);
+	return ((*m_FunctionItr).second);
 }
 
 

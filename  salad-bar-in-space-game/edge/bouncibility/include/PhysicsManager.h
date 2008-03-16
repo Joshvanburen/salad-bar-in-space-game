@@ -13,7 +13,9 @@ namespace irr{
 		class IMaterialPairAndContact;
 	};
 };
-class SomethingForScripts;;
+namespace Scripting{
+	class ScriptFunction;
+};
 
 class PhysicsManager;
 
@@ -24,7 +26,7 @@ namespace Physics{
 
 	typedef std::map<std::string, WorldEntityCollisionCallback*> StrCollisionCallbackMap;
 
-	typedef std::set<SomethingForScripts*> ScriptList;
+	typedef std::set<Scripting::ScriptFunction*> ScriptList;
 	
 	//! Thrown if there is an attempt to add a script handler twice.
 	class DuplicateScript { };
@@ -43,7 +45,7 @@ namespace Physics{
 		ScriptList m_CollisionHandlerScripts;
 
 		WorldEntityCollisionCallback(const std::string& m_Material1, const std::string& material2);
-		WorldEntityCollisionCallback(const std::string& m_Material1, const std::string& material2, SomethingForScripts* script);
+		WorldEntityCollisionCallback(const std::string& m_Material1, const std::string& material2, Scripting::ScriptFunction* scriptFunction);
 		~WorldEntityCollisionCallback();
 		WorldEntityCollisionCallback(const WorldEntityCollisionCallback& rhs);
 		WorldEntityCollisionCallback& operator=(const WorldEntityCollisionCallback& rhs);			
@@ -57,7 +59,7 @@ namespace Physics{
 		//! This is where any information about which points contacted needs to be saved.
 		int  ContactProcess (irr::newton::IMaterialPairAndContact *material_pair_and_contact);
 
-		void addHandler(SomethingForScripts* script);
+		void addHandler(Scripting::ScriptFunction* scriptFunction);
 	};
 	//! Thrown if an material was assumed to have existed but was not found. 
 	class MaterialDoesntExist {  };
@@ -101,7 +103,7 @@ public:
 	bool addNewDefinitions(const std::string& XMLMaterialDefinition);
 
 	//! The given script will be called whenever a collision occurs between the two materials.  The colliding WorldEntities will be sent to the script as arguments.
-	bool addObserver(SomethingForScripts* script, const std::string& material1, const std::string& material2);
+	bool addObserver(Scripting::ScriptFunction* scriptFunction, const std::string& material1, const std::string& material2);
 
 	//! Get to the current value for gravity
 	float getGravity() const{
