@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\angelscript\include"
+				AdditionalIncludeDirectories=".\angelscript\include;&quot;C:\Users\chase\Desktop\CSCE552\New Folder\edge\bouncibility\third_party\irrxml\include&quot;"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -58,8 +58,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="angelscriptd.lib"
-				AdditionalLibraryDirectories=".\angelscript\lib"
+				AdditionalDependencies="angelscriptd.lib irrxml.lib"
+				AdditionalLibraryDirectories=".\angelscript\lib;&quot;C:\Users\chase\Desktop\CSCE552\New Folder\edge\bouncibility\third_party\irrxml\lib&quot;"
 				GenerateDebugInformation="true"
 				TargetMachine="1"
 			/>
@@ -166,6 +166,10 @@
 			>
 			<File
 				RelativePath=".\ScriptManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\scriptstring.cpp"
 				>
 			</File>
 		</Filter>

@@ -7,26 +7,33 @@
 
 class ScriptManager;
 //!namespace containing all Script related structures used by the ScriptManager.
-namespace Script{
+namespace Scripting{
 
 	class ScriptRegistrationException{};
+	class ScriptLoadingFailure{};
+	class ScriptDoesntExist{};
+	class FunctionDoesntExist{};
+	class FunctionAlreadyRegistered{};
 
-
-
+	//! Encapsulates a function that can be called inside an AngelScript script.  
 	class ScriptFunction{
 		friend class Script;
+		friend class ::ScriptManager;
 	protected:
-		std::string m_Signature;
-		int m_ID;
-		asIScriptContext* m_pContext;
+
+		std::string m_Signature; //!< Signature of the function inside the script. Assumed to be initialized by a child constructor.
+		int m_ID; //!< ID assigned to this function by AngelScript.
+		asIScriptContext* m_pContext; //!< Context to call this script in.  Used to load variables on the stack and suspend or abort scripts.
 		
-		virtual void prepare() = 0;
-
-		ScriptFunction(const ScriptFunction& rhs);
-		ScriptFunction& operator=(const ScriptFunction& rhs);
+		ScriptFunction(const ScriptFunction& rhs); //!< ScriptManager instantiates a copy of a ScriptFunction every time create is called.  These must be implemented by any subclass that requires data to be copied.
+		ScriptFunction& operator=(const ScriptFunction& rhs); //!< ScriptManager instantiates a copy of a ScriptFunction every time create is called.  These must be implemented by any subclass that requires data to be copied.
+		
+		virtual void execute(); //!< Executes this function.  Prepares the script to call this function if it hasn't already.
+	
 	public:
-
-		virtual void execute();
+		
+		virtual void callFunction();  //!< Should prepare arguments, etc.  Then call execute.
+		
 
 		ScriptFunction();
 		virtual ~ScriptFunction();
@@ -34,55 +41,69 @@ namespace Script{
 	};
 	typedef std::map<std::string, ScriptFunction*> StrFunctionMap;
 
+	//! Class encapsulating a script.  A Script can have any number of functions.  A Script object must be loaded before it can be used.
 	class Script{
 		friend class ::ScriptManager;
 	private:
-		std::string m_Name;
-		std::string m_Filename;
+		std::string m_Name;	//!< The name of this Script object.  Used when building contexts.  Should be unique to this script file.
+		std::string m_Filename; //!< The filename of this script.
 
-		StrFunctionMap m_FunctionMap;
+		Scripting::StrFunctionMap m_FunctionMap;
 
-		StrFunctionMap::iterator m_FunctionMapItr;
+		Scripting::StrFunctionMap::iterator m_FunctionItr;
 
-		asIScriptContext* m_pContext;
+		asIScriptContext* m_pContext; //!< The context for this Script.  Everything relating to this script is loaded in this context object.
 		
-		Script(const std::string& sName);
+		Script(const std::string& sName, const std::string& sFilename);  
 		~Script();
 		Script(const Script& rhs);
 		Script& operator=(const Script& rhs);
 
-		int load();
+		int load(); //!< Loads the script from memory, compiles and builds it.  Stores it until told to unload it.
 
-		void unload();
+		void unload(); //!< Unloads the stored script from memory.
 
 	public:
-		void addFunction(const std::string& name, ScriptFunction*);
-		void removeFunction(const std::string& name);
-		ScriptFunction& getFunction(const std::string& name);
+		ScriptFunction& addFunction(const std::string& name); //!< Add a function that is capable of being called for this Script.
+		void removeFunction(const std::string& name); //!< Remove a function that can be called for this Script.
+		ScriptFunction& getFunction(const std::string& name); //!< Retrieves a handle to a function that can be called for this Script given a string name.
 	};
 
 	typedef std::map<std::string, Script*> StrScriptMap; 
 	typedef std::list<Script*> ScriptList; 
 };
-//! InputManager encapsulates all workings of the InputSystem.
-/*! Currently the InputManager only uses DirectInput.  In the future the Input API used might be decoupled from the InputManager.  But at the present time,
-* there are very few other options besides DirectInput.
+//! ScriptManager encapsulates all workings of the Script system.
+/*! ScriptManager holds a mapping between string script names and filenames.  When it is told to load a certain script, it loads it into memory.  
+* Users can then access the script by name.  Assuming it has been loaded, users can add ScriptFunction classes to the Script.
+* These tell the Script object which functions it can call in the loaded script.  A user uses the ScriptFunction object to call the script function.
+* During level loading, the script manager is told which scripts will be used.  These are loaded in.  
 */
 class ScriptManager :
 	public CSingleton<ScriptManager>{
 
 	friend class ::asIScriptEngine;
+	friend class Scripting::Script;
 private:
-	
-	asIScriptEngine *engine;
 
-	Script::StrScriptMap m_ScriptMap; //!< Maps Strings to Scripts.
+	std::string m_ScriptDefinition;
+	
+	static asIScriptEngine *s_Engine; //!< A pointer to the scripting engine.
+
+	Scripting::StrScriptMap m_ScriptMap; //!< Maps Strings to Scripts.
+
+	Scripting::StrFunctionMap m_FunctionMap;
+
+	Scripting::StrFunctionMap::iterator m_FunctionItr;
 
 	//Script::ScriptList m_ExecutionQueue; //!< List of scripts to be executed.
 
 	//Script::ScriptList::iterator m_ExecutionQueueItr; //!< Iterator for the execution queue.
 
-	Script::StrScriptMap::iterator m_ScriptItr; //!< An iterator for the String Script map
+	Scripting::StrScriptMap::iterator m_ScriptItr; //!< An iterator for the String Script map
+
+	bool readInXML(const std::string& XMLScriptDefinition); //!< Helper method for reading in Script definitions.
+
+	Scripting::ScriptFunction* createScriptFunction(const std::string& name); //!< Retreives a new copy of the script type specified by the string name
 
 	ScriptManager();
 	~ScriptManager();
@@ -92,26 +113,43 @@ private:
 public:
 	friend CSingleton<ScriptManager>;
 
-	bool init(const std::string& XMLScriptDefinition); //!< Initialize the scripting system. Maps script names to filenames.
+	bool init(); //!< Initialize the scripting system. Maps script names to filenames.
 
 	bool addNewDefinitions(const std::string& XMLScriptDefinition);  //Adds additional script names to filenames.
 
-	void shutdown();  //!< shutdown any resources used by the ScriptManager.
+	void shutdown();  //!< shutdown any resources used by the ScriptManager. Unloads all loaded scripts. Clears string to script filename map. 
 
-	Script::Script& loadScript(); //!< Tells the ScriptManager that this script will be needed soon. Returns a handle to the encompassing Script object.  Should check if this script is loaded already, if it is, send handle back, increasing reference count?. 
+	Scripting::Script& loadScript(const std::string& name); //!< Tells the script manager that the script with the given name should be loaded in.
 
+	Scripting::Script& getScript(const std::string& name); //!< Retrieve a handle to the script with the given name
 	void unloadScript(const std::string& name); //!< Tells the ScriptManager that this Script is no longer needed, so it can be unloaded.
 
 	void unloadAll(); //!< Unloads all scripts in the system.  Useful between levels.
 
+	void removeScript(const std::string& name);
+
 	void reset(); //!< Unloads all script definitions except global, as if init had just been called.
 
-	void update(); //!< Executes all scripts in the execution queue.  Gives scripts in the front of the list more execution time.  Suspends scripts when allotted time expires.
+	void update(); //!< Not currently used. Executes all scripts in the execution queue.  Gives scripts in the front of the list more execution time.  Suspends scripts when allotted time expires.
 	
-	void registerObject(const std::string&, int size, ::asDWORD flags = 0);
+	void registerScriptFunction(const std::string& name, Scripting::ScriptFunction* function); //!< Registers a function with the ScriptManager.  It will manage the deletion of the ScriptFunction when it is done.
 
-	void registerObjectMethod(std::string obj, std::string declaration, ::asUPtr fnPtr);
-	//Need some way to register class information cleanly
+	void removeScriptFunction(const std::string& name); //!< Removes a registered script function.
+
+	void removeAllScriptFunctions(); //!< Remomve all script functions.
+
+
+	void registerObject(const std::string&, int size = 0, ::asDWORD flags = 0); //!< Registers a class name for the scripting system to access.  
+
+	void registerObjectMethod(std::string obj, std::string declaration, ::asUPtr fnPtr);  //!< Registers a method with an already registered class name.
+
+	void registerAsGlobal( const std::string declaration, void* ptr );
+
+	void registerAsGlobal(const std::string declaration, ::asUPtr fnPtr);
+
+	static ::asIScriptEngine* getEngine(){
+		return s_Engine;
+	}
 };
 
 
