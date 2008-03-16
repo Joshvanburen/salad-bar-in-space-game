@@ -356,7 +356,7 @@ char Input::Keyboard::keyToChar(int key){
 
 	};
 
-	if (receiver->keyPressed(Input::Keyboard::KEY_LSHIFT) || receiver->keyPressed(Input::Keyboard::KEY_RSHIFT)){
+	if (receiver->keyPressed((char)Input::Keyboard::KEY_LSHIFT) || receiver->keyPressed((char)Input::Keyboard::KEY_RSHIFT)){
 		output = toupper(output);
 	}
 	if(output != ' ' || receiver->keyPressed(Input::Keyboard::KEY_SPACE)){

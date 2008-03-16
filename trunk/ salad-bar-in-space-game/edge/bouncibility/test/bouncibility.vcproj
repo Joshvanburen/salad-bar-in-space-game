@@ -40,12 +40,12 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\include;..\third_party\irrxml\include;&quot;..\third_party\wiiuse-v0.10\src&quot;;..\third_party\irrnewt\include;..\third_party\newton\sdk;..\third_party\irrlicht\include;..\third_party\irrklang\include"
+				AdditionalIncludeDirectories="..\include;..\third_party\irrxml\include;&quot;..\third_party\wiiuse-v0.10\src&quot;;..\third_party\irrnewt\include;..\third_party\newton\sdk;..\third_party\irrlicht\include;..\third_party\irrklang\include;..\third_party\angelscript\include"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				WarningLevel="3"
-				DebugInformationFormat="0"
+				DebugInformationFormat="3"
 				CompileAs="0"
 			/>
 			<Tool
@@ -59,10 +59,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="irrlicht.lib irrklang.lib wiiuse.lib irrxml.lib newton.lib irrnewt.lib"
+				AdditionalDependencies="irrlicht.lib irrklang.lib wiiuse.lib irrxml.lib newton.lib irrnewt.lib angelscriptd.lib"
 				OutputFile="..\bin\Demo.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\lib;&quot;..\third_party\wiiuse-v0.10\lib&quot;;..\third_party\irrxml\lib;..\third_party\newton\sdk\dll;..\third_party\irrnewt\lib;..\third_party\irrklang\lib;..\third_party\irrlicht\lib"
+				AdditionalLibraryDirectories="..\lib;&quot;..\third_party\wiiuse-v0.10\lib&quot;;..\third_party\irrxml\lib;..\third_party\newton\sdk\dll;..\third_party\irrnewt\lib;..\third_party\irrklang\lib;..\third_party\irrlicht\lib;..\third_party\angelscript\lib"
 				GenerateDebugInformation="true"
 				SubSystem="0"
 				RandomizedBaseAddress="1"
@@ -200,6 +200,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\ScriptManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\scriptstring.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\src\WorldEntity.cpp"
 				>
 			</File>
@@ -239,6 +247,10 @@
 			</File>
 			<File
 				RelativePath="..\include\PhysicsManager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\ScriptManager.h"
 				>
 			</File>
 			<File
