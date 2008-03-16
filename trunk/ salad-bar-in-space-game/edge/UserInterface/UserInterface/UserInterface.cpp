@@ -31,7 +31,7 @@ class UserInterface
 	//singletonPtr = InputManager::getSingletonptr();
 	
 	// Takes input and passes required action to Ball class
-	public void passInput() {
+	void passInput() {
 		// Detect press and call corresponding methods in ball class
 		/*** Not sure if 1 is value for pressed state, or if this is
 		 *** how I should be implementing this 
@@ -97,35 +97,35 @@ class UserInterface
 	}
 
 	// Draws the User Interface
-	public void drawUI() {
+	void drawUI() {
 		// Not sure what to put here
 	}
 	// Updates the User Interface
-	public void updateUI() {
+	void updateUI() {
 		// Not sure what to put here
 	}
 	// Gets the current score
-	public int getScore() {
+	int getScore() {
 		return playerScore;
 	}
 	// Sets the score
-	public void setScore(int pScore) {
+	void setScore(int pScore) {
 		playerScore = pScore;
 	}
 	// Gets the current number of lives
-	public int getLives() {
+	int getLives() {
 		return playerLives;
 	}
 	// Sets the number of lives
-	public void setLives(int pLives) {
+	void setLives(int pLives) {
 		playerLives = pLives;
 	}
 	// Gets the player name
-	public int getPlayerName() {
+	int getPlayerName() {
 		return playerName;
 	}
 	// Sets the player name
-	public void setPlayerName(int pName) {
+	void setPlayerName(int pName) {
 		playerName = pName;
 	}
 }
