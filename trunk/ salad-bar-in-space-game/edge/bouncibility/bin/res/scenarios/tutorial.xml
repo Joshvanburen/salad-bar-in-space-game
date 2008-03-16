@@ -1,5 +1,7 @@
 <scenario>
-	<entities file="res/entities/tutorial.xml" />
+  <!--Scripts should come first because the rest may define scripts.-->
+  <scripts file="res/scripting/tutorial1.xml" />
+  <entities file="res/entities/tutorial.xml" />
   <level file="res/levels/tutorial1.xml" />
   <physics file="res/physics/tutorial.xml" />
 </scenario>

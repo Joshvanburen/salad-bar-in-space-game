@@ -1,6 +1,7 @@
 #include "Common.h"
 #include "irrXML.h"	
 #include "irrlicht.h"
+#include "ScriptManager.h"
 #include "LevelManager.h"
 #include "irrnewt.hpp"
 #include "WorldEntity.h"
@@ -20,8 +21,8 @@ Physics::WorldEntityCollisionCallback::WorldEntityCollisionCallback(const std::s
 
 }
 
-Physics::WorldEntityCollisionCallback::WorldEntityCollisionCallback(const std::string& material1, const std::string& material2, SomethingForScripts* script) : IMaterialCollisionCallback(), entity1(NULL), entity2(NULL), m_Material1(material1), m_Material2(material2){
-	m_CollisionHandlerScripts.insert(script);
+Physics::WorldEntityCollisionCallback::WorldEntityCollisionCallback(const std::string& material1, const std::string& material2, Scripting::ScriptFunction* scriptFunction) : IMaterialCollisionCallback(), entity1(NULL), entity2(NULL), m_Material1(material1), m_Material2(material2){
+	m_CollisionHandlerScripts.insert(scriptFunction);
 }
 
 Physics::WorldEntityCollisionCallback::~WorldEntityCollisionCallback(){
@@ -33,6 +34,7 @@ void Physics::WorldEntityCollisionCallback::ContactEnd(irr::newton::IMaterialPai
 	Physics::ScriptList::iterator scriptItr;
 
 	for (scriptItr = m_CollisionHandlerScripts.begin(); scriptItr != scriptItrEnd; ++scriptItr){
+		(*scriptItr)->callFunction();
 		//Call the script collision function with entity1 and entity2 pointers.
 	}
 }
@@ -55,17 +57,17 @@ int  Physics::WorldEntityCollisionCallback::ContactProcess (irr::newton::IMateri
 	return 1;
 
 }
-void Physics::WorldEntityCollisionCallback::addHandler(SomethingForScripts* script){
+void Physics::WorldEntityCollisionCallback::addHandler(Scripting::ScriptFunction* scriptFunction){
 	Physics::ScriptList::iterator scriptItrEnd = m_CollisionHandlerScripts.end();
 	Physics::ScriptList::iterator scriptItr;
 
-	scriptItr = m_CollisionHandlerScripts.find(script);
+	scriptItr = m_CollisionHandlerScripts.find(scriptFunction);
 
 	if (scriptItr != scriptItrEnd){
 		throw DuplicateScript();
 	}
 
-	m_CollisionHandlerScripts.insert(script);
+	m_CollisionHandlerScripts.insert(scriptFunction);
 }
 
 
@@ -121,6 +123,12 @@ PhysicsManager::~PhysicsManager(){
 bool PhysicsManager::init(irr::IrrlichtDevice* device){
 	m_Device = device;
 	m_World = irr::newton::createPhysicsWorld(device);
+
+	
+
+	Scripting::MaterialCollisionFunction* script_function = new Scripting::MaterialCollisionFunction();
+
+	ScriptManager::getSingleton().registerScriptFunction("material_collision", script_function);
 
 	m_MaterialDefinition = "./res/physics/global.xml";
 
@@ -187,10 +195,14 @@ bool PhysicsManager::readInXML(const std::string& XMLMaterialDefinition){
 				material1 = xml->getAttributeValue("material1");
 				material2 = xml->getAttributeValue("material2");
 				scriptName = xml->getAttributeValue("script");
-				//TODO
-				//Create script pointer here, perhaps from scriptmanager
-				//Add this script as an observer to a collision of these materials.
-				//this->addObserver(scriptpointer, material1, material2);
+
+				Scripting::Script& script = ScriptManager::getSingleton().getScript(scriptName);
+				if (!script.isLoaded()){
+					script.load();
+				}
+				Scripting::ScriptFunction* callbackFunction = script.addFunction("material_collision");
+				
+				this->addObserver(callbackFunction, material1, material2);
 			}
 			break;
 		}
@@ -206,7 +218,7 @@ bool PhysicsManager::addNewDefinitions(const std::string& XMLMaterialDefinition)
 
 }
 
-bool PhysicsManager::addObserver(SomethingForScripts* script, const std::string& material1, const std::string& material2){
+bool PhysicsManager::addObserver(Scripting::ScriptFunction* scriptFunction, const std::string& material1, const std::string& material2){
 
 	std::string key;
 	if (material1.compare(material2) <= 0){
@@ -220,7 +232,7 @@ bool PhysicsManager::addObserver(SomethingForScripts* script, const std::string&
 	m_CallbackItr = m_CallbackMap.find(key);
 	//If the Entity wasn't found, add new entry.
 	if (m_CallbackItr == m_CallbackMap.end()){
-		Physics::WorldEntityCollisionCallback* callback = new Physics::WorldEntityCollisionCallback(material1, material2, script);
+		Physics::WorldEntityCollisionCallback* callback = new Physics::WorldEntityCollisionCallback(material1, material2, scriptFunction);
 		irr::newton::IMaterial* material = this->getMaterial(material1);
 		irr::newton::IMaterial* second_material = this->getMaterial(material2);
 		material->setCollisionCallback(second_material, callback);
@@ -228,7 +240,7 @@ bool PhysicsManager::addObserver(SomethingForScripts* script, const std::string&
 
 	}
 	else{
-		(*m_CallbackItr).second->addHandler(script);
+		(*m_CallbackItr).second->addHandler(scriptFunction);
 	}
 	return true;
 }

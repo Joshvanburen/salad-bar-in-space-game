@@ -56,8 +56,6 @@ std::ostream& operator << (std::ostream& os, const Level& level){
 bool Level::load(const std::string& LevelDefinition)
 {
 	LevelManager::getSingleton().getSceneManager()->clear();
-
-	std::cout << "loading xml file for a level " << LevelDefinition << "\n";
 	irr::io::IrrXMLReader* xml = irr::io::createIrrXMLReader(LevelDefinition.c_str());
 
 	// strings for storing the data we want to get out of the file
@@ -92,14 +90,11 @@ bool Level::load(const std::string& LevelDefinition)
 				entityStartState = xml->getAttributeValue("startstate");
 				entityX = xml->getAttributeValueAsInt("xloc");
 				entityY = xml->getAttributeValueAsInt("yloc");
-				std::cout << "loaded in entity attributes for entity " << entityName << "\n";
 
 				WorldEntity& entity = EntityManager::getSingleton().createEntity(entityName);
 
-				std::cout << "created entity\n";
 				entity.setLocation((float)entityX, (float)entityY, 0);
 				entity.changeState(entityStartState);
-				std::cout << "changed state\n";
 				m_WorldEntities.push_back(&entity);
 
 				//WorldEntity is assumed to have been added to the sceneManager by this point by its corresponding factory.

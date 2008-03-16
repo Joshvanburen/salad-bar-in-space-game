@@ -6,6 +6,7 @@
 #include "Common.h"
 #include "EntityManager.h"
 #include "InputManager.h"
+#include "ScriptManager.h"
 #include "irrnewt.hpp"
 #include "PhysicsManager.h"
 #include "LevelManager.h"
@@ -28,22 +29,35 @@ using namespace irr::video;
 using namespace irr::gui;
 
 
+void PrintString(){
+
+	std::cout << "hello";
+
+}
 irr::scene::ISceneManager* smgr;
 irr::IrrlichtDevice *device;
 
 bool init(){
+
+	ScriptManager::getSingleton().init();
+
+	ScriptManager::getSingleton().registerAsGlobal("void PrintString()", ::asFUNCTION(PrintString));
 	InputManager::getSingleton().init();
-	device = irr::createDevice( irr::video::EDT_OPENGL, irr::core::dimension2d<irr::s32>(1024, 768), 16,
-		true, false, false, InputManager::getSingleton().getEventReceiver());
+
+	device = irr::createDevice( irr::video::EDT_DIRECT3D9, irr::core::dimension2d<irr::s32>(1024, 768), 16,
+		false, false, false, InputManager::getSingleton().getEventReceiver());
 
 	smgr = device->getSceneManager();
 
-	
+	//PhysicsManager must be initialized before LevelManager because Entity initialization requires physics.
 	PhysicsManager::getSingleton().init(device);
+
 
 	LevelManager::getSingleton().init(device, "./res/scenarios/tutorial.xml");
 
 	LevelManager::getSingleton().startGame();
+
+
 
 	return true;
 }
@@ -152,8 +166,11 @@ int main()
 	http://irrlicht.sourceforge.net//docu/classirr_1_1IUnknown.html#a3
 	for more information.
 	*/
+
 	InputManager::getSingleton().shutdown();
 	LevelManager::getSingleton().shutdown();
+	PhysicsManager::getSingleton().shutdown();
+	ScriptManager::getSingleton().shutdown();
 	device->drop();
 
 	return 0;

@@ -39,12 +39,23 @@ namespace Scripting{
 		virtual ~ScriptFunction();
 
 	};
+
+	class MaterialCollisionFunction : public ScriptFunction {
+		
+	public:
+
+		void callFunction();
+
+		MaterialCollisionFunction();
+	};
+
 	typedef std::map<std::string, ScriptFunction*> StrFunctionMap;
 
 	//! Class encapsulating a script.  A Script can have any number of functions.  A Script object must be loaded before it can be used.
 	class Script{
 		friend class ::ScriptManager;
 	private:
+		bool loaded;
 		std::string m_Name;	//!< The name of this Script object.  Used when building contexts.  Should be unique to this script file.
 		std::string m_Filename; //!< The filename of this script.
 
@@ -59,14 +70,19 @@ namespace Scripting{
 		Script(const Script& rhs);
 		Script& operator=(const Script& rhs);
 
-		int load(); //!< Loads the script from memory, compiles and builds it.  Stores it until told to unload it.
 
 		void unload(); //!< Unloads the stored script from memory.
 
 	public:
-		ScriptFunction& addFunction(const std::string& name); //!< Add a function that is capable of being called for this Script.
+		//! Tells the caller whether this script has been loaded yet or not.
+		bool isLoaded(){
+			return loaded;
+		}
+		int load(); //!< Loads the script from memory, compiles and builds it.  Stores it until told to unload it.
+
+		ScriptFunction* addFunction(const std::string& name); //!< Add a function that is capable of being called for this Script.
 		void removeFunction(const std::string& name); //!< Remove a function that can be called for this Script.
-		ScriptFunction& getFunction(const std::string& name); //!< Retrieves a handle to a function that can be called for this Script given a string name.
+		ScriptFunction* getFunction(const std::string& name); //!< Retrieves a handle to a function that can be called for this Script given a string name.
 	};
 
 	typedef std::map<std::string, Script*> StrScriptMap; 

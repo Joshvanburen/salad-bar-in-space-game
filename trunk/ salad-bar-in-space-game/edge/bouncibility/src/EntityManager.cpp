@@ -4,6 +4,7 @@
 #include ".\EntityManager.h"
 #include "LevelManager.h"
 #include "irrnewt.hpp"
+#include "ScriptManager.h"
 #include "PhysicsManager.h"
 #include "ball.h"
 #include "WorldEntity.h"
@@ -14,7 +15,6 @@ using namespace io;
 
 WorldEntity& Entity::BallFactory::loadEntity(const std::string& XMLFilename){
 
-	std::cout << "in ball factory opening xml file " << XMLFilename << "\n";
 
 	irr::io::IrrXMLReader* xml = irr::io::createIrrXMLReader(XMLFilename.c_str());
 
@@ -23,6 +23,7 @@ WorldEntity& Entity::BallFactory::loadEntity(const std::string& XMLFilename){
 	std::string meshFile;
 	std::string textureFile;
 	std::string startState;
+
 	int physics_enabled = 0;
 	int gravity_enabled = 0;
 	std::string materialName;
@@ -59,7 +60,7 @@ WorldEntity& Entity::BallFactory::loadEntity(const std::string& XMLFilename){
 				entity->setMesh(NULL);
 
 				entity->setSceneNode(node);
-
+				node->setMaterialTexture(0,LevelManager::getSingleton().getDriver()->getTexture(textureFile.c_str()));
 				if (physics_enabled){
 					gravity_enabled = xml->getAttributeValueAsInt("enable_gravity");
 					materialName = xml->getAttributeValue("material");
@@ -149,8 +150,7 @@ Entity::EntityFactory* Entity::Loader::getFactory(const std::string& type){
 
 
 WorldEntity& Entity::Loader::loadEntity(EntityInfo* entityInfo){
-	std::cout << "calling factory for " << entityInfo->m_Name << " with xml file " << entityInfo->m_XMLFile << "\n";
-	std::cout.flush();
+
 	return entityInfo->mp_Factory->loadEntity(entityInfo->m_XMLFile);
 }
 
@@ -206,6 +206,7 @@ bool EntityManager::addNewDefinitions(const std::string& XMLEntityDefinition){
 	std::string name;
 	std::string xmlFile;
 	std::string type;
+	std::string script;
 
 	while(xml && xml->read())
 	{
@@ -243,7 +244,6 @@ bool EntityManager::addNewDefinitions(const std::string& XMLEntityDefinition){
 }
 
 bool EntityManager::init(const std::string& XMLEntityDefinition){
-	std::cout << "loading xml file with name " << XMLEntityDefinition << "\n";
 	//Should register all the factories to each type here!!!!
 
 	this->m_Loader.registerFactory("ball", new Entity::BallFactory());
@@ -257,6 +257,7 @@ bool EntityManager::init(const std::string& XMLEntityDefinition){
 	std::string name;
 	std::string xmlFile;
 	std::string type;
+	std::string script;
 
 	while(xml && xml->read())
 	{
@@ -272,13 +273,17 @@ bool EntityManager::init(const std::string& XMLEntityDefinition){
 				if (factory){
 					Entity::EntityInfo* entityInfo = new Entity::EntityInfo(xml->getAttributeValue("name"), xml->getAttributeValue("file"), factory);
 					if ((m_EntityMap.insert(make_pair(std::string(xml->getAttributeValue("name")), entityInfo))).second){
-						std::cout << "added entity with name " << std::string(xml->getAttributeValue("name")) << "\n";
-
+						if (xml->getAttributeValue("script")){
+							std::cout << "loading script.\n";
+							script = xml->getAttributeValue("script");
+							ScriptManager::getSingleton().loadScript(script);
 						}
-						else{
-							m_EntityMap.clear();
-							return false;
+						
 						}
+					else{
+						m_EntityMap.clear();
+						return false;
+					}
 				}
 				else{
 					m_EntityMap.clear();
@@ -313,7 +318,6 @@ void EntityManager::shutdown(){
 
 WorldEntity& EntityManager::createEntity(const std::string name){
 	//Find the Entity in the Str EntityInfo map for this entity name.
-	std::cout << "finding entity with name " << name << "\n";
 	Entity::StrEntityMap::iterator entityItr = m_EntityMap.find(name);
 	//If the Entity wasn't found, return false
 	if(entityItr == m_EntityMap.end()){
