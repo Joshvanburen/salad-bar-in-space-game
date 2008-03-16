@@ -7,8 +7,8 @@
 #include <irrlicht.h>
 #include <iostream>
 #include <vector>
-#include <InputManager>
-#include <ball>
+//#include <InputManager>
+//#include <ball>
 
 // Irrlicht namespaces
 using namespace irr;
@@ -39,31 +39,60 @@ class UserInterface
 		/* Need to handle current state vs new state 
 		 * i.e. become normal if small, become big if normal...
 		 * Should this be done here or in changeState's implementation? 
-		 */	
+		 */
+
+		// WiiMote Controls
 		// Assuming big = correct state name
-		if( *grow.BEHAVIOR_DETECT_PRESS == 1)
+		if( *wmGrow.BEHAVIOR_DETECT_PRESS == 1)
 			ball::changeState(big);
 		// Assuming small = correct state name
-		if( *shrink.BEHAVIOR_DETECT_PRESS == 1)
+		if( *wmShrink.BEHAVIOR_DETECT_PRESS == 1)
 			ball::changeState(small);
 		// Assuming 1 = normal jump
-		if( *normalJump.BEHAVIOR_DETECT_PRESS == 1)
+		if( *wmNormalJump.BEHAVIOR_DETECT_PRESS == 1)
 			ball::jump(1);
 		// Assuming 2 = big jump
-		if( *bigJump.BEHAVIOR_DETECT_PRESS == 1)
+		if( *wmBigJump.BEHAVIOR_DETECT_PRESS == 1)
 			ball::jump(2);
-		if( *rightMomentum.BEHAVIOR_DETECT_PRESS == 1)
+		if( *wmRightMomentum.BEHAVIOR_DETECT_PRESS == 1)
 			ball::changeVelocity(/*Not sure what to put here*/);
-		if( *leftMomentum.BEHAVIOR_DETECT_PRESS == 1)
+		if( *wmLeftMomentum.BEHAVIOR_DETECT_PRESS == 1)
 			ball::changeVelocity(/*Not sure what to put here*/);
 		// Assuming hard = correct state name
-		if( *harden.BEHAVIOR_DETECT_PRESS == 1)
+		if( *wmHarden.BEHAVIOR_DETECT_PRESS == 1)
 			ball::changeState(hard);
 		// Assuming helium  = correct state name
-		if( *heliumize.BEHAVIOR_DETECT_PRESS == 1)
+		if( *wmHeliumize.BEHAVIOR_DETECT_PRESS == 1)
 			ball::changeState(helium);
 		// Assuming spike  = correct state name
-		if( *growSpikes.BEHAVIOR_DETECT_PRESS == 1)
+		if( *wmGrowSpikes.BEHAVIOR_DETECT_PRESS == 1)
+			ball::changeState(spike);
+
+		// Keyboard Controls
+		// Assuming big = correct state name
+		if( *kbGrow.BEHAVIOR_DETECT_PRESS == 1)
+			ball::changeState(big);
+		// Assuming small = correct state name
+		if( *kbShrink.BEHAVIOR_DETECT_PRESS == 1)
+			ball::changeState(small);
+		// Assuming 1 = normal jump
+		if( *kbNormalJump.BEHAVIOR_DETECT_PRESS == 1)
+			ball::jump(1);
+		// Assuming 2 = big jump
+		if( *kbBigJump.BEHAVIOR_DETECT_PRESS == 1)
+			ball::jump(2);
+		if( *kbRightMomentum.BEHAVIOR_DETECT_PRESS == 1)
+			ball::changeVelocity(/*Not sure what to put here*/);
+		if( *kbLeftMomentum.BEHAVIOR_DETECT_PRESS == 1)
+			ball::changeVelocity(/*Not sure what to put here*/);
+		// Assuming hard = correct state name
+		if( *kbHarden.BEHAVIOR_DETECT_PRESS == 1)
+			ball::changeState(hard);
+		// Assuming helium  = correct state name
+		if( *kbHeliumize.BEHAVIOR_DETECT_PRESS == 1)
+			ball::changeState(helium);
+		// Assuming spike  = correct state name
+		if( *kbGrowSpikes.BEHAVIOR_DETECT_PRESS == 1)
 			ball::changeState(spike);
 	}
 

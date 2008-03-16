@@ -53,23 +53,23 @@ class UserInterface
 			// Create pointers to Wiimote actions
 			//*****ACTIONS FOR ANALOG**********//
 			Input::Action *wmGrow = InputManager::createAction(
-							grow, *wiimote, WII_MOVE_HANDS_OUTWARD, BEHAVIOR_DETECT_PRESS),
+							wmGrow, *wiimote, WII_MOVE_HANDS_OUTWARD, BEHAVIOR_DETECT_PRESS),
 						  *wmShrink = InputManager::createAction(
-							shrink, *wiimote, WII_MOVE_HANDS_INWARD, BEHAVIOR_DETECT_PRESS),
+							wmShrink, *wiimote, WII_MOVE_HANDS_INWARD, BEHAVIOR_DETECT_PRESS),
 						  *wmNormalJump = InputManager::createAction(
-							normalJump, *wiimote, WII_RIGHT_HAND_UP, BEHAVIOR_DETECT_PRESS),
+							wmNormalJump, *wiimote, WII_RIGHT_HAND_UP, BEHAVIOR_DETECT_PRESS),
 						  *wmBigJump = InputManager::createAction(
-							bigJump, *wiimote, WII_BOTH_HANDS_DOWN, BEHAVIOR_DETECT_PRESS),
+							wmBigJump, *wiimote, WII_BOTH_HANDS_DOWN, BEHAVIOR_DETECT_PRESS),
 						  *wmRightMomentum = InputManager::createAction(
-							rightMomentum, *wiimote, WII_RIGHT_HAND_RIGHT, BEHAVIOR_DETECT_PRESS),
+							wmRightMomentum, *wiimote, WII_RIGHT_HAND_RIGHT, BEHAVIOR_DETECT_PRESS),
 						  *wmLeftMomentum = InputManager::createAction(
-							leftMomentum, *wiimote, WII_RIGHT_HAND_LEFT, BEHAVIOR_DETECT_PRESS),
+							wmLeftMomentum, *wiimote, WII_RIGHT_HAND_LEFT, BEHAVIOR_DETECT_PRESS),
 						  *wmHarden = InputManager::createAction(
-							harden, *wiimote, WII_Z_BUTTON, BEHAVIOR_DETECT_PRESS),
+							wmHarden, *wiimote, WII_Z_BUTTON, BEHAVIOR_DETECT_PRESS),
 						  *wmHeliumize = InputManager::createAction(
-							heliumize, *wiimote, WII_C_BUTTON, BEHAVIOR_DETECT_PRESS),
+							wmHeliumize, *wiimote, WII_C_BUTTON, BEHAVIOR_DETECT_PRESS),
 						  *wmGrowSpikes = InputManager::createAction(
-							growSpikes, *wiimote, WII_B_BUTTON, BEHAVIOR_DETECT_PRESS);
+							wmGrowSpikes, *wiimote, WII_B_BUTTON, BEHAVIOR_DETECT_PRESS);
 			// Create pointers to Keyboard actions
 			//************NORMAL DIRECTIONS/MOVEMENTS*************//
 			Input::Action *kbGrow = InputManager::createAction(
