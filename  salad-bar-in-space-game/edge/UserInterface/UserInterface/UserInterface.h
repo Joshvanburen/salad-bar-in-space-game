@@ -1,34 +1,17 @@
 /* CSCE 552
  * UserInterface.h
- * A header file for the UserInterface class.
+ * Header file for the UserInterface class.
  */
 
-#ifndef USERINTERFACE_H
-#define USERINTERFACE_H
-
 // Includes the irrlicht header and iostream
-#include <irrlicht.h>
-#include <iostream>
+#include "irrlicht.h"
 
 // Allows the use of vectors
-#include <vector>
+#include "vector"
 
 // Include InputManager and ball classes
-#include <InputManager>
-#include <ball>
-
-// Irrlicht namespaces
-using namespace irr;
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
-
-// Links with the irrlicht library file
-#ifdef _IRR_WINDOWS_
-#pragma comment(lib, "Irrlicht.lib")
-#endif
+#include "InputManager.h"
+#include "ball.h"
 
 // Class definition
 class UserInterface

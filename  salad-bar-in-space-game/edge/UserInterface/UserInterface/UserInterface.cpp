@@ -3,12 +3,8 @@
  * CPP file for the UserInterface class.
  */
 
-// Includes
-#include <irrlicht.h>
-#include <iostream>
-#include <vector>
-//#include <InputManager>
-//#include <ball>
+// Include header
+#include ".\UserInterface.h"
 
 // Irrlicht namespaces
 using namespace irr;
