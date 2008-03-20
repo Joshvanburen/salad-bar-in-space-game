@@ -21,7 +21,7 @@ public:
 private:
 
 	//! Stores sounds in a map. Priority is given to sounds to better manage them.
-	map<std::string, ISoundSource, int> sound;
+	map<std::string, ISoundSource, int priority> sound;
 	
 	//! Reads XML for parameters 
 	static void loadSound( const std::string& XMLFilename );
