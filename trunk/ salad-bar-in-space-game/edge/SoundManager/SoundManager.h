@@ -2,8 +2,10 @@
 #define SOUND_MANAGER_H
 
 #include<map>
+using namespace std;
 #include<string>
-#include "irrKlang.h"
+
+#include <irrKlang.h>
 using namespace irrklang;
 #pragma comment(lib, "irrKlang.lib")
 
@@ -19,9 +21,9 @@ public:
 	std::string getSound( const std::string& sound );
 	
 private:
-
-	//! Stores sounds in a map. Priority is given to sounds to better manage them.
-	map<std::string, ISoundSource, int priority> sound;
+	
+	//! Stores sounds in a map. 
+	map<std::string, ISoundSource* > sound;
 	
 	//! Reads XML for parameters 
 	static void loadSound( const std::string& XMLFilename );
