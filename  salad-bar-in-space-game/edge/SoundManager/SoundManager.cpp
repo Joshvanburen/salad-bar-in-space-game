@@ -24,4 +24,8 @@ std::string SoundManager::getSound(const std::string &sound){
 	return "?";
 }
 
+void SoundManager::playSound(const std::string &sound){
+
+}
+
 
