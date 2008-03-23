@@ -3,8 +3,10 @@
  * CPP file for the UserInterface class.
  */
 
-// Include header
+// Include headers
 #include ".\UserInterface.h"
+#include "InputManager.h"
+#include "ball.h"
 
 // Irrlicht namespaces
 using namespace irr;
@@ -27,7 +29,7 @@ class UserInterface
 	//singletonPtr = InputManager::getSingletonptr();
 	
 	// Takes input and passes required action to Ball class
-	void passInput() {
+	void update() {
 		// Detect press and call corresponding methods in ball class
 		/*** Not sure if 1 is value for pressed state, or if this is
 		 *** how I should be implementing this 
@@ -40,16 +42,14 @@ class UserInterface
 		// WiiMote Controls
 		// Assuming big = correct state name
 		if( *wmGrow.BEHAVIOR_DETECT_PRESS == 1)
-			ball::changeState(big);
+			ball::setState(big);
 		// Assuming small = correct state name
 		if( *wmShrink.BEHAVIOR_DETECT_PRESS == 1)
-			ball::changeState(small);
-		// Assuming 1 = normal jump
+			ball::setState(small);
 		if( *wmNormalJump.BEHAVIOR_DETECT_PRESS == 1)
-			ball::jump(1);
-		// Assuming 2 = big jump
+			ball::jump = 1;
 		if( *wmBigJump.BEHAVIOR_DETECT_PRESS == 1)
-			ball::jump(2);
+			ball::jump = 2;
 		if( *wmRightMomentum.BEHAVIOR_DETECT_PRESS == 1)
 			ball::changeVelocity(/*Not sure what to put here*/);
 		if( *wmLeftMomentum.BEHAVIOR_DETECT_PRESS == 1)
@@ -71,10 +71,8 @@ class UserInterface
 		// Assuming small = correct state name
 		if( *kbShrink.BEHAVIOR_DETECT_PRESS == 1)
 			ball::changeState(small);
-		// Assuming 1 = normal jump
 		if( *kbNormalJump.BEHAVIOR_DETECT_PRESS == 1)
 			ball::jump(1);
-		// Assuming 2 = big jump
 		if( *kbBigJump.BEHAVIOR_DETECT_PRESS == 1)
 			ball::jump(2);
 		if( *kbRightMomentum.BEHAVIOR_DETECT_PRESS == 1)
@@ -93,11 +91,7 @@ class UserInterface
 	}
 
 	// Draws the User Interface
-	void drawUI() {
-		// Not sure what to put here
-	}
-	// Updates the User Interface
-	void updateUI() {
+	void draw() {
 		// Not sure what to put here
 	}
 	// Gets the current score
