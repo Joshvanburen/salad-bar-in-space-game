@@ -1,8 +1,8 @@
 #include "SoundManager.h"
-
-#include <irrKlang.h>
-using namespace irrklang;
-#pragma comment(lib, "irrKlang.lib")
+#include <string>
+//#include <irrKlang.h>
+//using namespace irrklang;
+//#pragma comment(lib, "irrKlang.lib")
 
 SoundManager::SoundManager(){
 
