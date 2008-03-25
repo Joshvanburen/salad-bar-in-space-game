@@ -31,6 +31,8 @@ private:
 	//! Reads XML for parameters 
 	static bool loadSound( const std::string& XMLFilename );
 
+	ISoundEngine* engine;
+
 };
 
 #endif
