@@ -29,7 +29,7 @@ private:
 	map<std::string, Sound > soundMap;
 	
 	//! Reads XML for parameters 
-	static void loadSound( const std::string& XMLFilename );
+	static bool loadSound( const std::string& XMLFilename );
 
 };
 
