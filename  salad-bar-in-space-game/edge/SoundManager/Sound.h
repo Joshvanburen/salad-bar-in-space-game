@@ -8,10 +8,6 @@ private:
 
 	//! Sound Constructor - takes both name and location
 	Sound( std::string sName, std::string sLoc );
-	//! Sound Constructor - takes name of sound
-	Sound( std::string sName );
-	//! Sound Constructor - takes location of file
-	Sound( std::string sLoc );
 	//! Default Constructor
 	Sound();
 
