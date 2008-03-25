@@ -2,18 +2,6 @@
 
 #include <string>
 
-// Shouldn't normally be called
-Sound::Sound(){
-	setName("default");
-	setLoc("None");
-}
-
-// Shouldn't normally be called
-Sound::Sound(std::string sName){
-	setName(sName);
-	setLoc("None");
-}
-
 // Primary
 Sound::Sound(std::string sName, std::string sLoc){
 	setName( sName );
