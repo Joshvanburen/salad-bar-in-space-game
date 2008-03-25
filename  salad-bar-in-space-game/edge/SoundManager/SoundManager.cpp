@@ -9,7 +9,7 @@ using namespace irrklang;
 SoundManager::SoundManager(){
 
    // start the sound engine with default parameters
-   ISoundEngine* engine = createIrrKlangDevice();
+   engine = createIrrKlangDevice();
 }
 
 SoundManager::~SoundManager(){
@@ -34,7 +34,7 @@ bool SoundManager::loadSound(const std::string &XMLFilename){
 			break;
 
 		case irr::io::EXN_ELEMENT:
-			if (!strcmp("script", xml->getNodeName())){
+			if (!strcmp("sound", xml->getNodeName())){
 				name = xml->getAttributeValue("name");
 				filename = xml->getAttributeValue("filename");
 
@@ -43,12 +43,12 @@ bool SoundManager::loadSound(const std::string &XMLFilename){
 				m_ScriptItr = m_ScriptMap.find(name);
 
 				//If the script is already in the map, print out and continue;
-				if (m_ScriptItr != m_ScriptMap.end()){
+				if (m_SoundItr != SoundtMap.end()){
 					std::cout << "Sound with name: " << name << "already exists. Continuing...\n";
-					delete script;
+					delete sound;
 				}
 				else{
-					soundMap.insert(std::make_pair(name, script));
+					soundMap.insert(std::make_pair(name, sound));
 				}
 
 			}
