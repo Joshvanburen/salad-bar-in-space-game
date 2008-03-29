@@ -3,7 +3,7 @@ void main()
 	
 }
 
-void collide()
+void collide(WorldEntity &entity1, WorldEntity &entity2)
 {
-	PrintString();
+	entity2.move();
 }

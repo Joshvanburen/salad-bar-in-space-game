@@ -243,7 +243,10 @@ bool EntityManager::addNewDefinitions(const std::string& XMLEntityDefinition){
 	return true;
 }
 
+
 bool EntityManager::init(const std::string& XMLEntityDefinition){
+
+
 	//Should register all the factories to each type here!!!!
 
 	this->m_Loader.registerFactory("ball", new Entity::BallFactory());

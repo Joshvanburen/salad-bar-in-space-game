@@ -6,6 +6,7 @@
 
 
 class ScriptManager;
+class WorldEntity;
 //!namespace containing all Script related structures used by the ScriptManager.
 namespace Scripting{
 
@@ -44,7 +45,7 @@ namespace Scripting{
 		
 	public:
 
-		void callFunction();
+		void callFunction(WorldEntity* entity1, WorldEntity* entity2);
 
 		MaterialCollisionFunction();
 	};
@@ -155,7 +156,7 @@ public:
 	void removeAllScriptFunctions(); //!< Remomve all script functions.
 
 
-	void registerObject(const std::string&, int size = 0, ::asDWORD flags = 0); //!< Registers a class name for the scripting system to access.  
+	void registerReferenceObject(const std::string&); //!< Registers a class name for the scripting system to access.  
 
 	void registerObjectMethod(std::string obj, std::string declaration, ::asUPtr fnPtr);  //!< Registers a method with an already registered class name.
 

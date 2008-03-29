@@ -29,9 +29,9 @@ using namespace irr::video;
 using namespace irr::gui;
 
 
-void PrintString(){
+void PrintString(int a){
 
-	std::cout << "hello";
+	std::cout << a << std::endl;
 
 }
 irr::scene::ISceneManager* smgr;
@@ -41,11 +41,11 @@ bool init(){
 
 	ScriptManager::getSingleton().init();
 
-	ScriptManager::getSingleton().registerAsGlobal("void PrintString()", ::asFUNCTION(PrintString));
+	ScriptManager::getSingleton().registerAsGlobal("void PrintString(float a)", ::asFUNCTION(PrintString));
 	InputManager::getSingleton().init();
 
-	device = irr::createDevice( irr::video::EDT_DIRECT3D9, irr::core::dimension2d<irr::s32>(1024, 768), 16,
-		false, false, false, InputManager::getSingleton().getEventReceiver());
+	device = irr::createDevice( irr::video::EDT_DIRECT3D9, irr::core::dimension2d<irr::s32>(800, 600), 16,
+		true, false, false, InputManager::getSingleton().getEventReceiver());
 
 	smgr = device->getSceneManager();
 

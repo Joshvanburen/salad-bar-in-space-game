@@ -33,8 +33,8 @@ irr::IrrlichtDevice *device;
 
 bool init(){
 	InputManager::getSingleton().init();
-	device = irr::createDevice( irr::video::EDT_DIRECT3D8, irr::core::dimension2d<irr::s32>(1024, 768), 16,
-		false, false, false, InputManager::getSingleton().getEventReceiver());
+	device = irr::createDevice( irr::video::EDT_DIRECT3D8, irr::core::dimension2d<irr::s32>(800,600), 16,
+		true, false, false, InputManager::getSingleton().getEventReceiver());
 
 	smgr = device->getSceneManager();
 

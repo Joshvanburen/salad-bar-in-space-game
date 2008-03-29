@@ -35,6 +35,13 @@ public:
 	
 	irr::scene::ISceneNode* entity();
 
+	void AddRef(){
+
+	}
+	void move();
+	void Release(){
+
+	}
 	// get/set ID
 	int getID();
 	void setID( int iID );
@@ -80,8 +87,7 @@ public:
 	// provides a virtual function for manipulating the state.
 	virtual void changeState(const std::string name) = 0;
 
-
-protected:
+public:
 	float fx;// Used for location on the x-axis
 	float fy;// Used for location on the y-axis
 	float fz;// Used for location on the z-axis

@@ -24,6 +24,9 @@ WorldEntity::WorldEntity(int iID, float x, float y, float z){
 	setLocation(x,y,z);
 }
 
+void WorldEntity::move(){
+	this->m_Physics_Body->addImpulse(irr::core::vector3df(0, -10.0f, 0.0f), irr::core::vector3df(0, 0, 0));
+}
 void WorldEntity::setID( int iID ){
 	if(iID > 0)
 		id = iID;

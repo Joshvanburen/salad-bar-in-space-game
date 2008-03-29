@@ -41,6 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="&quot;C:\Users\chase\Desktop\CSCE552\irrKlang-1.0.4\include&quot;;&quot;C:\Users\chase\Desktop\CSCE552\New Folder\edge\bouncibility\third_party\irrxml\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -60,7 +61,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="irrklang.lib"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="&quot;C:\Users\chase\Desktop\CSCE552\irrKlang-1.0.4\lib\Win32-visualStudio&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -171,10 +174,6 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\Sound.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\SoundManager.cpp"
 				>
 			</File>
@@ -184,10 +183,6 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
-			<File
-				RelativePath=".\Sound.h"
-				>
-			</File>
 			<File
 				RelativePath=".\SoundManager.h"
 				>

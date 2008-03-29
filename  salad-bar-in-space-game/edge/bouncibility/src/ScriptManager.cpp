@@ -1,5 +1,6 @@
 #include "Common.h"
 #include "angelscript.h"
+#include "WorldEntity.h"
 #include "scriptstring.h"
 #include "irrXML.h"	
 #include "ScriptManager.h"
@@ -15,12 +16,21 @@ void MessageCallback(const asSMessageInfo *msg, void *param)
 }
 
 Scripting::MaterialCollisionFunction::MaterialCollisionFunction(){
-	this->m_Signature = "void collide()";
+	this->m_Signature = "void collide(WorldEntity&, WorldEntity&)";
 }
 
-void Scripting::MaterialCollisionFunction::callFunction() {
+void Scripting::MaterialCollisionFunction::callFunction(WorldEntity* entity1, WorldEntity* entity2) {
+	int r = m_pContext->Prepare(m_ID);
+	if( r < 0 ) 
+	{
+		std::cout << "Failed to prepare the context. Unable to execute script function: " << m_Signature << std::endl;
+	}
+	
 
-	ScriptFunction::callFunction();
+	this->m_pContext->SetArgObject(0, entity1);
+	this->m_pContext->SetArgObject(1, entity2);
+	
+	ScriptFunction::execute();
 
 }
 
@@ -33,12 +43,7 @@ Scripting::ScriptFunction::~ScriptFunction(){
 }
 
 void Scripting::ScriptFunction::callFunction(){
-	int r = m_pContext->Prepare(m_ID);
-	if( r < 0 ) 
-	{
-		std::cout << "Failed to prepare the context. Unable to execute script function: " << m_Signature << std::endl;
-	}
-	
+
 	execute();
 }
 void Scripting::ScriptFunction::execute(){
@@ -216,6 +221,15 @@ bool ScriptManager::init(){
 	s_Engine->SetMessageCallback(asFUNCTION(MessageCallback), 0, ::asCALL_CDECL);
 
 	RegisterScriptString(s_Engine);
+
+	registerReferenceObject("WorldEntity");
+
+	registerObjectMethod("WorldEntity", "int getID()", ::asMETHOD(WorldEntity, getID));
+
+	registerObjectMethod("WorldEntity", "void move()", ::asMETHOD(WorldEntity, move));
+
+	this->s_Engine->RegisterObjectProperty("WorldEntity", "float fx", offsetof(WorldEntity, fx));
+
 
 	m_ScriptDefinition = "./res/scripting/global.xml";
 
@@ -418,12 +432,22 @@ void ScriptManager::update(){
 	//Doesn't do anything right now.  In future it may handle suspending scripts and queueing them based on priority etc.
 }
 
-void ScriptManager::registerObject(const std::string& declaration, int size /* = 0 */, ::asDWORD flags /* = 0 */){
-	int r = s_Engine->RegisterObjectType(declaration.c_str(),size,flags);
+void DummyFunc() {}
+void ScriptManager::registerReferenceObject(const std::string& declaration){
+	int r = s_Engine->RegisterObjectType(declaration.c_str(), 0, ::asOBJ_REF);
+
+	r < 0 ? throw Scripting::ScriptRegistrationException() : ++r;
+
+	r = s_Engine->RegisterObjectBehaviour(declaration.c_str(), asBEHAVE_ADDREF, "void AddRef()", asMETHOD(WorldEntity, AddRef), asCALL_THISCALL);
+
+	r < 0 ? throw Scripting::ScriptRegistrationException() : ++r;
+
+	r = s_Engine->RegisterObjectBehaviour(declaration.c_str(), asBEHAVE_RELEASE, "void Release()", asMETHOD(WorldEntity, Release), asCALL_THISCALL);
 
 	r < 0 ? throw Scripting::ScriptRegistrationException() : ++r;
 
 }
+
 
 void ScriptManager::registerObjectMethod(const std::string obj, const std::string declaration, ::asUPtr fnPtr){
 	int r = s_Engine->RegisterObjectMethod(obj.c_str(),declaration.c_str(),fnPtr,::asCALL_THISCALL);
@@ -451,9 +475,3 @@ void ScriptManager::registerAsGlobal(const std::string declaration, ::asUPtr fnP
 	r < 0 ? throw Scripting::ScriptRegistrationException() : ++r;
 
 }
-
-void PrintString(std::string &str)
-{
-	std::cout << str;
-}
-
