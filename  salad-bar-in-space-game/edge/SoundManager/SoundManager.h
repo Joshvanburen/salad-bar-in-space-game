@@ -10,6 +10,7 @@ namespace Sound{
 	private:
 
 		std::string m_Name;
+		std::string m_Filename;
 		irrklang::ISound* m_pSound;
 		//! Sound Constructor - takes both name and location
 		Audio(const std::string& sName, const std::string& sFilename, bool is3D);
@@ -20,7 +21,7 @@ namespace Sound{
 
 		
 
-		Audio(const Sound& rhs);
+		Audio(const Audio& rhs);
 		Audio& operator=(const Audio& rhs);
 
 		void destroy();
@@ -32,9 +33,9 @@ namespace Sound{
 
 		float getVolume();
 
-		void setPosition(irrklang::ved3df& newPosition);
+		void setPosition(irrklang::vec3df& newPosition);
 
-		irrklang::vec3df& getPosition();
+		irrklang::vec3df getPosition();
 
 		void setPaused(bool paused);
 
@@ -45,7 +46,7 @@ namespace Sound{
 		void setMinDistance(float distance);
 
 		//! Returns the name of the sound
-		const std::string& getName(){return name;};
+		const std::string& getName();
 
 		void play(bool looped = false);
 
@@ -55,11 +56,11 @@ namespace Sound{
 	class SoundManagerInitException {};
 	class AudioAlreadyExists {};
 	class AudioDoestExist {};
-	typedef std::map<std::string, Audio*> StrAudioMap
+	typedef std::map<std::string, Audio*> StrAudioMap;
 };
   
 class SoundManager : CSingleton<SoundManager>{
-	friend CSingleton<ScriptManager>;
+	friend CSingleton<SoundManager>;
 	friend Sound::Audio;
 public:
 	void init();
@@ -74,9 +75,9 @@ public:
 
 	void removeAll();
 
-	void removeSound(const Audio* sound);
+	void removeSound(Sound::Audio* sound);
 
-	Sound::Audio* addSound(const std::string& soundName, const std::string& filename);
+	Sound::Audio* addSound(const std::string& soundName, const std::string& filename, bool is3D);
 
 	//! Looks for the sound in queue and returns the name if found
 	Sound::Audio* getSound( const std::string& soundName );
@@ -103,4 +104,4 @@ private:
 	Sound::StrAudioMap::iterator m_AudioItr;
 
 
-}
+};

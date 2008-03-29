@@ -6,13 +6,13 @@
 using namespace irrklang;
 using namespace Sound;
 
-Sound::Audio::Audio(const std::srring& sName, const std::string& sFilename, bool is3D) : name(sName), filename(sFilename), m_pSound(NULL){
+Sound::Audio::Audio(const std::string& sName, const std::string& sFilename, bool is3D) : m_Name(sName), m_Filename(sFilename), m_pSound(NULL){
 	if(is3D){
-		this->m_pSound = SoundManager::engine->play3D(filename, irrklang::vec3df(0, 0, 0), false, true, true);
+		this->m_pSound = SoundManager::engine->play3D(sFilename.c_str(), irrklang::vec3df(0.0, 0.0, 0.0), false, true, true);
 		
 	}
 	else{
-		this->m_pSound = SoundManager::engine->play2D(filename, false, true, true);
+		this->m_pSound = SoundManager::engine->play2D(sFilename.c_str(), false, true, true);
 	}
 
 }
@@ -42,7 +42,7 @@ float Sound::Audio::getVolume(){
 void Sound::Audio::setPosition(vec3df& newPosition){
 	m_pSound->setPosition(newPosition);
 }
-vec3df& Sound::Audio::getPosition(){
+vec3df Sound::Audio::getPosition(){
 	return m_pSound->getPosition();
 }
 
@@ -63,7 +63,7 @@ void Sound::Audio::setMinDistance(float distance){
 }
 
 const std::string& Sound::Audio::getName(){
-	return name;
+	return m_Name;
 }
 void Sound::Audio::play(bool looped){
 	m_pSound->setIsLooped(looped);
@@ -75,7 +75,7 @@ void Sound::Audio::stop(){
 	m_pSound->stop();
 }
 
-SoundManager::SoundManager() : {
+SoundManager::SoundManager() {
 	engine = NULL;
 }
 
@@ -143,7 +143,7 @@ void SoundManager::readInXML(const std::string& XMLFilename){
 				m_AudioItr = m_AudioMap.find(name);
 
 				//If the script is already in the map, print out and continue;
-				if (m_AudioItr != AudioMap.end()){
+				if (m_AudioItr != m_AudioMap.end()){
 					std::cout << "Sound with name: " << name << "already exists. Continuing...\n";
 					delete audio;
 				}
@@ -158,7 +158,7 @@ void SoundManager::readInXML(const std::string& XMLFilename){
 	}
 
 	delete xml;
-	return true;
+	return;
 	
 }
 void SoundManager::init(){
@@ -192,7 +192,7 @@ void SoundManager::reset(){
 void SoundManager::update(){
 	//need to get properties from the main camera.
 	//Set the current listener position to the camera or the ball or whatever each time update is called.
-	engine->setListenerPosition();
+//	engine->setListenerPosition();
 
 }
 
@@ -241,14 +241,14 @@ Sound::Audio* SoundManager::addSound(const std::string& soundName, const std::st
 	return audio;
 }
 
-Sound* SoundManager::getSound(const std::string& soundName){
+Sound::Audio* SoundManager::getSound(const std::string& soundName){
 	m_AudioItr = m_AudioMap.find(soundName);
 
 	//If the sound wasn't found, throw exception
 	if (m_AudioItr == m_AudioMap.end()){
-		throw Sound::AudioDoesntExist();
+		throw Sound::AudioDoestExist();
 	}
-	return *(m_AudioItr->second);
+	return (m_AudioItr->second);
 
 }
 
