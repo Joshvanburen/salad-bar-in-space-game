@@ -6,6 +6,7 @@
 #include "LevelManager.h"
 #include "WorldEntity.h"
 #include "PhysicsManager.h"
+#include "SoundManager.h"
 #include "irrlicht.h"
 #include "Level.h"
 
@@ -44,6 +45,7 @@ void Level::update()
 
 void Level::shutdown(){
 	m_WorldEntities.clear();
+	m_Music->stop();
 	m_Status = Level::STOPPED;
 }
 
@@ -77,7 +79,8 @@ bool Level::load(const std::string& LevelDefinition)
 		case irr::io::EXN_ELEMENT:
 			if (!strcmp("level", xml->getNodeName())){
 				m_LevelName = xml->getAttributeValue("name");
-				m_MusicFile = xml->getAttributeValue("music");
+				m_MusicName = xml->getAttributeValue("music");
+				m_Music = SoundManager::getSingleton().getSound(m_MusicName);
 				m_Time = xml->getAttributeValueAsInt("time");
 				m_StartingX = xml->getAttributeValueAsInt("startingx");
 				m_StartingY = xml->getAttributeValueAsInt("startingy");
@@ -121,7 +124,10 @@ bool Level::load(const std::string& LevelDefinition)
 
 	m_Physics_Body = PhysicsManager::getSingleton().getPhysicsWorld()->createBody(mapData);
 
+	m_Music->play(true);
+
 	delete xml;
+
 	return true;
 }
 
@@ -133,10 +139,10 @@ const std::string& Level::getName()
 }
 
 //Gets the music file name
-const std::string& Level::getMusicFileName()
+const std::string& Level::getMusicName()
 {
 	//Returns the music file name
-	return m_MusicFile;
+	return m_MusicName;
 }
 
 //Gets the current time

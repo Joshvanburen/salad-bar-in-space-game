@@ -10,6 +10,7 @@
 #include "irrnewt.hpp"
 #include "PhysicsManager.h"
 #include "LevelManager.h"
+#include "SoundManager.h"
 #include "Level.h"
 #include "WorldEntity.h"
 #include <stdio.h>
@@ -41,11 +42,13 @@ bool init(){
 
 	ScriptManager::getSingleton().init();
 
+	SoundManager::getSingleton().init();
+
 	ScriptManager::getSingleton().registerAsGlobal("void PrintString(float a)", ::asFUNCTION(PrintString));
 	InputManager::getSingleton().init();
 
 	device = irr::createDevice( irr::video::EDT_DIRECT3D9, irr::core::dimension2d<irr::s32>(800, 600), 16,
-		true, false, false, InputManager::getSingleton().getEventReceiver());
+		false, false, false, InputManager::getSingleton().getEventReceiver());
 
 	smgr = device->getSceneManager();
 
@@ -169,6 +172,7 @@ int main()
 
 	InputManager::getSingleton().shutdown();
 	LevelManager::getSingleton().shutdown();
+	SoundManager::getSingleton().shutdown();
 	PhysicsManager::getSingleton().shutdown();
 	ScriptManager::getSingleton().shutdown();
 	device->drop();

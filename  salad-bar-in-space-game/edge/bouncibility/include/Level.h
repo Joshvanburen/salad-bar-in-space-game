@@ -13,6 +13,9 @@ namespace irr{
 		class IBody;
 	}
 }
+namespace Sound{
+	class Audio;
+}
 
 typedef std::vector<WorldEntity*> EntityVector;
 //!The Level class holds everything within a specific level.  It loads in all the world entities and updates them.  Each level has its own xml file. 
@@ -30,8 +33,10 @@ class Level
 			std::string m_XmlFile;
 			//!Level file name
 			std::string m_LevelFile;
-			//!Filename of music file
-			std::string m_MusicFile;
+			//!name of music file
+			std::string m_MusicName;
+			//!Handle to the sound object for music.
+			Sound::Audio* m_Music;
 			//!Level timer;
 			int m_Time;
 			//!Current status of level
@@ -76,7 +81,7 @@ class Level
 			//!Gets the level name
 			const std::string& getName();
 			//!Gets the music file name
-			const std::string& getMusicFileName();
+			const std::string& getMusicName();
 			//!Gets the current level time
 			int getCurrentTime();
 			//!Sets the current level time

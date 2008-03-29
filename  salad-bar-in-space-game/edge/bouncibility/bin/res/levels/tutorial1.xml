@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<level name="tutorial1" music="default.mp3" time="50" startingx="100" startingy="100" map="res/levels/testlevel.irr" material="level" gravity="-3.0">
+<level name="tutorial1" music="tutorial1_music" time="50" startingx="100" startingy="100" map="res/levels/testlevel.irr" material="level" gravity="-3.0">
 	<entities>
 		<entity name="player_ball" startstate="normal" xloc="-150" yloc="150" />
 		<entity name="player_ball" startstate="normal" xloc="-90" yloc="150" />

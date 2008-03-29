@@ -61,9 +61,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="irrklang.lib"
+				AdditionalDependencies="irrklang.lib irrxml.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;C:\Users\chase\Desktop\CSCE552\irrKlang-1.0.4\lib\Win32-visualStudio&quot;"
+				AdditionalLibraryDirectories="&quot;C:\Users\chase\Desktop\CSCE552\New Folder\edge\bouncibility\third_party\irrklang\lib&quot;;&quot;C:\Users\chase\Desktop\CSCE552\New Folder\edge\bouncibility\third_party\irrxml\lib&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
