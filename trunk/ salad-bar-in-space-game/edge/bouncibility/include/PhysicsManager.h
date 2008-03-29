@@ -16,6 +16,9 @@ namespace irr{
 namespace Scripting{
 	class ScriptFunction;
 };
+namespace Sound{
+	class Audio;
+};
 
 class PhysicsManager;
 
@@ -27,6 +30,8 @@ namespace Physics{
 	typedef std::map<std::string, WorldEntityCollisionCallback*> StrCollisionCallbackMap;
 
 	typedef std::set<Scripting::ScriptFunction*> ScriptList;
+
+	typedef std::set<Sound::Audio*> SoundList;
 	
 	//! Thrown if there is an attempt to add a script handler twice.
 	class DuplicateScript { };
@@ -44,7 +49,12 @@ namespace Physics{
 		WorldEntity* entity1;
 		WorldEntity* entity2;
 
-		ScriptList m_CollisionHandlerScripts;
+		Physics::ScriptList m_CollisionHandlerScripts;
+
+		Physics::SoundList::iterator m_SoundsItr;
+		Physics::SoundList::iterator m_SoundsItrEnd;
+
+		Physics::SoundList m_Sounds;
 
 		WorldEntityCollisionCallback(const std::string& m_Material1, const std::string& material2);
 		WorldEntityCollisionCallback(const std::string& m_Material1, const std::string& material2, Scripting::ScriptFunction* scriptFunction);
@@ -62,6 +72,8 @@ namespace Physics{
 		int  ContactProcess (irr::newton::IMaterialPairAndContact *material_pair_and_contact);
 
 		void addHandler(Scripting::ScriptFunction* scriptFunction);
+
+		void addSound(Sound::Audio* sound);
 	};
 	//! Thrown if an material was assumed to have existed but was not found. 
 	class MaterialDoesntExist {  };
@@ -106,6 +118,8 @@ public:
 
 	//! The given script will be called whenever a collision occurs between the two materials.  The colliding WorldEntities will be sent to the script as arguments.
 	bool addObserver(Scripting::ScriptFunction* scriptFunction, const std::string& material1, const std::string& material2);
+
+	bool addCollisionSound(Sound::Audio* sound, const std::string& material1, const std::string& material2);
 
 	//! Get to the current value for gravity
 	float getGravity() const{

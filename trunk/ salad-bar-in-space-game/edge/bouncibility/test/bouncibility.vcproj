@@ -208,6 +208,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\SoundManager.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\src\WorldEntity.cpp"
 				>
 			</File>
@@ -251,6 +255,10 @@
 			</File>
 			<File
 				RelativePath="..\include\ScriptManager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\SoundManager.h"
 				>
 			</File>
 			<File
@@ -344,6 +352,30 @@
 				>
 				<File
 					RelativePath="..\bin\res\meshes\level.3DS"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="scripting"
+				>
+				<File
+					RelativePath="..\bin\res\scripting\global.xml"
+					>
+				</File>
+				<File
+					RelativePath="..\bin\res\scripting\test.as"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="sounds"
+				>
+				<File
+					RelativePath="..\bin\res\sounds\global.xml"
+					>
+				</File>
+				<File
+					RelativePath="..\bin\res\sounds\tutorial.xml"
 					>
 				</File>
 			</Filter>

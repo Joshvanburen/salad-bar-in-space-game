@@ -3,6 +3,7 @@
 #include "irrlicht.h"
 #include "ScriptManager.h"
 #include "LevelManager.h"
+#include "SoundManager.h"
 #include "irrnewt.hpp"
 #include "WorldEntity.h"
 #include "PhysicsManager.h"
@@ -55,8 +56,17 @@ int  Physics::WorldEntityCollisionCallback::ContactProcess (irr::newton::IMateri
 		//Call the script collision function with entity1 and entity2 pointers.
 	}
 
+	m_SoundsItrEnd = m_Sounds.end();
+
+	for (m_SoundsItr = m_Sounds.begin(); m_SoundsItr != m_SoundsItrEnd; ++m_SoundsItr){
+		(*m_SoundsItr)->play(false);
+	}
 	return 1;
 
+}
+
+void Physics::WorldEntityCollisionCallback::addSound(Sound::Audio* sound){
+	m_Sounds.insert(sound);
 }
 void Physics::WorldEntityCollisionCallback::addHandler(Scripting::ScriptFunction* scriptFunction){
 	Physics::ScriptList::iterator scriptItrEnd = m_CollisionHandlerScripts.end();
@@ -156,6 +166,7 @@ bool PhysicsManager::readInXML(const std::string& XMLMaterialDefinition){
 	float static_friction = 0;
 	float elasticity = 0;
 	std::string scriptName;
+	std::string soundName;
 	while(xml && xml->read())
 	{
 		switch(xml->getNodeType())
@@ -205,6 +216,14 @@ bool PhysicsManager::readInXML(const std::string& XMLMaterialDefinition){
 				
 				this->addObserver(callbackFunction, material1, material2);
 			}
+			else if (!strcmp("sound", xml->getNodeName())){
+				material1 = xml->getAttributeValue("material1");
+				material2 = xml->getAttributeValue("material2");
+				soundName = xml->getAttributeValue("name");
+				
+				
+				this->addCollisionSound(SoundManager::getSingleton().getSound(soundName), material1, material2);
+			}
 			break;
 		}
 
@@ -242,6 +261,32 @@ bool PhysicsManager::addObserver(Scripting::ScriptFunction* scriptFunction, cons
 	}
 	else{
 		(*m_CallbackItr).second->addHandler(scriptFunction);
+	}
+	return true;
+}
+
+bool PhysicsManager::addCollisionSound(Sound::Audio* sound, const std::string& material1, const std::string& material2){
+	std::string key;
+	if (material1.compare(material2) <= 0){
+		key = material1 + material2;
+	}
+	else{
+		key = material2 + material1;
+	}
+
+	//Find the entity in the ID map for this entityID
+	m_CallbackItr = m_CallbackMap.find(key);
+	//If the Entity wasn't found, add new entry.
+	if (m_CallbackItr == m_CallbackMap.end()){
+		Physics::WorldEntityCollisionCallback* callback = new Physics::WorldEntityCollisionCallback(material1, material2);
+		callback->addSound(sound);
+		irr::newton::IMaterial* material = this->getMaterial(material1);
+		irr::newton::IMaterial* second_material = this->getMaterial(material2);
+		material->setCollisionCallback(second_material, callback);
+		m_CallbackMap.insert(std::make_pair(key, callback));
+	}
+	else{
+		(*m_CallbackItr).second->addSound(sound);
 	}
 	return true;
 }

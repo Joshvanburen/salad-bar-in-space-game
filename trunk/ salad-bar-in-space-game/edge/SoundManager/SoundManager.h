@@ -8,10 +8,12 @@ namespace Sound{
 	class Audio{
 		friend class ::SoundManager;
 	private:
-
+		bool is3D;
 		std::string m_Name;
 		std::string m_Filename;
+		irrklang::ISoundSource* m_pSoundSource;
 		irrklang::ISound* m_pSound;
+		irrklang::vec3df position;
 		//! Sound Constructor - takes both name and location
 		Audio(const std::string& sName, const std::string& sFilename, bool is3D);
 		//! Default Constructor
@@ -35,11 +37,10 @@ namespace Sound{
 
 		void setPosition(irrklang::vec3df& newPosition);
 
+		void setPosition(float x, float y, float z);
 		irrklang::vec3df getPosition();
 
 		void setPaused(bool paused);
-
-		void setLooped(bool looped);
 
 		void setMaxDistance(float distance);
 
@@ -59,7 +60,7 @@ namespace Sound{
 	typedef std::map<std::string, Audio*> StrAudioMap;
 };
   
-class SoundManager : CSingleton<SoundManager>{
+class SoundManager : public CSingleton<SoundManager>{
 	friend CSingleton<SoundManager>;
 	friend Sound::Audio;
 public:

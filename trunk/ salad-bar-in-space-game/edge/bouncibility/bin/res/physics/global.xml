@@ -9,7 +9,7 @@
     <collision material1="player_ball" material2="level" softness="0.3" static_friction="1.0" kinetic_friction="0.9" elasticity="1.0" />
 	<collision material1="player_ball" material2="large_ball" softness="0.3" static_friction="1.0" kinetic_friction="0.9" elasticity="1.0" />
 	<collision material1="player_ball" material2="player_ball" softness="0.6" static_friction="1.0" kinetic_friction="0.9" elasticity="1.0" />
-	
     <callback script="player_ball" material1="player_ball" material2="large_ball" />
+    <sound name="ball_collision" material1="player_ball" material2="large_ball" />
   </collisions>
 </physics>

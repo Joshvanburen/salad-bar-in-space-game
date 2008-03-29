@@ -5,6 +5,7 @@
 #include "Level.h"
 #include "irrnewt.hpp"
 #include "PhysicsManager.h"
+#include "SoundManager.h"
 #include "ScriptManager.h"
 #include "LevelManager.h"
 
@@ -83,6 +84,9 @@ bool LevelManager::init(irr::IrrlichtDevice* device, const std::string& XMLScena
 			}
 			if (!strcmp("scripts", xml->getNodeName())){
 				ScriptManager::getSingleton().addNewDefinitions(xml->getAttributeValue("file"));
+			}
+			if (!strcmp("sounds", xml->getNodeName())){
+				SoundManager::getSingleton().addNewSounds(xml->getAttributeValue("file"));
 			}
 			break;
 		}

@@ -279,7 +279,6 @@ bool EntityManager::init(const std::string& XMLEntityDefinition){
 						if (xml->getAttributeValue("script")){
 							std::cout << "loading script.\n";
 							script = xml->getAttributeValue("script");
-							ScriptManager::getSingleton().loadScript(script);
 						}
 						
 						}

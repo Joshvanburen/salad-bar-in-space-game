@@ -6,14 +6,12 @@
 using namespace irrklang;
 using namespace Sound;
 
-Sound::Audio::Audio(const std::string& sName, const std::string& sFilename, bool is3D) : m_Name(sName), m_Filename(sFilename), m_pSound(NULL){
-	if(is3D){
-		this->m_pSound = SoundManager::engine->play3D(sFilename.c_str(), irrklang::vec3df(0.0, 0.0, 0.0), false, true, true);
-		
-	}
-	else{
-		this->m_pSound = SoundManager::engine->play2D(sFilename.c_str(), false, true, true);
-	}
+Sound::Audio::Audio(const std::string& sName, const std::string& sFilename, bool is3D) : m_pSound(NULL), m_Name(sName), m_Filename(sFilename), m_pSoundSource(NULL){
+	this->is3D = is3D;
+
+	this->position = irrklang::vec3df(0.0,0.0,0.0);
+	this->m_pSoundSource = SoundManager::engine->addSoundSourceFromFile(m_Filename.c_str());
+
 
 }
 
@@ -27,54 +25,86 @@ void Sound::Audio::destroy(){
 		m_pSound->drop();
 	}
 	m_pSound = NULL;
+	m_pSoundSource = NULL;
 }
 
 
 void Sound::Audio::setVolume(float newVolume){
-	m_pSound->setVolume(newVolume);
+	if (m_pSoundSource){
+
+		m_pSoundSource->setDefaultVolume(newVolume);
+	}
 }
 
 float Sound::Audio::getVolume(){
+	if (m_pSoundSource){
 
-	return m_pSound->getVolume();
+		return m_pSoundSource->getDefaultVolume();
+	}
+	else{
+		return 0.0;
+	}
 }
 
 void Sound::Audio::setPosition(vec3df& newPosition){
-	m_pSound->setPosition(newPosition);
+	this->position = newPosition;
+	if (m_pSound){
+
+		m_pSound->setPosition(newPosition);
+	}
+}
+
+void Sound::Audio::setPosition(float x, float y, float z){
+	this->position = irrklang::vec3df(x, y, z);
+
+	if (m_pSound){
+		m_pSound->setPosition(position);
+	}
 }
 vec3df Sound::Audio::getPosition(){
-	return m_pSound->getPosition();
+	return position;
 }
 
 void Sound::Audio::setPaused(bool paused){
-	m_pSound->setIsPaused(paused);
-}
-
-void Sound::Audio::setLooped(bool looped){
-	m_pSound->setIsLooped(looped);
+	if (m_pSound){
+		m_pSound->setIsPaused(paused);
+	}
 }
 
 void Sound::Audio::setMaxDistance(float distance){
-	m_pSound->setMaxDistance(distance);
+	if (m_pSoundSource){
+		m_pSoundSource->setDefaultMaxDistance(distance);
+	}
+
 }
 
 void Sound::Audio::setMinDistance(float distance){
-	m_pSound->setMinDistance(distance);
+	if (m_pSoundSource){
+		m_pSoundSource->setDefaultMinDistance(distance);
+	}
 }
 
 const std::string& Sound::Audio::getName(){
 	return m_Name;
 }
 void Sound::Audio::play(bool looped){
-	m_pSound->setIsLooped(looped);
-	m_pSound->setPlayPosition(0);
-	m_pSound->setIsPaused(false);
+	if (is3D){
+		m_pSound = SoundManager::engine->play3D(m_pSoundSource, position, looped, false, true);
+	}
+	else{
+		m_pSound = SoundManager::engine->play2D(m_pSoundSource, looped, false, true);
+	}
 }
 
 void Sound::Audio::stop(){
-	m_pSound->stop();
+	if (m_pSound){
+
+		m_pSound->stop();
+
+	}
 }
 
+irrklang::ISoundEngine* SoundManager::engine = NULL;
 SoundManager::SoundManager() {
 	engine = NULL;
 }
@@ -93,7 +123,6 @@ void SoundManager::readInXML(const std::string& XMLFilename){
 
 	std::string name;
 	std::string filename;
-	int looped = 0;
 	float volume = 0.0;
 	int is3D = 0;
 	float x = 0.0;
@@ -114,29 +143,23 @@ void SoundManager::readInXML(const std::string& XMLFilename){
 			if (!strcmp("sound", xml->getNodeName())){
 				name = xml->getAttributeValue("name");
 				filename = xml->getAttributeValue("filename");
-				looped = xml->getAttributeValueAsInt("looped");
 				volume = xml->getAttributeValueAsFloat("volume");
 				is3D = xml->getAttributeValueAsInt("3D");
 
 				
 				Sound::Audio* audio = new Sound::Audio(name, filename, (bool)is3D);
 
-				audio->setLooped((bool)looped);
 				audio->setVolume(volume);
 				
-				if (is3D){
-					x = xml->getAttributeValueAsFloat("x");
-					y = xml->getAttributeValueAsFloat("y");
-					z = xml->getAttributeValueAsFloat("z");
-					min_distance = xml->getAttributeValueAsFloat("distance_min");
-					max_distance = xml->getAttributeValueAsFloat("distance_max");
+				min_distance = xml->getAttributeValueAsFloat("distance_min");
+				max_distance = xml->getAttributeValueAsFloat("distance_max");
 
-					audio->setPosition(irrklang::vec3df(x, y, z));
-					audio->setMinDistance(min_distance);
-					audio->setMaxDistance(max_distance);
+				audio->setPosition(irrklang::vec3df(x, y, z));
+				audio->setMinDistance(min_distance);
+				audio->setMaxDistance(max_distance);
 
 					
-				}
+				
 
 				
 				
@@ -253,3 +276,27 @@ Sound::Audio* SoundManager::getSound(const std::string& soundName){
 }
 
 
+int main(){
+
+	SoundManager::getSingleton().init();
+	Sound::Audio* audio = SoundManager::getSingleton().addSound("bell", "media/bell.wav", true);
+	
+	audio->setPosition(-15.0f, 5.0f, 0.0f);
+	audio->setMinDistance(10.0f);
+	Sound::Audio* music = SoundManager::getSingleton().addSound("music", "media/getout.ogg", false);
+
+	music->play(true);
+    char i = 0;
+
+    while(i != 'q')
+    {
+            std::cout << "Press any key to play some sound, press 'q' to quit.\n";
+
+            // play a single sound
+            audio->play();
+
+            std::cin >> i; // wait for user to press some key
+    }
+
+	SoundManager::getSingleton().shutdown();
+}
