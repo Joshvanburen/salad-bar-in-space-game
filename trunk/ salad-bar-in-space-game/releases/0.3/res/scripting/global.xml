@@ -1,0 +1,3 @@
+<scripts>
+	<script name="player_ball" filename="./res/entities/scripts/player_ball.as" />
+</scripts>
