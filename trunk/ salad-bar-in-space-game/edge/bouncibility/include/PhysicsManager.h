@@ -36,6 +36,8 @@ namespace Physics{
 		friend class ::PhysicsManager;
 
 	private:
+		Physics::ScriptList::iterator m_ScriptItrEnd;
+		Physics::ScriptList::iterator m_ScriptItr;
 		const std::string& m_Material1;
 		const std::string& m_Material2;
 

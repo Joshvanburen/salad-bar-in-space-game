@@ -30,13 +30,7 @@ Physics::WorldEntityCollisionCallback::~WorldEntityCollisionCallback(){
 }
 
 void Physics::WorldEntityCollisionCallback::ContactEnd(irr::newton::IMaterialPair* material_pair){
-	Physics::ScriptList::iterator scriptItrEnd = m_CollisionHandlerScripts.end();
-	Physics::ScriptList::iterator scriptItr;
 
-	for (scriptItr = m_CollisionHandlerScripts.begin(); scriptItr != scriptItrEnd; ++scriptItr){
-		(*scriptItr)->callFunction();
-		//Call the script collision function with entity1 and entity2 pointers.
-	}
 }
 
 int  Physics::WorldEntityCollisionCallback::ContactBegin (irr::newton::IMaterialPair *material_pair, irr::newton::IBody *body0, irr::newton::IBody *body1){
@@ -53,6 +47,13 @@ int  Physics::WorldEntityCollisionCallback::ContactBegin (irr::newton::IMaterial
 int  Physics::WorldEntityCollisionCallback::ContactProcess (irr::newton::IMaterialPairAndContact *material_pair_and_contact){
 
 	//Save anything relevant about the points that are in contact.
+
+	m_ScriptItrEnd = m_CollisionHandlerScripts.end();
+
+	for (m_ScriptItr = m_CollisionHandlerScripts.begin(); m_ScriptItr != m_ScriptItrEnd; ++m_ScriptItr){
+		((Scripting::MaterialCollisionFunction*)(*m_ScriptItr))->callFunction(this->entity1, this->entity2);
+		//Call the script collision function with entity1 and entity2 pointers.
+	}
 
 	return 1;
 
