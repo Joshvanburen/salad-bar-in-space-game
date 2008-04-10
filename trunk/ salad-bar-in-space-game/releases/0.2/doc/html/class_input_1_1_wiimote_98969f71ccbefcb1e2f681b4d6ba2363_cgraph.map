@@ -1,3 +1,0 @@
-<area shape="rect" href="$class_input_1_1_wiimote.html#3b240805ca849d91f2494c52c0feb59b" title="Input::Wiimote::handle_ctrl_status" alt="" coords="193,6,412,32">
-<area shape="rect" href="$class_input_1_1_wiimote.html#c843cb13b844161582b3ea35ffaa7a1e" title="Input::Wiimote::handle_event" alt="" coords="209,56,396,83">
-<area shape="rect" href="$class_input_1_1_input_device.html#dcce067d8d22b66e226d24cd00f14793" title="read() is called for all devices when getInput() is called in the InputManager. Only..." alt="" coords="225,107,380,134">

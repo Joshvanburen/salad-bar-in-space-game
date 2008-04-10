@@ -1,5 +1,0 @@
-<area shape="rect" href="$class_entity_manager.html#1d1254a497aeaecddd512db6b76582cd" title="Add new entity definitions. This function is the same as init in that it loads in..." alt="" coords="205,6,424,32">
-<area shape="rect" href="$class_c_singleton.html#76b01ad6bedf1f5313a828ce3035ae6b" title="Gets a reference to the instance of the singleton class." alt="" coords="179,56,451,83">
-<area shape="rect" href="$class_entity_manager.html#52ecdb78de6f3ac7ec75629df546e90f" title="Initialize the Entity system. Provide the filename of the XML file that has the global..." alt="" coords="249,107,380,134">
-<area shape="rect" href="$class_entity_1_1_loader.html#16daef119d065ec413dcfcb975537481" title="Returns the factory pointer given a type name string. This should be used by EntityManager..." alt="" coords="512,31,683,58">
-<area shape="rect" href="$class_entity_1_1_loader.html#6c612adfb9a0fee09a03c975a3964229" title="Registers a factory and type into the Loader. These are hard coded in the EntityManager..." alt="" coords="499,107,696,134">

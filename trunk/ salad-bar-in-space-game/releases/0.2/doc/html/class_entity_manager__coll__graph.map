@@ -1,3 +1,0 @@
-<area shape="rect" href="$class_c_singleton.html" title="{CSingleton\&lt; EntityManager \&gt;\n|&#45; m_instance\l|+ getSingleton()\l+ getSingletonPtr()\l+ destroy()\l# CSingleton()\l# ~CSingleton()\l&#45; CSingleton()\l}" alt="" coords="113,630,305,790">
-<area shape="rect" href="$class_c_singleton.html" title="The CSingleton class is a template class for creating singleton objects." alt="" coords="5,326,136,486">
-<area shape="rect" href="$class_entity_1_1_loader.html" title="Loader is used by EntityManager. It keeps track of the factories for each type. Types..." alt="" coords="217,6,340,182">

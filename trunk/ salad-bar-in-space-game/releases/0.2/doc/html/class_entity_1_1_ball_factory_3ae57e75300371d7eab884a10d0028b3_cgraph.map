@@ -1,6 +1,0 @@
-<area shape="rect" href="$class_level_manager.html#17b4aa3090014cdcff8077e9c0ff5582" title="LevelManager::getPhysicsWorld" alt="" coords="253,6,461,32">
-<area shape="rect" href="$class_level_manager.html#175e1bac6656b82c7ea680d304b4bd1e" title="LevelManager::getSceneManager" alt="" coords="251,56,464,83">
-<area shape="rect" href="$class_world_entity.html#9f7ec0ff1cddd5379c179711a08d1035" title="WorldEntity::setBodyMaterial" alt="" coords="261,107,453,134">
-<area shape="rect" href="$class_world_entity.html#4a4b4bae7a3c076a4fd292c00b7e9181" title="WorldEntity::setMesh" alt="" coords="284,158,431,184">
-<area shape="rect" href="$class_world_entity.html#2aab9745b008723ab12196fee78d4cac" title="WorldEntity::setPhysicsBody" alt="" coords="261,208,453,235">
-<area shape="rect" href="$class_world_entity.html#2c8d8481524d9dd4df94dda1b990715e" title="WorldEntity::setSceneNode" alt="" coords="267,259,448,286">

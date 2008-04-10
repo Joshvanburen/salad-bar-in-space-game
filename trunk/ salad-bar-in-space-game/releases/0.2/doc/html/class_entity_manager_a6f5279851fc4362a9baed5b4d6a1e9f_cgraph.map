@@ -1,2 +1,0 @@
-<area shape="rect" href="$class_entity_1_1_loader.html#57f9d991256d8ad2ae0c509ca31e3864" title="Creates the worldEntity using the provided factory and returns a reference to it..." alt="" coords="237,5,405,32">
-<area shape="rect" href="$class_entity_1_1_entity_factory.html#e1bacbc631488f64e142b62fc7f93514" title="Each child class of EntityFactory should implement the way it wishes to load its..." alt="" coords="453,5,661,32">

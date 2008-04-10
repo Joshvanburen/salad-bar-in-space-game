@@ -1,3 +1,0 @@
-<area shape="rect" href="$class_c_singleton.html" title="{CSingleton\&lt; LevelManager \&gt;\n|&#45; m_instance\l|+ getSingleton()\l+ getSingletonPtr()\l+ destroy()\l# CSingleton()\l# ~CSingleton()\l&#45; CSingleton()\l}" alt="" coords="111,1110,297,1270">
-<area shape="rect" href="$class_c_singleton.html" title="The CSingleton class is a template class for creating singleton objects." alt="" coords="5,734,136,894">
-<area shape="rect" href="$class_level.html" title="The Level class holds everything within a specific level. It loads in all the world..." alt="" coords="200,6,349,518">
