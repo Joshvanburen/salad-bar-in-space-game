@@ -6,6 +6,7 @@
 #include "irrnewt.hpp"
 #include "PhysicsManager.h"
 #include "SoundManager.h"
+#include "GameSystem.h"
 #include "ScriptManager.h"
 #include "LevelManager.h"
 
@@ -33,6 +34,8 @@ bool LevelManager::startGame(){
 	m_LevelItr = m_Levels.begin();
 
 	m_CurrentLevel->load(*(m_LevelItr));
+
+	GameSystem::getSingleton().startGame();
 
 	return true;
 }
@@ -127,6 +130,8 @@ void LevelManager::repeat(){
 	m_CurrentLevel = new Level();
 
 	m_CurrentLevel->load(*(m_LevelItr));
+
+	GameSystem::getSingleton().recoverAfterLevelChange();
 }
 
 bool LevelManager::goToNext(){
@@ -141,6 +146,7 @@ bool LevelManager::goToNext(){
 		m_CurrentLevel->load(*(++m_LevelItr));
 
 		return true;
+		GameSystem::getSingleton().recoverAfterLevelChange();
 	}
 	else{
 		return false;

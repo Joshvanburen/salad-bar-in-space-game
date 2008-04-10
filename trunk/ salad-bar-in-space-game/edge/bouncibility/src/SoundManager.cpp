@@ -10,7 +10,7 @@ Sound::Audio::Audio(const std::string& sName, const std::string& sFilename, bool
 	this->is3D = is3D;
 
 	this->position = irrklang::vec3df(0.0,0.0,0.0);
-	this->m_Sources.push_back(SoundManager::engine->addSoundSourceFromFile(m_Filename.c_str()));
+	this->m_Sources.push_back(SoundManager::engine->addSoundSourceFromFile(m_Filename.c_str(), irrklang::ESM_AUTO_DETECT, true));
 
 
 }

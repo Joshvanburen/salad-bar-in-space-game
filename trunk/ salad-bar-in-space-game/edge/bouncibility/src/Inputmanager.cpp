@@ -66,7 +66,7 @@ bool Input::Wiimote::init(Input::InputDeviceInit &deviceInit){
 bool Input::Wiimote::read(){
 	InputDevice::read();
 
-	if (wiimotes == NULL){
+	if (!found){
 		return false;
 	}
 	if (wiiuse_poll(wiimotes, 1)) {
@@ -110,6 +110,8 @@ const int Input::Wiimote::WII_RIGHT_HAND_UP = 3 << 12;
 const int Input::Wiimote::WII_BOTH_HANDS_DOWN = 4 << 12;
 const int Input::Wiimote::WII_RIGHT_HAND_RIGHT = 5 << 12;
 const int Input::Wiimote::WII_RIGHT_HAND_LEFT = 6 << 12;
+const int Input::Wiimote::WII_RIGHT_HAND_POINT_UP = 7 << 12;
+const int Input::Wiimote::WII_DRUM = 8 << 12;
 const int Input::Wiimote::WII_A_BUTTON = WIIMOTE_BUTTON_A;
 const int Input::Wiimote::WII_B_BUTTON = WIIMOTE_BUTTON_B;
 const int Input::Wiimote::WII_PLUS_BUTTON = WIIMOTE_BUTTON_PLUS;
@@ -118,9 +120,12 @@ const int Input::Wiimote::WII_Z_BUTTON = NUNCHUK_BUTTON_Z;
 const int Input::Wiimote::WII_C_BUTTON = NUNCHUK_BUTTON_C;
 const int Input::Wiimote::WII_1_BUTTON = WIIMOTE_BUTTON_ONE;
 const int Input::Wiimote::WII_2_BUTTON = WIIMOTE_BUTTON_TWO;
-
+const int Input::Wiimote::WII_HOME_BUTTON = WIIMOTE_BUTTON_HOME;
 
 bool Input::Wiimote::buttonStatus(int code) const{
+	if (!found){
+		return false;
+	}
 	InputDevice::buttonStatus(code);
 	if (code == Input::Wiimote::WII_MOVE_HANDS_OUTWARD){
 		return hands_out;
@@ -151,6 +156,9 @@ bool Input::Wiimote::operator()(int code) const{
 
 }
 void Input::Wiimote::toggleRumble(){
+	if (!found){
+		return;
+	}
 	wiiuse_toggle_rumble(wiimotes[0]);
 }
 
@@ -160,11 +168,17 @@ void Input::Wiimote::handle_ctrl_status(struct wiimote_t* wm){
 }
 
 float Input::Wiimote::joystickAngle(){
+	if (!found){
+		return 0.0;
+	}
 	return wiimotes[0]->exp.nunchuk.js.ang;
 }
 
 
 float Input::Wiimote::joystickMagnitude(){
+	if (!found){
+		return 0.0;
+	}
 	return wiimotes[0]->exp.nunchuk.js.mag;
 }
 void Input::Wiimote::handle_event(struct wiimote_t* wm){
@@ -173,20 +187,29 @@ void Input::Wiimote::handle_event(struct wiimote_t* wm){
 
 
 float Input::Wiimote::getBatteryLevel(){
+	if (!found){
+		return 0.0;
+	}
 	wiiuse_status(wiimotes[0]);
 	return battery_level;
 }
 
 int* Input::Wiimote::whichLEDs(){
+	if (!found){
+		return 0;
+	}
 	wiiuse_status(wiimotes[0]);
 	return LEDs;
 }
 
 bool Input::Wiimote::hasAttachement(){
+	if (!found){
+		return false;
+	}
 	wiiuse_status(wiimotes[0]);
 	return attachment;
 }
-Input::Wiimote::Wiimote() : InputDevice(), battery_level(0), attachment(0), moteID(0), wiimotes(NULL){
+Input::Wiimote::Wiimote() : InputDevice(), battery_level(0), attachment(0), moteID(0), wiimotes(NULL), found(false){
 	LEDs[0] = LEDs[1] = LEDs[2] = LEDs[3] = false;
 
 }
@@ -424,10 +447,12 @@ Input::Keyboard::~Keyboard(){
 
 
 
-Input::Action::Action(const std::string& sName) : m_Name(sName), m_ToggleTime(0), m_Amount(0){
+Input::Action::Action(const std::string& sName) : m_ToggleTime(0), m_Amount(0){
+	m_Name = sName;
 	reset();
 }
-Input::Action::Action(const std::string& sName, int code, Input::InputDevice &device): m_Name(sName), m_ToggleTime(0), m_Amount(0){
+Input::Action::Action(const std::string& sName, int code, Input::InputDevice &device): m_ToggleTime(0), m_Amount(0){
+	m_Name = sName;
 	this->addCode(code, device);
 }
 
@@ -623,18 +648,20 @@ bool InputManager::init(){
 	receiver = new MastEventReceiver();
 	receiver->init();
 
-	m_Keyboard.receiver = receiver;
-	
+
 	if (!m_Wiimote.init(m_WiimoteInit))
-		return(false);
+		//return(false);
 	if (!m_Keyboard.init(m_KeyboardInit))
-		return(false);
+		//return(false);
 
 	Input::InputDevice* pKeyboard = &m_Keyboard;
 	Input::InputDevice* pWiimote = &m_Wiimote;
 
-	m_DeviceMap.insert(make_pair(m_Wiimote.getName(), pWiimote));
-	m_DeviceMap.insert(make_pair(m_Keyboard.getName(), pKeyboard));
+	m_DeviceMap.insert(make_pair(m_Wiimote.getName(), &m_Wiimote));
+	m_DeviceMap.insert(make_pair(m_Keyboard.getName(), &m_Keyboard));
+
+	m_Keyboard.receiver = receiver;
+	
 	//return success
 	return(true);
 }

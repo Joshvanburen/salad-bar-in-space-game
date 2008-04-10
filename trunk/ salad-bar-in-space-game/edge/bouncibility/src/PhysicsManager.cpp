@@ -141,6 +141,7 @@ bool PhysicsManager::init(irr::IrrlichtDevice* device){
 
 	ScriptManager::getSingleton().registerScriptFunction("material_collision", script_function);
 
+
 	m_MaterialDefinition = "./res/physics/global.xml";
 
 	return readInXML(m_MaterialDefinition);
@@ -179,7 +180,7 @@ bool PhysicsManager::readInXML(const std::string& XMLMaterialDefinition){
 			if (!strcmp("material", xml->getNodeName())){
 				name = xml->getAttributeValue("name");
 				material = m_World->createMaterial();
-
+				
 				m_MaterialItr = m_MaterialMap.find(name);
 				//If the material is already in the map, print out and continue;
 				if (m_MaterialItr != m_MaterialMap.end()){
