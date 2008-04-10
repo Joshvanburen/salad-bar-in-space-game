@@ -12,6 +12,7 @@
 #include "LevelManager.h"
 #include "SoundManager.h"
 #include "Level.h"
+#include "GameSystem.h"
 #include "WorldEntity.h"
 #include <stdio.h>
 
@@ -30,9 +31,9 @@ using namespace irr::video;
 using namespace irr::gui;
 
 
-void PrintString(int a){
+void PrintString(std::string& str){
 
-	std::cout << a << std::endl;
+	std::cout << str << std::endl;
 
 }
 irr::scene::ISceneManager* smgr;
@@ -44,10 +45,10 @@ bool init(){
 
 	SoundManager::getSingleton().init();
 
-	ScriptManager::getSingleton().registerAsGlobal("void PrintString(float a)", ::asFUNCTION(PrintString));
+	ScriptManager::getSingleton().registerAsGlobal("void PrintString(string &in)", ::asFUNCTION(PrintString));
 	InputManager::getSingleton().init();
 
-	device = irr::createDevice( irr::video::EDT_DIRECT3D9, irr::core::dimension2d<irr::s32>(800, 600), 16,
+	device = irr::createDevice( irr::video::EDT_OPENGL, irr::core::dimension2d<irr::s32>(800, 600), 16,
 		false, false, false, InputManager::getSingleton().getEventReceiver());
 
 	smgr = device->getSceneManager();
@@ -55,9 +56,11 @@ bool init(){
 	//PhysicsManager must be initialized before LevelManager because Entity initialization requires physics.
 	PhysicsManager::getSingleton().init(device);
 
+	GameSystem::getSingleton().init();
 
 	LevelManager::getSingleton().init(device, "./res/scenarios/tutorial.xml");
 
+	
 	LevelManager::getSingleton().startGame();
 
 
@@ -125,7 +128,7 @@ int main()
 	To look at the mesh, we place a camera into 3d space at the position
 	(0, 30, -40). The camera looks from there to (0,5,0).
 	*/
-	smgr->addCameraSceneNode(0, irr::core::vector3df(0,100,-240), irr::core::vector3df(10,100,0));
+	smgr->addCameraSceneNode(0, irr::core::vector3df(0,-240,-150), irr::core::vector3df(0,250,200));
 
 
 	//Makes the mouse invisible
@@ -151,6 +154,7 @@ int main()
 		InputManager::getSingleton().getInput();
 		PhysicsManager::getSingleton().update();
 		LevelManager::getSingleton().update();
+		GameSystem::getSingleton().update();
 		driver->beginScene(true, true, SColor(255,100,101,140));
 			smgr->drawAll();
 			guienv->drawAll();

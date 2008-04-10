@@ -167,56 +167,6 @@
 	</References>
 	<Files>
 		<Filter
-			Name="Source Files"
-			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
-			>
-			<File
-				RelativePath="..\src\ball.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\EntityManager.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\Inputmanager.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\Level.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\LevelManager.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\main.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\PhysicsManager.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ScriptManager.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\scriptstring.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\SoundManager.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\WorldEntity.cpp"
-				>
-			</File>
-		</Filter>
-		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
@@ -231,6 +181,14 @@
 			</File>
 			<File
 				RelativePath="..\include\EntityManager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\GameSystem.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\Gravship.h"
 				>
 			</File>
 			<File
@@ -259,6 +217,10 @@
 			</File>
 			<File
 				RelativePath="..\include\SoundManager.h"
+				>
+			</File>
+			<File
+				RelativePath=".\VertBumpShader.h"
 				>
 			</File>
 			<File
@@ -379,6 +341,64 @@
 					>
 				</File>
 			</Filter>
+		</Filter>
+		<Filter
+			Name="Source Files"
+			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
+			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
+			>
+			<File
+				RelativePath="..\src\ball.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\EntityManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\GameSystem.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\Gravship.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\Inputmanager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\Level.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\LevelManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\main.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\PhysicsManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ScriptManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\scriptstring.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\SoundManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\WorldEntity.cpp"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>
