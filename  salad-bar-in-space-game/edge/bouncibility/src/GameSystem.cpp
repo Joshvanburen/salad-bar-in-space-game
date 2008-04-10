@@ -17,7 +17,7 @@
 
 GameSystem::GameSystem(){
 	//Set all to null
-	grow, shrink, up_momentum, right_momentum, left_momentum, up_momentum, melee, cycle_melee, shoot, cycle_weapon, cycle_morph, morph, hover, pause = NULL;
+	reverseGravity, gravityOn, up_momentum, right_momentum, left_momentum, up_momentum, melee, cycle_melee, shoot, cycle_weapon, cycle_morph, morph, hover, pause = NULL;
 
 	m_Gravship = NULL;
 
@@ -41,8 +41,8 @@ void GameSystem::shutdown(){
 	m_Input_Mgr->deleteAction("left_momentum");
 	m_Input_Mgr->deleteAction("up_momentum");
 
-	m_Input_Mgr->deleteAction("grow");
-	m_Input_Mgr->deleteAction("shrink");
+	m_Input_Mgr->deleteAction("reverse_gravity");
+	m_Input_Mgr->deleteAction("gravity_on");
 
 	m_Input_Mgr->deleteAction("melee");
 	m_Input_Mgr->deleteAction("cycle_melee");
@@ -53,7 +53,7 @@ void GameSystem::shutdown(){
 	m_Input_Mgr->deleteAction("hover");
 	m_Input_Mgr->deleteAction("pause");
 	
-	grow, shrink, up_momentum, right_momentum, left_momentum, up_momentum, melee, cycle_melee, shoot, cycle_weapon, cycle_morph, morph, hover, pause = NULL;
+	reverseGravity, gravityOn, up_momentum, right_momentum, left_momentum, up_momentum, melee, cycle_melee, shoot, cycle_weapon, cycle_morph, morph, hover, pause = NULL;
 
 
 }
@@ -63,9 +63,10 @@ void GameSystem::init(){
 	right_momentum = m_Input_Mgr->createAction("right_momentum", *m_Keyboard, Input::Keyboard::KEY_D, Input::Action::BEHAVIOR_DETECT_PRESS);
 	left_momentum = m_Input_Mgr->createAction("left_momentum", *m_Keyboard, Input::Keyboard::KEY_A, Input::Action::BEHAVIOR_DETECT_PRESS);
 	down_momentum = m_Input_Mgr->createAction("down_momentum", *m_Keyboard, Input::Keyboard::KEY_S, Input::Action::BEHAVIOR_DETECT_PRESS);
+	gravityOn = m_Input_Mgr->createAction("gravity_on", *m_Keyboard, Input::Keyboard::KEY_SPACE, Input::Action::BEHAVIOR_DETECT_PRESS);
 
-	grow = m_Input_Mgr->createAction("grow", *m_Keyboard, Input::Keyboard::KEY_G, Input::Action::BEHAVIOR_DETECT_PRESS);
-	shrink = m_Input_Mgr->createAction("shrink", *m_Keyboard, Input::Keyboard::KEY_F, Input::Action::BEHAVIOR_DETECT_PRESS);
+	reverseGravity = m_Input_Mgr->createAction("reverse_gravity", *m_Keyboard, Input::Keyboard::KEY_R, Input::Action::BEHAVIOR_DETECT_PRESS);
+
 
 	melee = m_Input_Mgr->createAction("melee", *m_Keyboard, Input::Keyboard::KEY_E, Input::Action::BEHAVIOR_DETECT_TAP);
 	cycle_melee = m_Input_Mgr->createAction("cycle_melee", *m_Keyboard, Input::Keyboard::KEY_I, Input::Action::BEHAVIOR_DETECT_TAP);
@@ -131,14 +132,28 @@ void GameSystem::update() {
 	if (up_momentum->isPressed()){
 		m_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(0.0f, 3.0f, 0.0f));
 	}
-	else if(down_momentum->isPressed()){
+	if(down_momentum->isPressed()){
 		m_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(0.0f, -3.0f, 0.0f));
 	}
-	else if(right_momentum->isPressed()){
+	if(right_momentum->isPressed()){
 		m_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(3.0f, 0.0f, 0.0f));
 	}
-	else if(left_momentum->isPressed()){
+	if(left_momentum->isPressed()){
 		m_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(-3.0f, 0.0f, 0.0f));
+	}
+
+	if(gravityOn->isPressed()){
+		m_Gravship->enableGravityField(true);
+	}
+	else{
+		m_Gravship->enableGravityField(false);
+	}
+
+	if(reverseGravity->isPressed()){
+		m_Gravship->reverseGravityField(true);
+	}
+	else{
+		m_Gravship->reverseGravityField(false);
 	}
 }
 

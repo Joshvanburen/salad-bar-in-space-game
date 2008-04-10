@@ -28,10 +28,40 @@ void Gravship::update(){
 void Gravship::applyGravityToOrbitingEntities(){
 	std::cout << "applying force to " << m_OrbitingEntities.size() << " \n";
 	for (m_OrbitingEntitiesItr = m_OrbitingEntities.begin(); m_OrbitingEntitiesItr != m_OrbitingEntities.end(); m_OrbitingEntitiesItr++){
-		irr::core::vector3df  gravityForce =  this->getSceneNode()->getPosition() - (*m_OrbitingEntitiesItr)->getSceneNode()->getPosition();
+		WorldEntity* otherEntity = (*m_OrbitingEntitiesItr);
+		irr::core::vector3df  distance =  this->getSceneNode()->getPosition() - otherEntity->getSceneNode()->getPosition();
+
+		//create the relative movement vector
+		//irr::core::vector3df movevec(0, 0, 0);
+
+	    //movevec += this->m_Physics_Body->getVelocity();
+	    //movevec -= otherEntity->getPhysicsBody()->getVelocity();
+		//float sumradii = (this->m_OrbitRingRadius + otherEntity->getBoundingSphereRadius() );
+        //float sumradiisq = sumradii * sumradii;
+		
+		float distanceSQ = distance.getLengthSQ();
+		//Normalise the movevec
+		//irr::core::vector3df N(movevec);
+		//N.normalize();
+
+
+		//D = N dot C = ||C|| * cos(angle between N and C)
+		//float D = N.dotProduct(distance);
+
+		//F = length(C)^2 - D^2
+		//float F = distanceSQ - (D*D);
+
+		//Escape test: if the closest that A will get to B (sqrt(F) ) is more than the sum of their radii
+		//then they won't collide
+		irr::core::vector3df gravityForce(distance);
 		gravityForce.normalize();
-		gravityForce = gravityForce * this->m_GravitationalPull;
-		(*m_OrbitingEntitiesItr)->getPhysicsBody()->addForce(gravityForce);
+		gravityForce = gravityForce *  this->m_GravitationalPull * (this->getPhysicsBody()->getMass() * (*m_OrbitingEntitiesItr)->getPhysicsBody()->getMass()) / distanceSQ;
+		if (this->m_GravitationalPull < 0){
+			//multiplier for reverse gravity
+			gravityForce = gravityForce * 2.5;
+			
+		}
+		otherEntity->getPhysicsBody()->addForce(gravityForce);
 	}
 }
 
@@ -227,7 +257,7 @@ Gravship* Gravship::EntityToGravship(WorldEntity* entity){
 	return dynamic_cast<Gravship*>(entity);
 }
 
-Gravship::Gravship() : m_GravityOn(true){
+Gravship::Gravship() : m_GravityOn(false){
 
 }
 

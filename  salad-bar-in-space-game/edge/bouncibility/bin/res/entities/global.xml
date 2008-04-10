@@ -1,4 +1,7 @@
 <worldentities>
-	<entity name="player_ball" file="./res/entities/definitions/player_ball.xml" type="ball" script="player_ball"/>
-	<entity name="player_large_ball" file="./res/entities/definitions/player_large_ball.xml" type="ball"/>
+	<entity name="blue_ball" file="./res/entities/definitions/blue_ball.xml" type="ball" script="enemy"/>
+	<entity name="green_ball" file="./res/entities/definitions/green_ball.xml" type="ball" script="enemy"/>
+	<entity name="yellow_ball" file="./res/entities/definitions/yellow_ball.xml" type="ball" script="enemy"/>
+	<entity name="red_ball" file="./res/entities/definitions/red_ball.xml" type="ball" script="enemy"/>
+	<entity name="gravship" file="./res/entities/definitions/gravship.xml" type="gravship" script="gravship"/>
 </worldentities>
