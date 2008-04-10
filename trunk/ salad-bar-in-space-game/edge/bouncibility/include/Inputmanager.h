@@ -80,6 +80,8 @@ namespace Input{
 		static const int WII_BOTH_HANDS_DOWN;
 		static const int WII_RIGHT_HAND_RIGHT;
 		static const int WII_RIGHT_HAND_LEFT;
+		static const int WII_RIGHT_HAND_POINT_UP;
+		static const int WII_DRUM;
 		static const int WII_A_BUTTON;
 		static const int WII_B_BUTTON;
 		static const int WII_PLUS_BUTTON;
@@ -88,13 +90,15 @@ namespace Input{
 		static const int WII_C_BUTTON;
 		static const int WII_1_BUTTON;
 		static const int WII_2_BUTTON;
+		static const int WII_HOME_BUTTON;
 
 
 
 		friend class ::InputManager;
 	private:
-
+	
 	protected:
+		bool found;
 		int LEDs[4];
 		float battery_level;
 		bool attachment;
@@ -243,7 +247,7 @@ namespace Input{
 		static const int STATE_WAITING_FOR_RELEASE; //!< The button this Action represents is waiting to be released.
 
 
-		const std::string& m_Name; //!< The name of the Action.
+		std::string m_Name; //!< The name of the Action.
 		int m_Behavior; //!< A behavior flag.
 		int m_Amount; //!< The amount this Action has been triggered.
 		int m_State; //!< The current state of the Action.

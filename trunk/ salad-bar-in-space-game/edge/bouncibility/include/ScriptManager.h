@@ -32,7 +32,6 @@ namespace Scripting{
 		virtual void execute(); //!< Executes this function.  Prepares the script to call this function if it hasn't already.
 	
 	public:
-		
 		virtual void callFunction();  //!< Should prepare arguments, etc.  Then call execute.
 		
 
