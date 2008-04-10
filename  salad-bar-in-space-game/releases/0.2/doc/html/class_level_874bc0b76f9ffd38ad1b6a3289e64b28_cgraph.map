@@ -1,7 +1,0 @@
-<area shape="rect" href="$class_world_entity.html#78caa6140616d2a8963a0dd0140601fc" title="WorldEntity::changeState" alt="" coords="187,5,357,32">
-<area shape="rect" href="$class_entity_manager.html#a6f5279851fc4362a9baed5b4d6a1e9f" title="Retrieves the entity information for an entity named by the given string. Loads this..." alt="" coords="180,56,364,83">
-<area shape="rect" href="$class_level_manager.html#175e1bac6656b82c7ea680d304b4bd1e" title="LevelManager::getSceneManager" alt="" coords="165,107,379,133">
-<area shape="rect" href="$class_c_singleton.html#76b01ad6bedf1f5313a828ce3035ae6b" title="Gets a reference to the instance of the singleton class." alt="" coords="136,157,408,184">
-<area shape="rect" href="$class_world_entity.html#246a68e479ff5059858a753f8a2c5c8d" title="WorldEntity::setLocation" alt="" coords="191,208,353,235">
-<area shape="rect" href="$class_entity_1_1_loader.html#57f9d991256d8ad2ae0c509ca31e3864" title="Creates the worldEntity using the provided factory and returns a reference to it..." alt="" coords="456,56,624,83">
-<area shape="rect" href="$class_entity_1_1_entity_factory.html#e1bacbc631488f64e142b62fc7f93514" title="Each child class of EntityFactory should implement the way it wishes to load its..." alt="" coords="672,56,880,83">

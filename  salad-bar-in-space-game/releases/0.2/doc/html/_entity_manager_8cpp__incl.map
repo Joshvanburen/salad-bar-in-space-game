@@ -1,6 +1,0 @@
-<area shape="rect" href="$_common_8h.html" title="Common.h" alt="" coords="371,229,453,256">
-<area shape="rect" href="$_entity_manager_8h.html" title=".\\EntityManager.h" alt="" coords="205,80,328,107">
-<area shape="rect" href="$_level_manager_8h.html" title="LevelManager.h" alt="" coords="309,155,421,181">
-<area shape="rect" href="$ball_8h.html" title="ball.h" alt="" coords="509,80,560,107">
-<area shape="rect" href="$_world_entity_8h.html" title="WorldEntity.h" alt="" coords="571,155,669,181">
-<area shape="rect" href="$singleton_8h.html" title="Implementation of the CSingleton template class." alt="" coords="203,155,285,181">
