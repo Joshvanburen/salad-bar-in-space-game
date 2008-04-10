@@ -1,0 +1,1 @@
+<gravship name="gravship" mesh="res/sydney.md2" texture="res/textures/blue_ball_texture.png" enable_physics="1" material="player" orbit_material="player_orbit" field_material="player_field" enable_gravity="1" radius="8.5" />

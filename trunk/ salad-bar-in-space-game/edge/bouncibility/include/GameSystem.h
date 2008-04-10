@@ -74,9 +74,9 @@ class GameSystem : public CSingleton<GameSystem>
 		Input::Wiimote* m_Wiimote;
 
 		// Available actions
-		Input::Action* grow;
+		Input::Action* reverseGravity;
 			//Set all to null
-		Input::Action* shrink;
+		Input::Action* gravityOn;
 
 		Input::Action* down_momentum;
 		Input::Action* right_momentum;

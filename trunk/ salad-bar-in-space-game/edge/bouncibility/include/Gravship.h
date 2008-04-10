@@ -33,10 +33,18 @@ public:
 
 	void draw();
 
-	void setGravityField(bool enabled){
+	void enableGravityField(bool enabled){
 		m_GravityOn=enabled;
 	}
 
+	void reverseGravityField(bool enabled){
+		if (enabled){
+			this->m_GravitationalPull *= -1;
+		}
+		else{
+			this->m_GravitationalPull = abs(this->m_GravitationalPull);
+		}
+	}
 	// Change ball state, all the other properties of the ball may be changed from here
 	void changeState(const std::string name);
 

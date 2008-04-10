@@ -245,7 +245,7 @@ bool Input::Keyboard::read(){
 bool Input::Keyboard::buttonStatus(int code) const{
 	InputDevice::buttonStatus(code);
 	
-	if (receiver->keyPressed(code))
+	if (receiver->keyDown(code))
 		return true;
 	else
 		return false;
@@ -497,7 +497,6 @@ int Input::Action::getAmount(){
         }
 		else if (m_Behavior == Action::BEHAVIOR_DETECT_PRESS) {
 			m_State = Action::STATE_WAITING_FOR_RELEASE;
-            m_Amount = 0;
         }
     }
     return retVal;

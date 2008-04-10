@@ -1,3 +1,6 @@
 <scripts>
-	<script name="player_ball" filename="./res/entities/scripts/player_ball.as" />
+	<script name="gravship" filename="./res/entities/scripts/gravship.as" />
+	<script name="enemy" filename="./res/entities/scripts/enemy.as" />
+	<script name="ship_field" filename="./res/entities/scripts/ship_field.as" />
+	<script name="ship_orbit" filename="./res/entities/scripts/ship_orbit.as" />
 </scripts>

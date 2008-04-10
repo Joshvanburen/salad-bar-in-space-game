@@ -1,0 +1,1 @@
+<creature name="player_creature" mesh="res/meshes/beast/beast.x" texture="res/textures/beast1.jpg" enable_physics="1" material="player_creature" enable_gravity="1"/>

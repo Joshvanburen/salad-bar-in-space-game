@@ -1,0 +1,1 @@
+<gravship name="player" mesh="res/sydney.md2" texture="res/textures/blue_ball_texture.png" material="gravship" orbit_material="ship_orbit" field_material="ship_field"  orbit_radius="25" field_radius="75" radius="8.5" gravity_pull="1000" />

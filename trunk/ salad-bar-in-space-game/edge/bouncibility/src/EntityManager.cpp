@@ -57,7 +57,7 @@ WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename)
 
 				irr::scene::ISceneNode* node = LevelManager::getSceneManager()->addSphereSceneNode(irr::f32(radius));
 		
-
+				
 
 				if (node){
 					node->setScale(irr::core::vector3df(1.0f, 1.0f, 1.0f));
@@ -101,6 +101,7 @@ WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename)
 
 				body->addForceContinuous(irr::core::vector3df(0,0, PhysicsManager::getSingleton().getGravity()));
 
+				body->setMass(100);
 				entity->setPhysicsBody(body);
 				
 
