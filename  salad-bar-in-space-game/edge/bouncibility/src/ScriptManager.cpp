@@ -1,6 +1,7 @@
 #include "Common.h"
 #include "angelscript.h"
 #include "WorldEntity.h"
+#include "Ball.h"
 #include "scriptstring.h"
 #include "irrXML.h"	
 #include "ScriptManager.h"
@@ -16,7 +17,7 @@ void MessageCallback(const asSMessageInfo *msg, void *param)
 }
 
 Scripting::MaterialCollisionFunction::MaterialCollisionFunction(){
-	this->m_Signature = "void collide(WorldEntity&, WorldEntity&)";
+	this->m_Signature = "int collide(WorldEntity&, WorldEntity&)";
 }
 
 void Scripting::MaterialCollisionFunction::callFunction(WorldEntity* entity1, WorldEntity* entity2) {
@@ -227,8 +228,12 @@ bool ScriptManager::init(){
 	registerObjectMethod("WorldEntity", "int getID()", ::asMETHOD(WorldEntity, getID));
 
 	registerObjectMethod("WorldEntity", "void move()", ::asMETHOD(WorldEntity, move));
+	registerReferenceObject("Ball");
+	this->registerAsGlobal("Ball& EntityToBall(WorldEntity&)", ::asFUNCTION(Ball::EntityToBall));
 
-	this->s_Engine->RegisterObjectProperty("WorldEntity", "float fx", offsetof(WorldEntity, fx));
+
+
+//	this->s_Engine->RegisterObjectProperty("WorldEntity", "float fx", offsetof(WorldEntity, fx));
 
 
 	m_ScriptDefinition = "./res/scripting/global.xml";

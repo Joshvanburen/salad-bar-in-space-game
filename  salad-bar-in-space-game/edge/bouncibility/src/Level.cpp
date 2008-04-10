@@ -46,6 +46,7 @@ void Level::update()
 void Level::shutdown(){
 	m_WorldEntities.clear();
 	m_Music->stop();
+	m_Physics_Body->remove();
 	m_Status = Level::STOPPED;
 }
 
@@ -65,11 +66,13 @@ bool Level::load(const std::string& LevelDefinition)
 	int entityX;
 	int entityY;
 	std::string entityStartState;
+	std::string handle = "";
 
 	m_XmlFile = LevelDefinition;
 
 	while(xml && xml->read())
 	{
+		handle = "";
 		switch(xml->getNodeType())
 		{
 		case irr::io::EXN_TEXT:
@@ -93,8 +96,10 @@ bool Level::load(const std::string& LevelDefinition)
 				entityStartState = xml->getAttributeValue("startstate");
 				entityX = xml->getAttributeValueAsInt("xloc");
 				entityY = xml->getAttributeValueAsInt("yloc");
-
-				WorldEntity& entity = EntityManager::getSingleton().createEntity(entityName);
+				if (xml->getAttributeValue("handle")){
+					handle = xml->getAttributeValue("handle");
+				}
+				WorldEntity& entity = EntityManager::getSingleton().createEntity(entityName, handle);
 
 				entity.setLocation((float)entityX, (float)entityY, 0);
 				entity.changeState(entityStartState);
