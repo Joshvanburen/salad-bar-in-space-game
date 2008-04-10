@@ -1,4 +1,0 @@
-<scenario>
-	<entities file="res/entities/tutorial.xml">
-	<level file="res/levels/tutorial1.xml">
-</scenario>
