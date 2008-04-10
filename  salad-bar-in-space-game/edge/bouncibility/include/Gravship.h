@@ -1,32 +1,31 @@
 /* 
  * 
- * ball.h
+ * Gravship.h
  * 
  *
  */
 
+#pragma once
 
-#ifndef BALL_H
-#define BALL_H
-
-#include <utility>	//For using pair
 #include "Common.h"
 #include "WorldEntity.h"
 
-
-class Ball : public WorldEntity {
-
+namespace Entity{
+class GravshipFactory;
+};
+class Gravship : public WorldEntity {
+	friend class Entity::GravshipFactory;
 public:
 
 
 	// Constructor and destructor
-	Ball();
-	~Ball();
+	Gravship();
+	~Gravship();
 
 	void load();
 
 
-	static Ball* EntityToBall(WorldEntity*);
+	static Gravship* EntityToGravship(WorldEntity*);
 
 
 	//Where story happens, check state, collision detect, physics staffs.
@@ -34,43 +33,30 @@ public:
 
 	void draw();
 
+	void setGravityField(bool enabled){
+		m_GravityOn=enabled;
+	}
+
 	// Change ball state, all the other properties of the ball may be changed from here
 	void changeState(const std::string name);
 
-	// Change ball speed, no accleration right now.
+	// Change speed, no accleration right now.
 	void changeVelocity(float x_speed, float y_speed);
 
-	//Jump!! Yahooooo!
-	//Right now we have two different kinds of jumps
-	//jump will give velocity a y+ speed, which is depends on jump_type
-	void jump(int jump_type);
-
-	char getColor(){
-		return color;
-	}
-	void setColor(std::string& newColor){
-		color = newColor.c_str()[0];
-	}
-
-	float getRadius(){
-		return radius;
-	}
-
-	void setRadius(float newRadius){
-		radius = newRadius;
-	}
-
+	void setGravityFieldRadius(float newRadius);
 private: 
  	
 	WorldEntity* clone();
 
+	void updateOrbitingEntities();
+
+	void applyGravityToOrbitingEntities();
 	//We are trying to use as few as possible parameters
 	//These two parameter can describe many states
 	//They always change together, unless in Helium state
-	float radius;
+	
 	float weight; 
 
-	char color;
 
 	//How powerful the ball is
 	int   attack;
@@ -79,11 +65,25 @@ private:
 	irr::core::vector3df velocity;
 
 	//I'll delete it in ball after it implemented in WorldEntity
-	int currentState;
+	std::string currentState;
 
-	//How much percents of speed left after bouncing
-	int bouncibility;
+
+	//Gravity field attributes
+
+	std::set<WorldEntity*> m_OrbitingEntities;
+
+	std::set<WorldEntity*>::iterator m_OrbitingEntitiesItr;
+
+	std::map<int, WorldEntity*>::iterator m_EntityItr;
+
+	bool m_GravityOn;
+
+	float m_GravityFieldRadius;
+
+	float m_GravitationalPull;
+
+	float m_GravitationCentripetalForce;
+
+	float m_OrbitRingRadius;
 
 };
-
-#endif

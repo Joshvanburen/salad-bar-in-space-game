@@ -3,15 +3,14 @@
 
 #include "Common.h"
 #include "singleton.h"
+#include "irrlicht.h"
 namespace irr{
 	namespace newton{
 		class IMaterial;
 		class IBody;
 	}
-	namespace scene{
-		class ISceneNode;
-		class IAnimatedMesh;
-	}
+
+	
 }
 namespace Entity{
 	class EntityFactory;
@@ -19,6 +18,7 @@ namespace Entity{
 
 class WorldEntity{
 	friend class Entity::EntityFactory;
+	friend class EntityManager;
 public:
 
 	// Constructor
@@ -32,7 +32,11 @@ public:
 
 	// Every world entity will have a location
 	void setLocation(float x, float y, float z);
-	
+	void setLocation(irr::core::vector3df newLocation);
+
+	irr::core::vector3df getLocation(){
+		return location;
+	}
 	irr::scene::ISceneNode* entity();
 
 	void AddRef(){
@@ -53,6 +57,7 @@ public:
 
 	void setSceneNode(irr::scene::ISceneNode* node){
 		m_SceneNode = node;
+		calculateBoundingSphere();
 	}
 
 	void setPhysicsBody(irr::newton::IBody* body){
@@ -87,12 +92,20 @@ public:
 	// provides a virtual function for manipulating the state.
 	virtual void changeState(const std::string name) = 0;
 
-public:
-	float fx;// Used for location on the x-axis
-	float fy;// Used for location on the y-axis
-	float fz;// Used for location on the z-axis
+	float getBoundingSphereRadius();
+protected:
+	
+	//!Create a deep copy of this WorldEntity, used by EntityManager to clone and entity for efficiency.
+	virtual WorldEntity* clone() = 0;
 
+	//!Calculates the bounding sphere of this entity used for simple collision detections.
+	void calculateBoundingSphere();
+
+	irr::core::vector3df location;
 	int id;// Unique ID
+
+	//!Radius of bounding sphere
+	float m_Radius;
 
 	irr::scene::ISceneNode* m_SceneNode; //Scene node of worldEntity.  Assumed to be initialized and added to the scene by factory.
 

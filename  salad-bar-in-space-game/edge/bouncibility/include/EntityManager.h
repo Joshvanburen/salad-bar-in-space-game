@@ -36,6 +36,10 @@ namespace Entity{
 		WorldEntity& loadEntity(const std::string& XMLFilename);
 	};
 
+	class GravshipFactory : public EntityFactory
+	{
+		WorldEntity& loadEntity(const std::string& XMLFilename);
+	};
 	//! Loader is used by EntityManager.  It keeps track of the factories for each type.  Types are currently hard coded.  
 	class Loader
 	{
@@ -107,7 +111,7 @@ namespace Entity{
 class EntityManager :
 	public CSingleton<EntityManager>{
 private:
-
+	static int Next_Available_ID;
 	Entity::Loader m_Loader;
 	static int next_ID; //!< Next available ID to assign to the next WorldEntity that is instantiatated.
 
@@ -117,6 +121,7 @@ private:
 
 	Entity::IdEntityMap::iterator m_EntityItr; //!< An iterator for the id entity map.
 
+	std::map<std::string, int> m_EntityHandleIDMap; //!< A map for retrieving certain entity instances by name.
 
 	EntityManager();
 	~EntityManager();
@@ -133,9 +138,18 @@ public:
 
 	void shutdown();  //!< shutdown any resources used by the EntityManager.
 
+	Entity::IdEntityMap getEntities(){
+		return m_IdEntityMap;
+	}
 	//!Retrieves the entity information for an entity named by the given string.  Loads this entity with the correct factory and returns a reference to it.
-	WorldEntity& createEntity(const std::string name); 
+	WorldEntity& createEntity(const std::string& name, const std::string& handle = ""); 
 	
+	//!Create a complete deep clone of the entity referred to by entityID.
+	WorldEntity& cloneEntity(const int entityID);
+	//!Complete a complete deep clone of the entity passed in.
+	WorldEntity& cloneEntity(WorldEntity& entity);
+
+
 	//! Deletes an entity identified by the given ID number.  This can be called to delete an entity since delete should not be called on WorldEntity.  All Entities will be cleaned up when EntityManager is shutdown.
 	bool remove(const int entityID);
 
@@ -145,4 +159,5 @@ public:
 	//!Returns a reference to an already instantiated WorldEntity object given it's ID, NULL if WorldEntity with ID does not exist.
 	WorldEntity& getEntity(const int entityID);
 
+	int getEntityID(const std::string& handle);
 };
