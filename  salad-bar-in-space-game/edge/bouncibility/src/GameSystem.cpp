@@ -117,7 +117,7 @@ void GameSystem::init(){
 
 void GameSystem::startGame(){
 
-	//Assumes player_ball is available for now.
+	//Assumes player_Enemy is available for now.
 	int entity_ID = EntityManager::getSingleton().getEntityID("player");
 
 	if (entity_ID < 0){
@@ -135,8 +135,8 @@ void GameSystem::startGame(){
 }
 
 void GameSystem::recoverAfterLevelChange(){
-	//Need to get the new ball in the new level.  Assume it is available for now.
-	//Assumes player_ball is available for now.
+	//Need to get the new Enemy in the new level.  Assume it is available for now.
+	//Assumes player_Enemy is available for now.
 	int entity_ID = EntityManager::getSingleton().getEntityID("player");
 
 	if (entity_ID < 0){

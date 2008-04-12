@@ -1,6 +1,5 @@
 <scripts>
 	<script name="gravship" filename="./res/entities/scripts/gravship.as" />
 	<script name="enemy" filename="./res/entities/scripts/enemy.as" />
-	<script name="ship_field" filename="./res/entities/scripts/ship_field.as" />
-	<script name="ship_orbit" filename="./res/entities/scripts/ship_orbit.as" />
+	<script name="gravship_helper" filename="./res/entities/scripts/gravship_helper.as" />
 </scripts>

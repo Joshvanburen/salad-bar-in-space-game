@@ -31,7 +31,7 @@ namespace Entity{
 		WorldEntity& loadEntity(const std::string& XMLFilename);
 	};
 
-	class BallFactory : public EntityFactory
+	class EnemyFactory : public EntityFactory
 	{
 		WorldEntity& loadEntity(const std::string& XMLFilename);
 	};
@@ -158,7 +158,7 @@ public:
 	//! Deletes an entity identified by the given ID number.  This can be called to delete an entity since delete should not be called on WorldEntity.  All Entities will be cleaned up when EntityManager is shutdown.
 	bool remove(const int entityID);
 
-	//! Deletes all currently instantiated entities.  This would be ideal for moving from level to level.  Even the ball should get deleted because it will also be in the next level's definition.
+	//! Deletes all currently instantiated entities.  This would be ideal for moving from level to level.  Even the Enemy should get deleted because it will also be in the next level's definition.
 	void removeAll();
 
 	//!Returns a reference to an already instantiated WorldEntity object given it's ID, NULL if WorldEntity with ID does not exist.

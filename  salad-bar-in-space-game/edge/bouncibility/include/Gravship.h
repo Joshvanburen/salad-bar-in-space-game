@@ -13,6 +13,8 @@
 namespace Entity{
 class GravshipFactory;
 };
+class GravshipHelper;
+
 class Gravship : public WorldEntity {
 	friend class Entity::GravshipFactory;
 public:
@@ -41,7 +43,7 @@ public:
 		return m_Helper;
 	}
 
-	// Change ball state, all the other properties of the ball may be changed from here
+	// Change Enemy state, all the other properties of the Enemy may be changed from here
 	void changeState(const std::string name);
 
 	// Change speed, no accleration right now.
@@ -53,7 +55,7 @@ private:
 
 
 	//This is the Gravship's gravity helper object
-	WorldEntity* m_Helper;
+	GravshipHelper* m_Helper;
 
 	//We are trying to use as few as possible parameters
 	//These two parameter can describe many states
@@ -62,13 +64,13 @@ private:
 	float weight; 
 
 
-	//How powerful the ball is
+	//How powerful the Enemy is
 	int   attack;
 
 	//2d speed and direction - Irrlicht probably has a better vector class for representing 2d vectors!
 	irr::core::vector3df velocity;
 
-	//I'll delete it in ball after it implemented in WorldEntity
+	//I'll delete it in Enemy after it implemented in WorldEntity
 	std::string currentState;
 
 

@@ -6,7 +6,7 @@
 #include "irrnewt.hpp"
 #include "ScriptManager.h"
 #include "PhysicsManager.h"
-#include "ball.h"
+#include "Enemy.h"
 #include "Gravship.h"
 #include "GravshipHelper.h"
 #include "WorldEntity.h"
@@ -214,7 +214,7 @@ WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename)
 	entity->load();
 	return *entity;
 }
-WorldEntity& Entity::BallFactory::loadEntity(const std::string& XMLFilename){
+WorldEntity& Entity::EnemyFactory::loadEntity(const std::string& XMLFilename){
 
 
 	irr::io::IrrXMLReader* xml = irr::io::createIrrXMLReader(XMLFilename.c_str());
@@ -241,7 +241,7 @@ WorldEntity& Entity::BallFactory::loadEntity(const std::string& XMLFilename){
 			break;
 
 		case EXN_ELEMENT:
-			if (!strcmp("ball", xml->getNodeName())){
+			if (!strcmp("enemy", xml->getNodeName())){
 				name = xml->getAttributeValue("name");
 				meshFile = xml->getAttributeValue("mesh");
 				textureFile = xml->getAttributeValue("texture");
@@ -258,12 +258,12 @@ WorldEntity& Entity::BallFactory::loadEntity(const std::string& XMLFilename){
 				}
 
 			
-				entity = new Ball();
+				entity = new Enemy();
 				
 				entity->setMesh(NULL);
 				
-				((Ball*)entity)->setColor(color);
-				((Ball*)entity)->setRadius(radius);
+				((Enemy*)entity)->setColor(color);
+				((Enemy*)entity)->setRadius(radius);
 				entity->setSceneNode(node);
 				node->setMaterialTexture(0,LevelManager::getSingleton().getDriver()->getTexture(textureFile.c_str()));
 				if (physics_enabled){
@@ -454,7 +454,7 @@ bool EntityManager::init(const std::string& XMLEntityDefinition){
 
 	//Should register all the factories to each type here!!!!
 
-	this->m_Loader.registerFactory("ball", new Entity::BallFactory());
+	this->m_Loader.registerFactory("enemy", new Entity::EnemyFactory());
 	this->m_Loader.registerFactory("gravship", new Entity::GravshipFactory());
 
 	irr::io::IrrXMLReader* xml = irr::io::createIrrXMLReader(XMLEntityDefinition.c_str());
