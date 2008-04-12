@@ -35,6 +35,28 @@ void Scripting::MaterialCollisionFunction::callFunction(WorldEntity* entity1, Wo
 
 }
 
+
+// Chuan: Used by AI system
+Scripting::WorldEntityAIFunction::WorldEntityAIFunction(){
+	this->m_Signature = "int collide(WorldEntity&, WorldEntity&)";
+}
+
+void Scripting::WorldEntityAIFunction::callFunction(WorldEntity* enemy, WorldEntity* player) {
+	int r = m_pContext->Prepare(m_ID);
+	if( r < 0 ) 
+	{
+		std::cout << "Failed to prepare the context. Unable to execute script function: " << m_Signature << std::endl;
+	}
+	
+
+	this->m_pContext->SetArgObject(0, enemy);
+	this->m_pContext->SetArgObject(1, player);
+	
+	ScriptFunction::execute();
+
+}
+
+
 Scripting::ScriptFunction::ScriptFunction() : m_ID(-1), m_pContext(NULL){
 	 m_Signature = "void main()";
 }
