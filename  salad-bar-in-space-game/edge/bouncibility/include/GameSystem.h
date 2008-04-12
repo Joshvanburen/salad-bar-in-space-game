@@ -103,6 +103,9 @@ class GameSystem : public CSingleton<GameSystem>
 		void update();
 		void startGame();
 		void recoverAfterLevelChange();
+		Gravship* getGravship(){
+			return m_Gravship;
+		}
 		void draw();
 		void shutdown();
 
