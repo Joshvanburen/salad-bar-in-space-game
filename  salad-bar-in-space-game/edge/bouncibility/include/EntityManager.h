@@ -36,6 +36,7 @@ namespace Entity{
 		WorldEntity& loadEntity(const std::string& XMLFilename);
 	};
 
+
 	class GravshipFactory : public EntityFactory
 	{
 		WorldEntity& loadEntity(const std::string& XMLFilename);
