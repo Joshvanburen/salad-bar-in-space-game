@@ -107,6 +107,8 @@ protected:
 	//!Radius of bounding sphere
 	float m_Radius;
 
+	//!Mass of the object used in the physics system
+	int m_Mass;
 	irr::scene::ISceneNode* m_SceneNode; //Scene node of worldEntity.  Assumed to be initialized and added to the scene by factory.
 
 	irr::scene::IAnimatedMesh* m_Mesh;

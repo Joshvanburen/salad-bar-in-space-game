@@ -59,6 +59,10 @@ private:
 	void updateOrbitingEntities();
 
 	void applyGravityToOrbitingEntities();
+
+	//This is the Gravship's gravity helper object
+	WorldEntity* helper;
+
 	//We are trying to use as few as possible parameters
 	//These two parameter can describe many states
 	//They always change together, unless in Helium state

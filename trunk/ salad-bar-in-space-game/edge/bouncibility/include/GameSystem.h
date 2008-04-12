@@ -91,6 +91,11 @@ class GameSystem : public CSingleton<GameSystem>
 		Input::Action* hover;
 		Input::Action* pause;
 
+
+
+		irr::scene::ISceneNode* m_Cursor;
+		int m_CursorX;
+		int m_CursorY;
 			
 	// Public methods and variables
 	public:
