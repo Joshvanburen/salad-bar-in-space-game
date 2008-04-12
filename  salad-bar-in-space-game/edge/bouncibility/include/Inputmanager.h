@@ -10,7 +10,7 @@ class InputManager;
 //!namespace containing all Input related structures used by the InputManager.
 namespace Input{
 
-
+	class InputManagerInitException {};
 	//! InputDeviceInit should be inherited from if a new device needs to be added, should contain initialiation information.
 	struct InputDeviceInit{
 		std::string m_name;	//!< Name of the device
@@ -27,6 +27,14 @@ namespace Input{
 		WiimoteInit(){
 			m_name = "Wii Mote";
 		}
+	};
+
+	//! Irrlicht Mouse provided.
+	struct MouseInit : InputDeviceInit{
+		MouseInit(){
+			m_name = "DirectX Mouse";
+		}
+
 	};
 	//!InputDevice is the base class for all devices added to the InputManager.
 	class InputDevice
@@ -71,6 +79,60 @@ namespace Input{
 		}
 
 	};
+	//! Mouse is a specialization of the InputDevice provided by the InputManager by default.
+	/*! This implementation of Mouse is using the default Irrlicht Mouse.
+	*/
+	class Mouse : public InputDevice{
+		friend class ::InputManager;
+	public:
+		static const int MOUSE_LEFT_BUTTON;
+		static const int MOUSE_RIGHT_BUTTON;
+		static const int MOUSE_MIDDLE_BUTTON;
+	protected:
+		irr::core::position2di m_ScreenCenter;
+		int m_dx, m_dy; //!< difference in the mouse values since the last time it was polled.
+		int m_AbsX, m_AbsY; //!< absolute x and y values;
+
+		bool init(InputDeviceInit &deviceInit);
+
+		bool read();
+
+		void release();
+
+		bool buttonStatus(int code) const;
+		bool operator()(int code) const;
+	private:
+		Mouse();
+
+		~Mouse();
+	public:
+		//! Returns absolute x position of mouse
+		int getAbsX() const{
+			return m_AbsX;
+		}
+		//! Returns absolute y position of mouse
+		int getAbsY() const{
+			return m_AbsY;
+		}
+		//! gets the change in the position of the mouse and resets the change counters to zero.  Call this each frame when checking mouse position.
+		irr::core::position2di getRelativePosition(){
+			irr::core::position2di relative_position(m_dx, m_dy);
+			m_dx = 0;
+			m_dy = 0;
+			return relative_position;
+		}
+
+		//! Returns the change in x position of the mouse
+		int getX() const{
+			return m_dx;
+		}
+		//! Returns the change in y position of the mouse
+		int getY() const{
+			return m_dy;
+		}
+
+	};
+
 
 	class Wiimote : public InputDevice{
 	public:
@@ -84,6 +146,10 @@ namespace Input{
 		static const int WII_DRUM;
 		static const int WII_A_BUTTON;
 		static const int WII_B_BUTTON;
+		static const int WII_UP_BUTTON;
+		static const int WII_DOWN_BUTTON;
+		static const int WII_RIGHT_BUTTON;
+		static const int WII_LEFT_BUTTON;
 		static const int WII_PLUS_BUTTON;
 		static const int WII_MINUS_BUTTON;
 		static const int WII_Z_BUTTON;
@@ -110,6 +176,8 @@ namespace Input{
 		bool both_hands_down;
 		bool right_hand_right;
 		bool right_hand_left;
+
+
 
 		void handle_event(struct wiimote_t* wm);
 
@@ -183,6 +251,7 @@ namespace Input{
 		static const int KEY_LSHIFT;
 		static const int KEY_RSHIFT;
 		static const int KEY_SPACE;
+		static const int KEY_ESC;
 		static const int KEY_1;
 		static const int KEY_2;
 		static const int KEY_3;
@@ -318,9 +387,12 @@ private:
 	Input::Keyboard m_Keyboard; //!< provided Keyboard implementation.
 
 	Input::Wiimote m_Wiimote; //!< provided Wiimote implementation
+	
+	Input::Mouse m_Mouse; //!< Provided Mouse implementation
 	//Create initialization structures
 	Input::KeyboardInit m_KeyboardInit;
 	Input::WiimoteInit m_WiimoteInit;
+	Input::MouseInit m_MouseInit;
 
 	Input::StrActionMap m_ActionMap; //!< Maps strings to Actions.
 
@@ -376,6 +448,10 @@ public:
 	Input::Wiimote& getWiimote(){
 		return m_Wiimote;
 	}
+
+	Input::Mouse& getMouse(){
+		return m_Mouse;
+	}
 	//! Used to retrieve the keyboard initialization structure to modify settings before calling InputManager::init().
 	Input::KeyboardInit& getKeyboardInit(){
 		return m_KeyboardInit;
@@ -383,6 +459,10 @@ public:
 
 	Input::WiimoteInit& getWiimoteInit(){
 		return m_WiimoteInit;
+	}
+
+	Input::MouseInit& getMouseInit(){
+		return m_MouseInit;
 	}
 };
 
