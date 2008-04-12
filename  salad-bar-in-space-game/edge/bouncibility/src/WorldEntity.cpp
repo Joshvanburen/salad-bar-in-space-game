@@ -41,6 +41,14 @@ WorldEntity::WorldEntity(int iID, float x, float y, float z){
 }
 
 
+float WorldEntity::getX(){
+
+	return location.X;
+}
+
+float WorldEntity::getY(){
+	return location.Y;
+}
 void WorldEntity::calculateBoundingSphere(){
 	if (m_SceneNode == 0)
 	{
