@@ -44,7 +44,7 @@ WorldEntity& Entity::GravshipHelperFactory::loadEntity(const std::string& XMLFil
 			break;
 
 		case EXN_ELEMENT:
-			if (!strcmp("gravship", xml->getNodeName())){
+			if (!strcmp("gravship_helper", xml->getNodeName())){
 				name = xml->getAttributeValue("name");
 				meshFile = xml->getAttributeValue("mesh");
 				textureFile = xml->getAttributeValue("texture");
@@ -53,7 +53,7 @@ WorldEntity& Entity::GravshipHelperFactory::loadEntity(const std::string& XMLFil
 				fieldRadius = xml->getAttributeValueAsFloat("field_radius");
 				orbitRadius = xml->getAttributeValueAsFloat("orbit_radius");
 				gravityPull = xml->getAttributeValueAsFloat("gravity_pull");
-
+				mass = xml->getAttributeValueAsInt("mass");
 				irr::scene::ISceneNode* node = LevelManager::getSceneManager()->addSphereSceneNode(irr::f32(radius));
 		
 				
@@ -65,15 +65,15 @@ WorldEntity& Entity::GravshipHelperFactory::loadEntity(const std::string& XMLFil
 				}
 
 			
-				entity = new Gravship();
+				entity = new GravshipHelper();
 				
 				entity->setMesh(NULL);
 				
 				
-				((Gravship*)entity)->m_GravityFieldRadius = fieldRadius;
-				((Gravship*)entity)->m_OrbitRingRadius = orbitRadius;
-				((Gravship*)entity)->m_GravitationCentripetalForce = centripetal;
-				((Gravship*)entity)->m_GravitationalPull = gravityPull;
+				((GravshipHelper*)entity)->m_GravityFieldRadius = fieldRadius;
+				((GravshipHelper*)entity)->m_OrbitRingRadius = orbitRadius;
+				((GravshipHelper*)entity)->m_GravitationCentripetalForce = centripetal;
+				((GravshipHelper*)entity)->m_GravitationalPull = gravityPull;
 
 				entity->setSceneNode(node);
 				node->setMaterialTexture(0,LevelManager::getSingleton().getDriver()->getTexture(textureFile.c_str()));
@@ -92,7 +92,7 @@ WorldEntity& Entity::GravshipHelperFactory::loadEntity(const std::string& XMLFil
 
 				irr::newton::IBody* body = PhysicsManager::getSingleton().getPhysicsWorld()->createBody(physics_node);
 				
-				body->setContinuousCollisionMode(true);
+				body->setContinuousCollisionMode(false);
 
 				body->setMaterial(material);
 
@@ -100,7 +100,7 @@ WorldEntity& Entity::GravshipHelperFactory::loadEntity(const std::string& XMLFil
 
 				body->addForceContinuous(irr::core::vector3df(0,0, PhysicsManager::getSingleton().getGravity()));
 
-				body->setMass(100);
+				body->setMass(mass);
 				entity->setPhysicsBody(body);
 				
 				
@@ -130,7 +130,7 @@ WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename)
 	std::string textureFile;
 	std::string startState;
 	std::string materialName;
-
+	std::string helper;
 	irr::newton::IMaterial* material;
 
 	float radius = 1;
@@ -152,7 +152,8 @@ WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename)
 				textureFile = xml->getAttributeValue("texture");
 				//startState = xml->getAttributeValue("start_state");
 				radius = xml->getAttributeValueAsFloat("radius");
-				
+				mass = xml->getAttributeValueAsInt("mass");
+				helper = xml->getAttributeValue("helper");
 				irr::scene::ISceneNode* node = LevelManager::getSceneManager()->addSphereSceneNode(irr::f32(radius));
 		
 				
@@ -174,10 +175,9 @@ WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename)
 
 				materialName = xml->getAttributeValue("material");
 
-				
 				material = PhysicsManager::getSingleton().getMaterial(materialName);
 
-
+				((Gravship*)entity)->m_Helper = &(EntityManager::getSingleton().createEntity(helper));
 
 				irr::newton::SBodyFromNode physics_node;
 
@@ -194,7 +194,7 @@ WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename)
 
 				body->addForceContinuous(irr::core::vector3df(0,0, PhysicsManager::getSingleton().getGravity()));
 
-				body->setMass(10);
+				body->setMass(mass);
 				entity->setPhysicsBody(body);
 				
 				
