@@ -1,5 +1,6 @@
 #include "Common.h"
 #include ".\inputmanager.h"
+#include "LevelManager.h"
 #include "MastEventReceiver.cpp"
 #include "wiiuse.h"
 #define WIIUSE_PATH		"wiiuse.dll"
@@ -27,9 +28,66 @@ Input::InputDevice::~InputDevice(){
 }
 //End interface methods
 
+Input::Mouse::Mouse() : m_AbsX(0), m_AbsY(0), m_dx(0), m_dy(0){
+	m_ScreenCenter.X = 0;
+	m_ScreenCenter.Y = 0;
+}
+
+Input::Mouse::~Mouse(){
+	release();
+}
+
+const int Input::Mouse::MOUSE_LEFT_BUTTON = 0;
+const int Input::Mouse::MOUSE_MIDDLE_BUTTON = 1;
+const int Input::Mouse::MOUSE_RIGHT_BUTTON = 2;
+
+bool Input::Mouse::init(Input::InputDeviceInit &deviceInit){
+	InputDevice::init(deviceInit);
+
+	return true;
+}
+
+bool Input::Mouse::read(){
+	if (m_ScreenCenter.X == 0 && m_ScreenCenter.Y == 0){
+		m_ScreenCenter = irr::core::position2di(LevelManager::getSingleton().getDriver()->getScreenSize().Width*0.5, LevelManager::getSingleton().getDriver()->getScreenSize().Height*0.5);
+	}
+	InputDevice::read();
+	irr::core::position2di mouse_pos = LevelManager::getSingleton().getDevice()->getCursorControl()->getPosition();
+	this->m_dx += m_ScreenCenter.X - mouse_pos.X;
+	this->m_dy += m_ScreenCenter.Y - mouse_pos.Y;
+	LevelManager::getSingleton().getDevice()->getCursorControl()->setPosition(m_ScreenCenter); 
+	
+	return true;
+}
+
+void Input::Mouse::release(){
+	InputDevice::release();
+}
+
+bool Input::Mouse::buttonStatus(int code) const{
+	InputDevice::buttonStatus(code);
+	
+	switch (code){
+		case MOUSE_LEFT_BUTTON:
+			return receiver->leftMouseDown();
+			break;
+		case MOUSE_MIDDLE_BUTTON:
+			return receiver->middleMouseDown();
+			break;
+		case MOUSE_RIGHT_BUTTON:
+			return receiver->rightMouseDown();
+			break;
+	}
+
+}
+
+bool Input::Mouse::operator()(int code) const{
+	return buttonStatus(code);
+}
+
 
 bool Input::Wiimote::init(Input::InputDeviceInit &deviceInit){
-	int found, connected = 0;
+	int connected = 0;
 	//call the base class version first.
 	InputDevice::init(deviceInit);
 
@@ -59,7 +117,6 @@ bool Input::Wiimote::init(Input::InputDeviceInit &deviceInit){
 
 	wiiuse_rumble(wiimotes[0], 0);
 	wiiuse_motion_sensing(wiimotes[0], 1);
-	this->release();
 
 	return true;
 }
@@ -121,6 +178,11 @@ const int Input::Wiimote::WII_C_BUTTON = NUNCHUK_BUTTON_C;
 const int Input::Wiimote::WII_1_BUTTON = WIIMOTE_BUTTON_ONE;
 const int Input::Wiimote::WII_2_BUTTON = WIIMOTE_BUTTON_TWO;
 const int Input::Wiimote::WII_HOME_BUTTON = WIIMOTE_BUTTON_HOME;
+const int Input::Wiimote::WII_RIGHT_BUTTON = WIIMOTE_BUTTON_RIGHT;
+const int Input::Wiimote::WII_LEFT_BUTTON = WIIMOTE_BUTTON_LEFT;
+const int Input::Wiimote::WII_UP_BUTTON = WIIMOTE_BUTTON_UP;
+const int Input::Wiimote::WII_DOWN_BUTTON = WIIMOTE_BUTTON_DOWN;
+
 
 bool Input::Wiimote::buttonStatus(int code) const{
 	if (!found){
@@ -146,7 +208,7 @@ bool Input::Wiimote::buttonStatus(int code) const{
 		return both_hands_down;
 	}
 
-		return (wiimotes[0]->btns & code) == code;
+	return (wiimotes[0]->btns & code) == code;
 	
 
 }
@@ -212,6 +274,8 @@ bool Input::Wiimote::hasAttachement(){
 Input::Wiimote::Wiimote() : InputDevice(), battery_level(0), attachment(0), moteID(0), wiimotes(NULL), found(false){
 	LEDs[0] = LEDs[1] = LEDs[2] = LEDs[3] = false;
 
+
+
 }
 Input::Wiimote::~Wiimote(){
 	wiiuse_cleanup(wiimotes, 1);
@@ -222,7 +286,6 @@ bool Input::Keyboard::init(Input::InputDeviceInit &deviceInit){
 	InputDevice::init(deviceInit);
 
 	Input::KeyboardInit *keyboardInit = (KeyboardInit*)&deviceInit;
-	this->release();
 
 	return true;
 
@@ -268,6 +331,7 @@ const int Input::Keyboard::KEY_K = irr::KEY_KEY_K;
 const int Input::Keyboard::KEY_L = irr::KEY_KEY_L;
 const int Input::Keyboard::KEY_M = irr::KEY_KEY_M;
 const int Input::Keyboard::KEY_N = irr::KEY_KEY_N;
+const int Input::Keyboard::KEY_ESC = irr::KEY_ESCAPE;
 const int Input::Keyboard::KEY_O = irr::KEY_KEY_O;
 const int Input::Keyboard::KEY_P = irr::KEY_KEY_P;
 const int Input::Keyboard::KEY_Q = irr::KEY_KEY_Q;
@@ -649,16 +713,20 @@ bool InputManager::init(){
 
 
 	if (!m_Wiimote.init(m_WiimoteInit))
-		//return(false);
+		throw Input::InputManagerInitException();
 	if (!m_Keyboard.init(m_KeyboardInit))
-		//return(false);
-
+		throw Input::InputManagerInitException();
+	if (!m_Mouse.init(m_MouseInit))
+		throw Input::InputManagerInitException();
+	Input::InputDevice* pMouse = &m_Mouse;
 	Input::InputDevice* pKeyboard = &m_Keyboard;
 	Input::InputDevice* pWiimote = &m_Wiimote;
 
+	m_DeviceMap.insert(make_pair(m_Mouse.getName(), &m_Mouse));
 	m_DeviceMap.insert(make_pair(m_Wiimote.getName(), &m_Wiimote));
 	m_DeviceMap.insert(make_pair(m_Keyboard.getName(), &m_Keyboard));
 
+	m_Mouse.receiver = receiver;
 	m_Keyboard.receiver = receiver;
 	
 	//return success
@@ -701,6 +769,7 @@ void InputManager::shutdown(){
 	//have the keyboard and mouse shut themselves down.
 	m_Keyboard.release();
 	m_Wiimote.release();
+	m_Mouse.release();
 	//delete irrilicht input receiver
 	if (receiver){
 		delete receiver;
@@ -713,7 +782,7 @@ bool InputManager::getInput(){
 
 	m_Wiimote.read();
 	m_Keyboard.read();
-
+	m_Mouse.read();
 	for(m_ActionItr = m_ActionMap.begin(); m_ActionItr != m_ActionMap.end(); ++m_ActionItr)
 	{
 		m_ActionItr->second->checkButtonStatus();

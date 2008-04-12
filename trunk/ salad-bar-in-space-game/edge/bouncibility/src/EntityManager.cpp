@@ -15,7 +15,8 @@ using namespace io;
 
 int EntityManager::Next_Available_ID = 1;
 
-WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename){
+
+WorldEntity& Entity::GravshipHelperFactory::loadEntity(const std::string& XMLFilename){
 
 	irr::io::IrrXMLReader* xml = irr::io::createIrrXMLReader(XMLFilename.c_str());
 
@@ -32,7 +33,6 @@ WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename)
 	float orbitRadius = 1;
 	float fieldRadius = 1;
 	float gravityPull = 1;
-	float centripetal = 1;
 	WorldEntity* entity = NULL;
 
 	while(xml && xml->read())
@@ -53,7 +53,6 @@ WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename)
 				fieldRadius = xml->getAttributeValueAsFloat("field_radius");
 				orbitRadius = xml->getAttributeValueAsFloat("orbit_radius");
 				gravityPull = xml->getAttributeValueAsFloat("gravity_pull");
-				centripetal = xml->getAttributeValueAsFloat("centripetal");
 
 				irr::scene::ISceneNode* node = LevelManager::getSceneManager()->addSphereSceneNode(irr::f32(radius));
 		
@@ -104,7 +103,7 @@ WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename)
 				body->setMass(100);
 				entity->setPhysicsBody(body);
 				
-
+				
 
 			
 				
@@ -117,7 +116,101 @@ WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename)
 		}
 	}
 
+	entity->load();
+	return *entity;
+}
 
+WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename){
+
+	irr::io::IrrXMLReader* xml = irr::io::createIrrXMLReader(XMLFilename.c_str());
+
+	// strings for storing the data we want to get out of the file
+	std::string name;
+	std::string meshFile;
+	std::string textureFile;
+	std::string startState;
+	std::string materialName;
+
+	irr::newton::IMaterial* material;
+
+	float radius = 1;
+	int mass = 1;
+	WorldEntity* entity = NULL;
+
+	while(xml && xml->read())
+	{
+		switch(xml->getNodeType())
+		{
+		case EXN_TEXT:
+			//No text nodes
+			break;
+
+		case EXN_ELEMENT:
+			if (!strcmp("gravship", xml->getNodeName())){
+				name = xml->getAttributeValue("name");
+				meshFile = xml->getAttributeValue("mesh");
+				textureFile = xml->getAttributeValue("texture");
+				//startState = xml->getAttributeValue("start_state");
+				radius = xml->getAttributeValueAsFloat("radius");
+				
+				irr::scene::ISceneNode* node = LevelManager::getSceneManager()->addSphereSceneNode(irr::f32(radius));
+		
+				
+
+				if (node){
+					node->setScale(irr::core::vector3df(1.0f, 1.0f, 1.0f));
+					node->setMaterialFlag(irr::video::EMF_LIGHTING, true);
+					
+				}
+
+			
+				entity = new Gravship();
+				
+				entity->setMesh(NULL);
+				
+				
+				entity->setSceneNode(node);
+				node->setMaterialTexture(0,LevelManager::getSingleton().getDriver()->getTexture(textureFile.c_str()));
+
+				materialName = xml->getAttributeValue("material");
+
+				
+				material = PhysicsManager::getSingleton().getMaterial(materialName);
+
+
+
+				irr::newton::SBodyFromNode physics_node;
+
+				physics_node.Node = node;
+				physics_node.Type = irr::newton::EBT_PRIMITIVE_ELLIPSOID;
+
+				irr::newton::IBody* body = PhysicsManager::getSingleton().getPhysicsWorld()->createBody(physics_node);
+				
+				body->setContinuousCollisionMode(true);
+
+				body->setMaterial(material);
+
+				body->setUserData(entity);
+
+				body->addForceContinuous(irr::core::vector3df(0,0, PhysicsManager::getSingleton().getGravity()));
+
+				body->setMass(10);
+				entity->setPhysicsBody(body);
+				
+				
+
+			
+				
+			
+
+			//entity->changeState(startState)
+							
+			}
+			break;
+		}
+	}
+
+	entity->load();
 	return *entity;
 }
 WorldEntity& Entity::BallFactory::loadEntity(const std::string& XMLFilename){

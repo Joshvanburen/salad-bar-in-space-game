@@ -17,6 +17,7 @@ WorldEntity::WorldEntity(int iID): m_SceneNode(NULL), m_Mesh(NULL), m_Physics_Bo
 	location.Y = 0;
 	location.Z = 0;
 	m_Radius = 0.0f;
+	m_Mass = 1;
 }
 
 WorldEntity::~WorldEntity(){

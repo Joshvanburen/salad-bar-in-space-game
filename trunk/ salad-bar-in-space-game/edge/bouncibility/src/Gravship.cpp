@@ -7,6 +7,36 @@
 #include "PhysicsManager.h"
 
 void Gravship::load(){
+	helper = &(EntityManager::getSingleton().createEntity("gravship_helper");
+
+
+
+	irr::scene::ISceneNode* node = LevelManager::getSceneManager()->addSphereSceneNode(irr::f32(this->m_Radius*.2));
+		
+	if (node){
+		node->setScale(irr::core::vector3df(1.0f, 1.0f, 1.0f));
+		node->setMaterialFlag(irr::video::EMF_LIGHTING, true);
+		
+	}
+	irr::newton::IMaterial* material = PhysicsManager::getSingleton().getMaterial("gravship_helper");
+
+	irr::newton::SBodyFromNode physics_node;
+
+	physics_node.Node = node;
+	physics_node.Type = irr::newton::EBT_PRIMITIVE_ELLIPSOID;
+
+	irr::newton::IBody* body = PhysicsManager::getSingleton().getPhysicsWorld()->createBody(physics_node);
+
+	body->setContinuousCollisionMode(false);
+
+	body->setMaterial(material);
+
+	body->setUserData(entity);
+
+	body->addForceContinuous(irr::core::vector3df(0,0, PhysicsManager::getSingleton().getGravity()));
+
+	body->setMass(100);
+	entity->setPhysicsBody(body);
 }
 
 void Gravship::update(){
@@ -26,7 +56,6 @@ void Gravship::update(){
 }
 
 void Gravship::applyGravityToOrbitingEntities(){
-	std::cout << "applying force to " << m_OrbitingEntities.size() << " \n";
 	for (m_OrbitingEntitiesItr = m_OrbitingEntities.begin(); m_OrbitingEntitiesItr != m_OrbitingEntities.end(); m_OrbitingEntitiesItr++){
 		WorldEntity* otherEntity = (*m_OrbitingEntitiesItr);
 		irr::core::vector3df  distance =  this->getSceneNode()->getPosition() - otherEntity->getSceneNode()->getPosition();
@@ -257,7 +286,7 @@ Gravship* Gravship::EntityToGravship(WorldEntity* entity){
 	return dynamic_cast<Gravship*>(entity);
 }
 
-Gravship::Gravship() : m_GravityOn(false){
+Gravship::Gravship() : m_GravityOn(false), helper(NULL){
 
 }
 
