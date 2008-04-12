@@ -37,6 +37,11 @@ public:
 	irr::core::vector3df getLocation(){
 		return location;
 	}
+
+	float getX();
+
+	float getY();
+
 	irr::scene::ISceneNode* entity();
 
 	void AddRef(){
