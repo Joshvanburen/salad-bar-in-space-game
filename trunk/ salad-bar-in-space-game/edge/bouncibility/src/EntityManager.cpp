@@ -8,6 +8,7 @@
 #include "PhysicsManager.h"
 #include "ball.h"
 #include "Gravship.h"
+#include "GravshipHelper.h"
 #include "WorldEntity.h"
 
 using namespace irr;
@@ -33,6 +34,7 @@ WorldEntity& Entity::GravshipHelperFactory::loadEntity(const std::string& XMLFil
 	float orbitRadius = 1;
 	float fieldRadius = 1;
 	float gravityPull = 1;
+	int mass = 1;
 	WorldEntity* entity = NULL;
 
 	while(xml && xml->read())
@@ -72,7 +74,6 @@ WorldEntity& Entity::GravshipHelperFactory::loadEntity(const std::string& XMLFil
 				
 				((GravshipHelper*)entity)->m_GravityFieldRadius = fieldRadius;
 				((GravshipHelper*)entity)->m_OrbitRingRadius = orbitRadius;
-				((GravshipHelper*)entity)->m_GravitationCentripetalForce = centripetal;
 				((GravshipHelper*)entity)->m_GravitationalPull = gravityPull;
 
 				entity->setSceneNode(node);
@@ -100,7 +101,7 @@ WorldEntity& Entity::GravshipHelperFactory::loadEntity(const std::string& XMLFil
 
 				body->addForceContinuous(irr::core::vector3df(0,0, PhysicsManager::getSingleton().getGravity()));
 
-				body->setMass(mass);
+				body->setMass(irr::f32(mass));
 				entity->setPhysicsBody(body);
 				
 				
@@ -177,7 +178,7 @@ WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename)
 
 				material = PhysicsManager::getSingleton().getMaterial(materialName);
 
-				((Gravship*)entity)->m_Helper = &(EntityManager::getSingleton().createEntity(helper));
+				((Gravship*)entity)->m_Helper = (GravshipHelper*)&(EntityManager::getSingleton().createEntity(helper));
 
 				irr::newton::SBodyFromNode physics_node;
 
@@ -194,7 +195,7 @@ WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename)
 
 				body->addForceContinuous(irr::core::vector3df(0,0, PhysicsManager::getSingleton().getGravity()));
 
-				body->setMass(mass);
+				body->setMass(irr::f32(mass));
 				entity->setPhysicsBody(body);
 				
 				
