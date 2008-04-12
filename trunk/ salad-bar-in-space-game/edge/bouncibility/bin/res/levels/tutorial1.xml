@@ -3,9 +3,9 @@
 	<entities>
 
 		<entity name="gravship" startstate="normal" xloc="0" yloc="-100" handle="player" />
-		<entity name="red_ball" startstate="normal" xloc="-5" yloc="20" />
-		<entity name="blue_ball" startstate="normal" xloc="-15" yloc="50" />
-		<entity name="yellow_ball" startstate="normal" xloc="10" yloc="20" />
+		<entity name="enemy" startstate="normal" xloc="-5" yloc="20" />
+		<entity name="enemy" startstate="normal" xloc="-15" yloc="50" />
+		<entity name="enemy" startstate="normal" xloc="10" yloc="20" />
 
 		
 	

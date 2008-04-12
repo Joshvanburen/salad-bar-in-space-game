@@ -5,7 +5,7 @@
 /*
 Notes for the game system class
 Reads in controls from inputmapping.xml
-Obtains a the name of the object it will be controlling from xml (hard coded = "player_ball")
+Obtains a the name of the object it will be controlling from xml (hard coded = "player_Enemy")
 Displays a UserInterface overlay with current game state
 State changes are in scripts, the scripts simply change properties of the object changing states.
 Should just define this in C++ for now.  Buttons to use, A, B, Z, C, drumming?, both outwards, both inwards, both down, right up, right right, right left, 

@@ -1,22 +1,22 @@
 #include "irrlicht.h"
 #include "irrnewt.hpp"
 #include "LevelManager.h"
-#include "ball.h"
+#include "Enemy.h"
 #include "PhysicsManager.h"
 
-void Ball::load(){
+void Enemy::load(){
 
 }
 
-void Ball::update(){
+void Enemy::update(){
 	const irr::core::vector3df position  = this->m_Physics_Body->getPosition();
 
 	this->m_Physics_Body->setPosition(irr::core::vector3df(position.X,position.Y, 0));
 	//this->m_Physics_Body->setVelocity(this->velocity);
 }
 
-WorldEntity* Ball::clone(){
-	Ball* entity = new Ball();
+WorldEntity* Enemy::clone(){
+	Enemy* entity = new Enemy();
 	entity->location = this->location;
 	entity->id = -1;
 	entity->currentState = this->currentState;
@@ -50,17 +50,18 @@ WorldEntity* Ball::clone(){
 
 	return entity;
 }
-void Ball::changeState(const std::string name){
+
+void Enemy::changeState(const std::string name){
 }
 
-void Ball::changeVelocity(float x_speed, float y_speed){
+void Enemy::changeVelocity(float x_speed, float y_speed){
 }
 
-Ball* Ball::EntityToBall(WorldEntity* entity){
-	return dynamic_cast<Ball*>(entity);
+Enemy* Enemy::EntityToEnemy(WorldEntity* entity){
+	return dynamic_cast<Enemy*>(entity);
 }
 
-void Ball::jump(int jump_type){
+void Enemy::jump(int jump_type){
 
 	irr::core::aabbox3d<irr::f32> box = this->m_Physics_Body->calculateAABB();
 
@@ -107,9 +108,9 @@ void Ball::jump(int jump_type){
 		}//distance
 	}//body!=NULL
 }
-Ball::Ball() {
+Enemy::Enemy() {
 	color = '0';
 }
 
-Ball::~Ball(){
+Enemy::~Enemy(){
 }

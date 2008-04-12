@@ -45,7 +45,7 @@ public:
 			this->m_GravitationalPull = abs(this->m_GravitationalPull);
 		}
 	}
-	// Change ball state, all the other properties of the ball may be changed from here
+	// Change Enemy state, all the other properties of the Enemy may be changed from here
 	void changeState(const std::string name);
 
 	// Change speed, no accleration right now.
@@ -70,13 +70,13 @@ private:
 	float weight; 
 
 
-	//How powerful the ball is
+	//How powerful the Enemy is
 	int   attack;
 
 	//2d speed and direction - Irrlicht probably has a better vector class for representing 2d vectors!
 	irr::core::vector3df velocity;
 
-	//I'll delete it in ball after it implemented in WorldEntity
+	//I'll delete it in Enemy after it implemented in WorldEntity
 	std::string currentState;
 
 

@@ -1,32 +1,30 @@
 /* 
  * 
- * ball.h
+ * Enemy.h
  * 
  *
  */
 
-
-#ifndef BALL_H
-#define BALL_H
+#pragma once
 
 #include <utility>	//For using pair
 #include "Common.h"
 #include "WorldEntity.h"
 
 
-class Ball : public WorldEntity {
+class Enemy : public WorldEntity {
 
 public:
 
 
 	// Constructor and destructor
-	Ball();
-	~Ball();
+	Enemy();
+	~Enemy();
 
 	void load();
 
 
-	static Ball* EntityToBall(WorldEntity*);
+	static Enemy* EntityToEnemy(WorldEntity*);
 
 
 	//Where story happens, check state, collision detect, physics staffs.
@@ -34,10 +32,10 @@ public:
 
 	void draw();
 
-	// Change ball state, all the other properties of the ball may be changed from here
+	// Change Enemy state, all the other properties of the Enemy may be changed from here
 	void changeState(const std::string name);
 
-	// Change ball speed, no accleration right now.
+	// Change Enemy speed, no accleration right now.
 	void changeVelocity(float x_speed, float y_speed);
 
 	//Jump!! Yahooooo!
@@ -72,13 +70,13 @@ private:
 
 	char color;
 
-	//How powerful the ball is
+	//How powerful the Enemy is
 	int   attack;
 
 	//2d speed and direction - Irrlicht probably has a better vector class for representing 2d vectors!
 	irr::core::vector3df velocity;
 
-	//I'll delete it in ball after it implemented in WorldEntity
+	//I'll delete it in Enemy after it implemented in WorldEntity
 	int currentState;
 
 	//How much percents of speed left after bouncing
@@ -86,4 +84,4 @@ private:
 
 };
 
-#endif
+

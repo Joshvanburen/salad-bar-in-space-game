@@ -4,7 +4,7 @@ void main()
 }
 int collide(WorldEntity &entity1, WorldEntity &entity2)
 {
-	PrintString("In Field Script");
+	PrintString("In Gravship Script");
 	Ball@ ball1 = EntityToBall(entity1);
 	Ball@ ball2 = EntityToBall(entity2);
 	if (ball1 == null || ball2 == null){
