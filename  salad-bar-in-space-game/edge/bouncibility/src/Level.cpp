@@ -46,7 +46,10 @@ void Level::update()
 void Level::shutdown(){
 	m_WorldEntities.clear();
 	m_Music->stop();
-	m_Physics_Body->remove();
+	if (m_Physics_Body){
+		m_Physics_Body->remove();
+		m_Physics_Body = NULL;
+	}
 	m_Status = Level::STOPPED;
 }
 

@@ -5,6 +5,7 @@
 #include "PhysicsManager.h"
 
 void Ball::load(){
+
 }
 
 void Ball::update(){

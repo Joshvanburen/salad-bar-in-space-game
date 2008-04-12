@@ -21,12 +21,17 @@ GameSystem::GameSystem(){
 
 	m_Gravship = NULL;
 
+	m_Cursor = NULL;
+
 	m_Input_Mgr = InputManager::getSingletonPtr();
 	m_Keyboard = &(m_Input_Mgr->getKeyboard());
 	m_Wiimote = &(m_Input_Mgr->getWiimote());
 
 	m_Score = 0;
 	m_Lives = 0;
+
+	m_CursorX = 0;
+	m_CursorY = 0;
 }
 
 
@@ -40,6 +45,8 @@ void GameSystem::shutdown(){
 	m_Input_Mgr->deleteAction("right_momentum");
 	m_Input_Mgr->deleteAction("left_momentum");
 	m_Input_Mgr->deleteAction("up_momentum");
+
+
 
 	m_Input_Mgr->deleteAction("reverse_gravity");
 	m_Input_Mgr->deleteAction("gravity_on");
@@ -67,7 +74,14 @@ void GameSystem::init(){
 
 	reverseGravity = m_Input_Mgr->createAction("reverse_gravity", *m_Keyboard, Input::Keyboard::KEY_R, Input::Action::BEHAVIOR_DETECT_PRESS);
 
+	gravityOn->addCode(Input::Wiimote::WII_B_BUTTON, *m_Wiimote);
+	
 
+	up_momentum->addCode(Input::Wiimote::WII_UP_BUTTON, *m_Wiimote);
+	down_momentum->addCode(Input::Wiimote::WII_DOWN_BUTTON, *m_Wiimote);
+	right_momentum->addCode(Input::Wiimote::WII_RIGHT_BUTTON, *m_Wiimote);
+	left_momentum->addCode(Input::Wiimote::WII_LEFT_BUTTON, *m_Wiimote);
+/*
 	melee = m_Input_Mgr->createAction("melee", *m_Keyboard, Input::Keyboard::KEY_E, Input::Action::BEHAVIOR_DETECT_TAP);
 	cycle_melee = m_Input_Mgr->createAction("cycle_melee", *m_Keyboard, Input::Keyboard::KEY_I, Input::Action::BEHAVIOR_DETECT_TAP);
 	shoot = m_Input_Mgr->createAction("shoot", *m_Keyboard, Input::Keyboard::KEY_S, Input::Action::BEHAVIOR_DETECT_TAP);
@@ -76,8 +90,8 @@ void GameSystem::init(){
 	morph = m_Input_Mgr->createAction("morph", *m_Keyboard, Input::Keyboard::KEY_M, Input::Action::BEHAVIOR_DETECT_PRESS);
 	hover = m_Input_Mgr->createAction("hover", *m_Keyboard, Input::Keyboard::KEY_C, Input::Action::BEHAVIOR_DETECT_PRESS);
 	pause = m_Input_Mgr->createAction("pause", *m_Keyboard, Input::Keyboard::KEY_LSHIFT, Input::Action::BEHAVIOR_DETECT_TAP);
-
-/*	grow->addCode(Input::Wiimote::WII_MOVE_HANDS_OUTWARD, *m_Wiimote);
+*/
+	/*	grow->addCode(Input::Wiimote::WII_MOVE_HANDS_OUTWARD, *m_Wiimote);
 	shrink->addCode(Input::Wiimote::WII_MOVE_HANDS_INWARD, *m_Wiimote);
 	jump->addCode(Input::Wiimote::WII_RIGHT_HAND_UP, *m_Wiimote);
 	right_momentum->addCode(Input::Wiimote::WII_RIGHT_HAND_RIGHT, *m_Wiimote);
@@ -93,6 +107,10 @@ void GameSystem::init(){
 	pause->addCode(Input::Wiimote::WII_HOME_BUTTON, *m_Wiimote);
 */	
 	//Initialize GUI
+
+
+	//Create mouse cursor
+
 }
 
 
@@ -108,6 +126,7 @@ void GameSystem::startGame(){
 	}
 	else{
 		this->m_Gravship = dynamic_cast<Gravship*>(&(EntityManager::getSingleton().getEntity(entity_ID)));
+		m_Cursor = LevelManager::getSingleton().getSceneManager()->addSphereSceneNode(5.0);
 		//irr::scene::ISceneNode* node = LevelManager::getSingleton().getSceneManager()->addCubeSceneNode(5.0, m_Gravship->getSceneNode());
 		//node->setMaterialTexture(0, LevelManager::getSingleton().getDriver()->getTexture("./res/textures/neon_green.png"));
 		//node->setPosition(irr::core::vector3df(0.0f, 0.0f, -15.0f));
@@ -129,6 +148,9 @@ void GameSystem::recoverAfterLevelChange(){
 	}
 }
 void GameSystem::update() {
+	irr::core::position2di mouse_change = InputManager::getSingleton().getMouse().getRelativePosition();
+	irr::core::vector3df cursor_position = m_Cursor->getPosition();
+	m_Cursor->setPosition(irr::core::vector3df(cursor_position.X-mouse_change.X, cursor_position.Y + mouse_change.Y, 0.0f));
 	if (up_momentum->isPressed()){
 		m_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(0.0f, 3.0f, 0.0f));
 	}
