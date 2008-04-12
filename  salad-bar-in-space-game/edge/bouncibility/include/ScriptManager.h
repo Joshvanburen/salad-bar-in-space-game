@@ -49,6 +49,17 @@ namespace Scripting{
 		MaterialCollisionFunction();
 	};
 
+
+
+	class WorldEntityAIFunction : public ScriptFunction {
+
+	public:
+
+		void callFunction();
+
+		WorldEntityAIFunction();
+	};
+
 	typedef std::map<std::string, ScriptFunction*> StrFunctionMap;
 
 	//! Class encapsulating a script.  A Script can have any number of functions.  A Script object must be loaded before it can be used.
