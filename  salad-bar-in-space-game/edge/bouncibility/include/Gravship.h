@@ -35,9 +35,7 @@ public:
 
 	void draw();
 
-	void enableGravityField(bool enabled){
-		m_GravityOn=enabled;
-	}
+	void enableGravityField(bool enabled);
 
 	GravshipHelper* getHelper(){
 		return m_Helper;
