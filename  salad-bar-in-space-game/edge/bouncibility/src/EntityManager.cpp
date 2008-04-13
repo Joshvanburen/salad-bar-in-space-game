@@ -8,6 +8,7 @@
 #include "PhysicsManager.h"
 #include "Enemy.h"
 #include "Gravship.h"
+#include "Obstacle.h"
 #include "GravshipHelper.h"
 #include "WorldEntity.h"
 
@@ -308,6 +309,149 @@ WorldEntity& Entity::EnemyFactory::loadEntity(const std::string& XMLFilename){
 	}
 
 
+	return *entity;
+}
+
+WorldEntity& Entity::ObstacleFactory::loadEntity(const std::string& XMLFilename){
+	
+	//Creates a pointer to the XML file reader
+	irr::io::IrrXMLReader* xml = irr::io::createIrrXMLReader(XMLFilename.c_str());
+
+	//Strings for storing the data we want to get out of the file
+	std::string name;
+	std::string meshFile;
+	std::string textureFile;
+	std::string startState;
+	std::string materialName;
+
+	//Physics material
+	irr::newton::IMaterial* material;
+
+	//Radius of the object
+	float radius = 1;
+	
+	//Attributes of the obstacle
+	float width = 1;
+	float height = 1;
+	float depth = 1;
+	bool destructable = false;
+	
+	//Pointer to the object
+	WorldEntity* entity = NULL;
+
+	//While loop that reads from the xml file
+	while(xml && xml->read())
+	{
+		//Switch based on the node type
+		switch(xml->getNodeType())
+		{
+			//If the node is text
+			case EXN_TEXT:
+				//No text nodes
+				break;
+			
+			//If the node is an elemet
+			case EXN_ELEMENT:
+				//If the node is not named obstacle
+				if (!strcmp("obstacle", xml->getNodeName()))
+				{
+					//Gets the name 
+					name = xml->getAttributeValue("name");
+					
+					//Gets the location of the mesh file
+					meshFile = xml->getAttributeValue("mesh");
+					
+					//Gets the location of the texture
+					textureFile = xml->getAttributeValue("texture");
+					
+					//Gets the start state of the object
+					
+					//Gets the radius
+					radius = xml->getAttributeValueAsFloat("radius");
+					
+					//Gets the width
+					width = xml->getAttributeValueAsFloat("width");
+					
+					//Gets the height
+					height = xml->getAttributeValueAsFloat("height");
+					
+					//Gets the depth
+					depth = xml->getAttributeValueAsFloat("depth");
+					
+					//Gets the scene node
+					irr::scene::ISceneNode* node = LevelManager::getSceneManager()->addSphereSceneNode(irr::f32(radius));
+			
+					//If the node exitst
+					if (node)
+					{
+						//Sets the scale and material flag
+						node->setScale(irr::core::vector3df(1.0f, 1.0f, 1.0f));
+						node->setMaterialFlag(irr::video::EMF_LIGHTING, true);
+						
+					}
+
+					//Creates the entity
+					entity = new Obstacle();
+					
+					//Sets the mesh of the entity
+					entity->setMesh(NULL);
+					
+					//Sets the attributes of the obstacle
+					((Obstacle*)entity)->height = height;
+					((Obstacle*)entity)->width = width;
+					((Obstacle*)entity)->depth = depth;
+					((Obstacle*)entity)->destructable = destructable;
+
+					//Sets the scene node
+					entity->setSceneNode(node);
+					
+					//Sets the texture
+					node->setMaterialTexture(0,LevelManager::getSingleton().getDriver()->getTexture(textureFile.c_str()));
+					
+					//Gets the material name
+					materialName = xml->getAttributeValue("material");
+
+					//Sets the physics material
+					material = PhysicsManager::getSingleton().getMaterial(materialName);
+
+					//Physics node
+					irr::newton::SBodyFromNode physics_node;
+
+					//Sets the physics node
+					physics_node.Node = node;
+					
+					//Sets the type of node
+					physics_node.Type = irr::newton::EBT_PRIMITIVE_ELLIPSOID;
+					
+					//Sets the physics body
+					irr::newton::IBody* body = PhysicsManager::getSingleton().getPhysicsWorld()->createBody(physics_node);
+					
+					//Sets continuous collision on
+					body->setContinuousCollisionMode(true);
+
+					//Sets the material
+					body->setMaterial(material);
+
+					//Sets the user data
+					body->setUserData(entity);
+
+					//Adds gravity
+					body->addForceContinuous(irr::core::vector3df(0,0, PhysicsManager::getSingleton().getGravity()));
+					
+					//Sets the mass
+					body->setMass(150);
+					
+					//Sets the physics body of the entity
+					entity->setPhysicsBody(body);
+								
+				}
+				
+				//Breaks the case
+				break;
+		}
+	}
+
+	//Returns a pointer to the entity
 	return *entity;
 }
 

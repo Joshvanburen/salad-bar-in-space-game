@@ -1,0 +1,1 @@
+<obstacle name="obstacle_one" mesh="res/sydney.md2" texture="res/textures/neon_green.png" material="enemy" height ="50" width ="50" depth="50"/>

@@ -6,6 +6,7 @@
 		<entity name="enemy" startstate="normal" xloc="-5" yloc="20" />
 		<entity name="enemy" startstate="normal" xloc="-15" yloc="50" />
 		<entity name="enemy" startstate="normal" xloc="10" yloc="20" />
+		<entity name="obstacle_one" startstate="normal" xloc="20" yloc="20" />
 
 		
 	

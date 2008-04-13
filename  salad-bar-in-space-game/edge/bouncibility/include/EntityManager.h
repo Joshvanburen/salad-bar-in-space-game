@@ -41,10 +41,17 @@ namespace Entity{
 	{
 		WorldEntity& loadEntity(const std::string& XMLFilename);
 	};
+	
+	class ObstacleFactory : public EntityFactory
+	{
+		WorldEntity& loadEntity(const std::string& XMLFilename);
+	};
+
 	class GravshipHelperFactory : public EntityFactory
 	{
 		WorldEntity& loadEntity(const std::string& XMLFilename);
 	};
+
 	//! Loader is used by EntityManager.  It keeps track of the factories for each type.  Types are currently hard coded.  
 	class Loader
 	{
