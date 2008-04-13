@@ -60,9 +60,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="CEGUIBase_d.lib IrrlichtRenderer.lib IrrlichtRenderer_d.lib Irrlicht.lib"
+				AdditionalDependencies="CEGUIBase.lib Irrlicht.lib IrrlichtRenderer.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;C:\Documents and Settings\Tommy Kahlow\My Documents\GAME\edge\bouncibility\third_party\CEGUI-SDK-0.6.0-vc9\lib&quot;"
+				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
