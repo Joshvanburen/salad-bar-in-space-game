@@ -208,6 +208,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\include\Obstacle.h"
+				>
+			</File>
+			<File
 				RelativePath="..\include\PhysicsManager.h"
 				>
 			</File>
@@ -272,7 +276,31 @@
 						>
 					</File>
 					<File
+						RelativePath="..\bin\res\entities\definitions\obstacle_one.xml"
+						>
+					</File>
+					<File
 						RelativePath="..\bin\res\entities\definitions\player_ball.xml"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="scripts"
+					>
+					<File
+						RelativePath="..\bin\res\entities\scripts\enemy.as"
+						>
+					</File>
+					<File
+						RelativePath="..\bin\res\entities\scripts\gravship.as"
+						>
+					</File>
+					<File
+						RelativePath="..\bin\res\entities\scripts\gravship_helper.as"
+						>
+					</File>
+					<File
+						RelativePath="..\bin\res\entities\scripts\obstacle.as"
 						>
 					</File>
 				</Filter>
@@ -381,6 +409,10 @@
 			</File>
 			<File
 				RelativePath=".\main.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\Obstacle.cpp"
 				>
 			</File>
 			<File
