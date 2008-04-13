@@ -6,8 +6,8 @@ using namespace video;
 using namespace scene;
 
 Core::Core () {
-        dev = createDevice (EDT_OPENGL, core::dimension2d<s32> (640, 480), 16, false,
-                        true, false, this);
+        dev = createDevice (EDT_OPENGL, core::dimension2d<s32>(800, 600), 16, false,
+                        false, false, this);
         drv = dev->getVideoDriver ();
         smgr = dev->getSceneManager ();
         dev->getCursorControl ()->setVisible (false);
