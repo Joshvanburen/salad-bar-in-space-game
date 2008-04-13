@@ -15,6 +15,8 @@ namespace irr{
 };
 namespace Scripting{
 	class ScriptFunction;
+	class WorldEntityAIFunction;
+
 };
 namespace Sound{
 	class Audio;
@@ -28,9 +30,8 @@ class WorldEntityAIManager;
 //! namepsace containing methods to help with implementation of WorldEntityAIManager
 namespace WorldEntityAI{
 
-	typedef std::map<std::string, WorldEntityAIFunction*> StrAIFunctionMap;
+	typedef std::map<std::string, Scripting::WorldEntityAIFunction*> StrAIFunctionMap;
 
-	typedef std::set<Scripting::ScriptFunction*> ScriptList;
 
 	
 };
@@ -40,9 +41,6 @@ class WorldEntityAIManager :
 	public CSingleton<WorldEntityAIManager>{
 private:
 
-	WorldEntityAI::StrAIFunctionMap m_AIFunctionMap; //!< The map of AI types to AI script functions.
-
-	WorldEntityAI::StrAIFunctionMap::iterator m_AIFunctionItr; //!< An iterator for the AI type to script map.
 
 	std::string m_AIDefinition;
 
@@ -57,7 +55,13 @@ public:
 	friend CSingleton<WorldEntityAIManager>;
 
 	//! Initialize the WorldEntityAIManager system. Provide the filename of the XML file that has the definition of the scenario to play.  Returns false if failed.
-	bool init(irr::IrrlichtDevice* device); 
+	bool init(); 
+
+	WorldEntityAI::StrAIFunctionMap m_AIFunctionMap; //!< The map of AI types to AI script functions.
+
+	WorldEntityAI::StrAIFunctionMap::iterator m_AIFunctionItr; //!< An iterator for the AI type to script map.
+
+	Scripting::ScriptFunction* getAI(const std::string type);
 
 	////! Add new entity definitions.  This function is the same as init in that it loads in the material definitions.  This allows a user of the class to keep different sets of materials in different definitions and only load in parts of them.
 	//bool addNewDefinitions(const std::string& XMLMaterialDefinition);

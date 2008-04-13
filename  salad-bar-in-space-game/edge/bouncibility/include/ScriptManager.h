@@ -3,10 +3,12 @@
 #include "Common.h"
 #include "singleton.h"
 #include "angelscript.h"
+#include "Enemy.h"
 
 
 class ScriptManager;
 class WorldEntity;
+class Enemy;
 //!namespace containing all Script related structures used by the ScriptManager.
 namespace Scripting{
 
@@ -55,7 +57,7 @@ namespace Scripting{
 
 	public:
 
-		void callFunction();
+		void callFunction(Enemy* enemy);
 
 		WorldEntityAIFunction();
 	};

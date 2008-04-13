@@ -225,12 +225,13 @@ WorldEntity& Entity::EnemyFactory::loadEntity(const std::string& XMLFilename){
 	std::string textureFile;
 	std::string startState;
 	std::string color;
+	std::string ai_type;
 	int physics_enabled = 0;
 	int gravity_enabled = 0;
 	std::string materialName;
 	irr::newton::IMaterial* material;
 	float radius = 1;
-	WorldEntity* entity = NULL;
+	Enemy* entity = NULL;
 
 	while(xml && xml->read())
 	{
@@ -249,6 +250,7 @@ WorldEntity& Entity::EnemyFactory::loadEntity(const std::string& XMLFilename){
 				physics_enabled = xml->getAttributeValueAsInt("enable_physics");
 				radius = xml->getAttributeValueAsFloat("radius");
 				color = xml->getAttributeValue("color");
+				ai_type = xml->getAttributeValue("ai");
 				irr::scene::ISceneNode* node = LevelManager::getSceneManager()->addSphereSceneNode(irr::f32(radius));
 
 				if (node){
@@ -294,7 +296,9 @@ WorldEntity& Entity::EnemyFactory::loadEntity(const std::string& XMLFilename){
 
 			
 				}
-	
+
+				Scripting::WorldEntityAIFunction* ai_script = dynamic_cast<Scripting::WorldEntityAIFunction*>(WorldEntityAIManager::getSingleton().getAI(ai_type));
+			entity->setAi(ai_script);
 
 			//entity->changeState(startState)
 							

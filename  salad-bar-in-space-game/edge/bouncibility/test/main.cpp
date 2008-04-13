@@ -14,6 +14,7 @@
 #include "Level.h"
 #include "GameSystem.h"
 #include "WorldEntity.h"
+#include "WorldEntityAIManager.h"
 #include <stdio.h>
 
 /* 
@@ -59,6 +60,8 @@ bool init(){
 	GameSystem::getSingleton().init();
 
 	LevelManager::getSingleton().init(device, "./res/scenarios/tutorial.xml");
+
+	WorldEntityAIManager::getSingleton().init();
 
 	
 	LevelManager::getSingleton().startGame();
