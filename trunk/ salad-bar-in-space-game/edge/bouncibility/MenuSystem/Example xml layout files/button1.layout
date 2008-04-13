@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<GUILayout>
+<Window Type="TaharezLook/ImageButton" Name="btnNewGame">
+	<Property Name="UnifiedPosition" Value="{{0,0},{0,0}}" />
+	<Property Name="UnifiedSize" Value="{{0,64},{0,20}}" />
+	<!-- Here we choose what images to take. set:THEButton means they are stored -->
+	<!-- in the imageset named THEButton and image:btnNormal specifies wich image it is. -->
+	<Property Name="NormalImage"     Value="set:THEButton image:btnNormal" />
+	<Property Name="HoverImage"      Value="set:THEButton image:btnHover"  />
+	<Property Name="PushedImage"     Value="set:THEButton image:btnPushed" />
+	<Property Name="DisabledImage"   Value="set:THEButton image:btnDisabl" />
+	<!-- Now the button would be ready, but without caption ... So we add a caption. -->
+	<Window Type="TaharezLook/StaticText" Name="btnNewGame_text__">
+		<!-- We make the text take all the space of the button to center the text. -->
+		<!-- You should adapt these values to your pictures, just play a bit with em ;) -->
+		<Property Name="UnifiedPosition"   Value="{{0,0},{0,0}}" />
+		<Property Name="UnifiedSize"       Value="{{1,0},{1,0}}" />
+		<!-- Disable the frame and background, so we got only the text and not a StaticText widget. -->
+		<Property Name="FrameEnabled"      Value="False" />
+		<Property Name="BackgroundEnabled" Value="False" />
+		<!-- Here we center the text into the button -->
+		<Property Name="HorzFormatting"    Value="WordWrapCentred" />
+		<Property Name="VertFormatting"    Value="Middle" />
+		<!-- We MUST disable the text so that it is the button that gets our mouse events, -->
+		<!-- and not the static text ! If you forget that line, the buttons graphics will correspond, -->
+		<!-- but the clicks on the button won't work ! because they are "eaten" by the staticText. -->
+		<Property Name="Disabled"          Value="True" />
+		<!-- finally, this is the caption we want the button to have. -->
+		<Property Name="Text">New game</Property>
+	</Window>
+</Window>
+</GUILayout>
