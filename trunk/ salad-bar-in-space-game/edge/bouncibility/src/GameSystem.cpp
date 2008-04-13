@@ -10,6 +10,7 @@
 #include "LevelManager.h"
 #include "irrnewt.hpp"
 #include "Gravship.h"
+#include "GravshipHelper.h"
 #include "GameSystem.h"
 
 
@@ -21,7 +22,6 @@ GameSystem::GameSystem(){
 
 	m_Gravship = NULL;
 
-	m_Cursor = NULL;
 
 	m_Input_Mgr = InputManager::getSingletonPtr();
 	m_Keyboard = &(m_Input_Mgr->getKeyboard());
@@ -126,7 +126,6 @@ void GameSystem::startGame(){
 	}
 	else{
 		this->m_Gravship = dynamic_cast<Gravship*>(&(EntityManager::getSingleton().getEntity(entity_ID)));
-		m_Cursor = LevelManager::getSingleton().getSceneManager()->addSphereSceneNode(5.0);
 		//irr::scene::ISceneNode* node = LevelManager::getSingleton().getSceneManager()->addCubeSceneNode(5.0, m_Gravship->getSceneNode());
 		//node->setMaterialTexture(0, LevelManager::getSingleton().getDriver()->getTexture("./res/textures/neon_green.png"));
 		//node->setPosition(irr::core::vector3df(0.0f, 0.0f, -15.0f));
@@ -149,8 +148,9 @@ void GameSystem::recoverAfterLevelChange(){
 }
 void GameSystem::update() {
 	irr::core::position2di mouse_change = InputManager::getSingleton().getMouse().getRelativePosition();
-	irr::core::vector3df cursor_position = m_Cursor->getPosition();
-	m_Cursor->setPosition(irr::core::vector3df(cursor_position.X-mouse_change.X, cursor_position.Y + mouse_change.Y, 0.0f));
+	irr::core::vector3df cursor_position = m_Gravship->getHelper()->getLocation();
+	m_Gravship->getHelper()->setLocation(irr::core::vector3df(cursor_position.X-mouse_change.X, cursor_position.Y + mouse_change.Y, 0.0f));
+	
 	if (up_momentum->isPressed()){
 		m_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(0.0f, 3.0f, 0.0f));
 	}
@@ -172,10 +172,10 @@ void GameSystem::update() {
 	}
 
 	if(reverseGravity->isPressed()){
-		m_Gravship->reverseGravityField(true);
+		m_Gravship->getHelper()->reverseGravityField(true);
 	}
 	else{
-		m_Gravship->reverseGravityField(false);
+		m_Gravship->getHelper()->reverseGravityField(false);
 	}
 }
 
