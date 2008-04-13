@@ -3,6 +3,7 @@
 #include "irrnewt.hpp"
 #include "LevelManager.h"
 #include "EntityManager.h"
+#include "GravshipHelper.h"
 #include "Gravship.h"
 #include "PhysicsManager.h"
 
@@ -19,7 +20,15 @@ void Gravship::update(){
 	if (this->m_GravityOn){
 	}
 
+	if (this->m_GravityOn){
+	irr::core::line3d<irr::f32> line(this->m_Physics_Body->getPosition(),m_Helper->getPhysicsBody()->getPosition());
 
+	irr::newton::SIntersectionPoint i_point = this->m_Physics_Body->getWorld()->getCollisionManager()->getCollisionFirstPoint(line);
+	std::cout << "line from " << line.start.X << " to " << i_point.point.X << "\n";
+	LevelManager::getDriver()->draw3DLine(line.start, i_point.point, irr::video::SColor(155, 100, 200,100));
+
+	}
+	m_Helper->update();
 	
 }
 
@@ -60,6 +69,11 @@ WorldEntity* Gravship::clone(){
 	return entity;
 }
 
+void Gravship::enableGravityField(bool enabled){
+	m_GravityOn = enabled;
+
+	m_Helper->enableGravityField(enabled);
+}
 
 void Gravship::changeState(const std::string name){
 }

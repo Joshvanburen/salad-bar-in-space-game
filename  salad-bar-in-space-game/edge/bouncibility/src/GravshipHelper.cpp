@@ -9,12 +9,12 @@
 #include "PhysicsManager.h"
 
 void GravshipHelper::load(){
-	WorldEntity::load();
+	
 }
 
 void GravshipHelper::update(){
-	const irr::core::vector3df position  = this->m_Physics_Body->getPosition();
-	this->m_Physics_Body->setPosition(irr::core::vector3df(position.X,position.Y, 0));
+	//const irr::core::vector3df position  = this->m_Physics_Body->getPosition();
+	//this->m_Physics_Body->setPosition(irr::core::vector3df(position.X,position.Y, 0));
 	//this->m_Physics_Body->setVelocity(this->velocity);
 
 	//Find any new entities that are in our gravity field range and remove those who are no longer in it.
