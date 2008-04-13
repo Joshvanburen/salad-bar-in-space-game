@@ -17,11 +17,11 @@ void WorldEntityAIManager::shutdown(){
 
 }
 	
-void WorldEntityAIManager::update(){
-	
-	//m_World->update();
-	
-}
+//void WorldEntityAIManager::update(){
+//	
+//	//m_World->update();
+//	
+//}
 
 void WorldEntityAIManager::clear(){
 
@@ -39,7 +39,7 @@ WorldEntityAIManager::~WorldEntityAIManager(){
 	this->shutdown();
 }
 
-bool WorldEntityAIManager::init(irr::IrrlichtDevice* device){
+bool WorldEntityAIManager::init(){
 	//m_Device = device;
 	//m_World = irr::newton::createPhysicsWorld(device);
 
@@ -102,7 +102,7 @@ bool WorldEntityAIManager::readInXML(const std::string& XMLMaterialDefinition){
 					std::cout << "AI with type: " << type << "already exists. Continuing...\n";
 				}
 				else{
-					m_AIFunctionMap.insert(std::make_pair(type, scriptFunction));
+					m_AIFunctionMap.insert(std::make_pair(type, dynamic_cast<Scripting::WorldEntityAIFunction*>(scriptFunction)));
 				}
 
 			}
@@ -114,4 +114,16 @@ bool WorldEntityAIManager::readInXML(const std::string& XMLMaterialDefinition){
 	delete xml;
 
 	return true;
+}
+
+Scripting::ScriptFunction* WorldEntityAIManager::getAI(const std::string type) {
+
+	m_AIFunctionItr = m_AIFunctionMap.find(type);
+
+	if (m_AIFunctionItr == m_AIFunctionMap.end()){
+		std::cout << "AI with type: " << type << "not exists. Continuing...\n";
+	}
+	
+	return m_AIFunctionItr->second;
+
 }

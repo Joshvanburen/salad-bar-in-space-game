@@ -3,6 +3,7 @@
 #include "LevelManager.h"
 #include "Enemy.h"
 #include "PhysicsManager.h"
+#include "WorldEntityAIManager.h"
 
 void Enemy::load(){
 
@@ -108,6 +109,13 @@ void Enemy::jump(int jump_type){
 		}//distance
 	}//body!=NULL
 }
+
+void Enemy::setAi(Scripting::WorldEntityAIFunction* newAIScript){
+					
+	ai_script = newAIScript;
+
+}
+
 Enemy::Enemy() {
 	color = '0';
 }

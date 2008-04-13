@@ -1,7 +1,7 @@
 #include "Common.h"
 #include "angelscript.h"
 #include "WorldEntity.h"
-#include "Ball.h"
+#include "Enemy.h"
 #include "scriptstring.h"
 #include "irrXML.h"	
 #include "ScriptManager.h"
@@ -38,10 +38,10 @@ void Scripting::MaterialCollisionFunction::callFunction(WorldEntity* entity1, Wo
 
 // Chuan: Used by AI system
 Scripting::WorldEntityAIFunction::WorldEntityAIFunction(){
-	this->m_Signature = "int collide(WorldEntity&, WorldEntity&)";
+	this->m_Signature = "int update(Enemy&)";
 }
 
-void Scripting::WorldEntityAIFunction::callFunction(WorldEntity* enemy, WorldEntity* player) {
+void Scripting::WorldEntityAIFunction::callFunction(Enemy* enemy) {
 	int r = m_pContext->Prepare(m_ID);
 	if( r < 0 ) 
 	{
@@ -50,7 +50,7 @@ void Scripting::WorldEntityAIFunction::callFunction(WorldEntity* enemy, WorldEnt
 	
 
 	this->m_pContext->SetArgObject(0, enemy);
-	this->m_pContext->SetArgObject(1, player);
+	//this->m_pContext->SetArgObject(1, player);
 	
 	ScriptFunction::execute();
 
@@ -250,8 +250,8 @@ bool ScriptManager::init(){
 	registerObjectMethod("WorldEntity", "int getID()", ::asMETHOD(WorldEntity, getID));
 
 	registerObjectMethod("WorldEntity", "void move()", ::asMETHOD(WorldEntity, move));
-	registerReferenceObject("Ball");
-	this->registerAsGlobal("Ball& EntityToBall(WorldEntity&)", ::asFUNCTION(Ball::EntityToBall));
+	registerReferenceObject("Enemy");
+	this->registerAsGlobal("Enemy& EntityToEnemy(WorldEntity&)", ::asFUNCTION(Enemy::EntityToEnemy));
 
 
 

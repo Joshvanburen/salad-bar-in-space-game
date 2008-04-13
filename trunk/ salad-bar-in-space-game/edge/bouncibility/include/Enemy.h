@@ -10,7 +10,13 @@
 #include <utility>	//For using pair
 #include "Common.h"
 #include "WorldEntity.h"
+#include "ScriptManager.h"
+#include "WorldEntityAIManager.h"
 
+namespace Scripting{
+	class ScriptFunction;
+	class WorldEntityAIFunction;
+}
 
 class Enemy : public WorldEntity {
 
@@ -58,6 +64,8 @@ public:
 		radius = newRadius;
 	}
 
+	void setAi(Scripting::WorldEntityAIFunction*);
+
 private: 
  	
 	WorldEntity* clone();
@@ -81,6 +89,9 @@ private:
 
 	//How much percents of speed left after bouncing
 	int bouncibility;
+
+	// point to the ai scripting function
+	Scripting::WorldEntityAIFunction* ai_script;
 
 };
 
