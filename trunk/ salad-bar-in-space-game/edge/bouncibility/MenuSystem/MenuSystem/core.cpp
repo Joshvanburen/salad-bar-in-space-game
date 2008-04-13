@@ -6,7 +6,7 @@ using namespace video;
 using namespace scene;
 
 Core::Core () {
-        dev = createDevice (EDT_OPENGL, core::dimension2d<s32> (640, 480), 32, false,
+        dev = createDevice (EDT_OPENGL, core::dimension2d<s32> (640, 480), 16, false,
                         true, false, this);
         drv = dev->getVideoDriver ();
         smgr = dev->getSceneManager ();
@@ -24,17 +24,18 @@ Core::Core () {
         // Create CEGUI, we specify only renderer, we take all the rest parameters
         // by default (you can see them all in CEGUI API)
         new     System (rend);
+
         // Get default resource provider
         DefaultResourceProvider* rp = static_cast<DefaultResourceProvider*> (
                         System::getSingleton ().getResourceProvider ());
         // Set defaults for resource groups
         // This will allow us to use resource groups instead of writing full path
         // to resources every time we need it
-        rp->setResourceGroupDirectory ("schemes", "../datafiles/schemes/");
-        rp->setResourceGroupDirectory ("imagesets", "../datafiles/imagesets/");
+        rp->setResourceGroupDirectory ("schemes", "../SleekSpaceSkin/");
+        rp->setResourceGroupDirectory ("imagesets", "../SleekSpaceSkin/");
         rp->setResourceGroupDirectory ("fonts", "../datafiles/fonts/");
         rp->setResourceGroupDirectory ("layouts", "../datafiles/layouts/");
-        rp->setResourceGroupDirectory ("looknfeel", "../datafiles/looknfeel/");
+        rp->setResourceGroupDirectory ("looknfeel", "../SleekSpaceSkin/");
         //rp->setResourceGroupDirectory ("lua_scripts", "../datafiles/lua_scripts/");
 
     // CEGUI relies on various systems being set up, so this is what we do
@@ -56,7 +57,7 @@ Core::Core () {
     //
     // Load TaharezLook imageset by making use of the ImagesetManager singleton.
         Imageset *imgs = ImagesetManager::getSingleton ().createImageset (
-                        "TaharezLook.imageset", "imagesets");
+                        "sleekspace.imageset", "imagesets");
         // The next thing we do is set a default mouse cursor image.  This is
     // not strictly essential, although it is nice to always have a visible
     // cursor if a window or widget does not explicitly set one of its own.
@@ -80,7 +81,7 @@ Core::Core () {
     //
     // We load the looknfeel via the WidgetLookManager singleton.
         WidgetLookManager::getSingleton ().parseLookNFeelSpecification (
-                        "TaharezLook.looknfeel", "looknfeel");
+                        "sleekspace.looknfeel", "looknfeel");
     // The final step of basic initialisation that is usually peformed is
     // registering some widgets with the system via a scheme file.  The scheme
     // basically states the name of a dynamically loaded module that contains the
@@ -90,7 +91,15 @@ Core::Core () {
     //
     // Use the SchemeManager singleton to load in a scheme that registers widgets
     // for TaharezLook.
-        SchemeManager::getSingleton ().loadScheme ("TaharezLookWidgets.scheme", "schemes");
+        SchemeManager::getSingleton ().loadScheme ("SleekSpace.scheme", "schemes");
+
+///// ADDING CUSTOM BUTTONS
+	/*CEGUI::Window *w = CEGUI::WindowManager::getSingleton().loadWindowLayout( "button1.layout" );
+	rootWin->addChildWindow( w );
+	w->setPosition( CEGUI::UVector2( CEGUI::UDim(0.5f,-32.0f), CEGUI::UDim(0.5f,-10.0f) ) );
+	w->setVisible( true );*/
+
+
     // Now the system is initialised, we can actually create some UI elements, for
     // this first example, a full-screen 'root' window is set as the active GUI
     // sheet, and then a simple frame window will be created and attached to it.
@@ -143,6 +152,19 @@ Core::Core () {
     // FrameWindow's titlebar.
         wnd->setText ("Hello, world!");
 
+// FOR TRANSPARENT WINDOWS
+		/*
+		CEGUI::GlobalEventSet::getSingleton( ).subscribeEvent( CEGUI::Window::EventNamespace + "/" + CEGUI::Window::EventActivated,
+                                                       CEGUI::Event::Subscriber(&onWindowActivated) );
+		CEGUI::GlobalEventSet::getSingleton( ).subscribeEvent( CEGUI::Window::EventNamespace + "/" + CEGUI::Window::EventDestructionStarted,
+                                                       CEGUI::Event::Subscriber(&onWindowClosed) );
+
+		std::list<CEGUI::Window *> pWinHistory;
+
+		pWinHistory.push_back(pMyRootWindow);
+		CEGUI::System::getSingleton().setGUISheet(pMyRootWindow);
+		*/
+
         smgr->addCameraSceneNode (0);
         //drv->setAmbientLight (SColor (255, 255, 255, 255));
         last_time = dev->getTimer ()->getRealTime ();
@@ -191,3 +213,50 @@ void Core::Run () {
                 }
         }
 }
+
+/// Called everytime a window gets closed.
+/** This function is called by CEGUI just before a window gets closed.
+ *
+ *  Currently, we use this function to activate the previous window
+ *  when closing this one, as it's not done automatically by CEGUI.
+ *
+ * \param e The event arguments.
+ *
+ * \return Always true.
+ *
+ * \author Pompei2
+ 
+bool onWindowClosed( const CEGUI::EventArgs &ea )
+{
+	try {
+		const CEGUI::WindowEventArgs& we = static_cast<const CEGUI::WindowEventArgs&>(ea);
+		CEGUI::Window *pLastWin = NULL;
+
+		// We only work with FrameWindows.
+		if( !we.window->testClassName( CEGUI::FrameWindow::EventNamespace ) )
+			return true;
+
+		// Delete the current window from the stack.
+		// CARE: std::list::remove removes ALL occurences of we.window from the stack !
+		// This is VERY important to know, as if you activate window A, then window B and then A again,
+		// the stack will contain A twice: {A,B,A}.
+		pWinHistory.remove( we.window );
+
+		// Now we get the window that was active before the current one:
+		pLastWin = m_pWinHistory.back( );
+
+		// re-activate it (like windos, linux, .. all do).
+		pLastWin->activate( );
+
+		// And set it to be opaque again.
+		// You could either do this here or you do this in the onWindowActivate function, the result is the same,
+		// as the call to CEGUI::Window::activate above results in onWindowActivate to be called.
+		pLastWin->setProperty( "Alpha", "1.0" );
+	} catch( CEGUI::Exception& e ) {
+		fprintf( stderr, "CEGUI error: %s\n", e.getMessage( ).c_str( ) );
+		return true;
+	}
+
+	return true;
+}
+*/
