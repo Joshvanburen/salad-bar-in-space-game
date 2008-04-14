@@ -159,9 +159,6 @@ struct wiimote_t** wiiuse_init(int wiimotes) {
  *	@brief	The wiimote disconnected.
  *
  *	@param wm	Pointer to a wiimote_t structure.
- *
- *	Called when a wiimote disconnects.
- *	If a disconnect callback was registered, then invoke it.
  */
 void wiiuse_disconnected(struct wiimote_t* wm) {
 	if (!wm)	return;
@@ -188,7 +185,6 @@ void wiiuse_disconnected(struct wiimote_t* wm) {
 	wm->btns_released = 0;
 	memset(wm->event_buf, 0, sizeof(wm->event_buf));
 
-	/* call the disconnect callback if set */
 	wm->event = WIIUSE_DISCONNECT;
 }
 
@@ -334,7 +330,7 @@ int wiiuse_set_report_type(struct wiimote_t* wm) {
 
 
 /**
- *	@brief	Read data from the wiimote.
+ *	@brief	Read data from the wiimote (callback version).
  *
  *	@param wm		Pointer to a wiimote_t structure.
  *	@param read_cb	Function pointer to call when the data arrives from the wiimote.
@@ -350,7 +346,7 @@ int wiiuse_set_report_type(struct wiimote_t* wm) {
  *	to a pending list and be sent out when the previous
  *	finishes.
  */
-int wiiuse_read_data(struct wiimote_t* wm, wiiuse_read_cb read_cb, byte* buffer, unsigned int addr, unsigned short len) {
+int wiiuse_read_data_cb(struct wiimote_t* wm, wiiuse_read_cb read_cb, byte* buffer, unsigned int addr, unsigned short len) {
 	struct read_req_t* req;
 
 	if (!wm || !WIIMOTE_IS_CONNECTED(wm))
@@ -365,6 +361,62 @@ int wiiuse_read_data(struct wiimote_t* wm, wiiuse_read_cb read_cb, byte* buffer,
 	req->addr = addr;
 	req->size = len;
 	req->wait = len;
+	req->dirty = 0;
+	req->next = NULL;
+
+	/* add this to the request list */
+	if (!wm->read_req) {
+		/* root node */
+		wm->read_req = req;
+
+		WIIUSE_DEBUG("Data read request can be sent out immediately.");
+
+		/* send the request out immediately */
+		wiiuse_send_next_pending_read_request(wm);
+	} else {
+		struct read_req_t* nptr = wm->read_req;
+		for (; nptr->next; nptr = nptr->next);
+		nptr->next = req;
+
+		WIIUSE_DEBUG("Added pending data read request.");
+	}
+
+	return 1;
+}
+
+
+/**
+ *	@brief	Read data from the wiimote (event version).
+ *
+ *	@param wm		Pointer to a wiimote_t structure.
+ *	@param buffer	An allocated buffer to store the data as it arrives from the wiimote.
+ *					Must be persistent in memory and large enough to hold the data.
+ *	@param addr		The address of wiimote memory to read from.
+ *	@param len		The length of the block to be read.
+ *
+ *	The library can only handle one data read request at a time
+ *	because it must keep track of the buffer and other
+ *	events that are specific to that request.  So if a request
+ *	has already been made, subsequent requests will be added
+ *	to a pending list and be sent out when the previous
+ *	finishes.
+ */
+int wiiuse_read_data(struct wiimote_t* wm, byte* buffer, unsigned int addr, unsigned short len) {
+	struct read_req_t* req;
+
+	if (!wm || !WIIMOTE_IS_CONNECTED(wm))
+		return 0;
+	if (!buffer || !len)
+		return 0;
+
+	/* make this request structure */
+	req = (struct read_req_t*)malloc(sizeof(struct read_req_t));
+	req->cb = NULL;
+	req->buf = buffer;
+	req->addr = addr;
+	req->size = len;
+	req->wait = len;
+	req->dirty = 0;
 	req->next = NULL;
 
 	/* add this to the request list */
@@ -405,7 +457,12 @@ void wiiuse_send_next_pending_read_request(struct wiimote_t* wm) {
 		return;
 	if (!wm->read_req)	return;
 
+	/* skip over dirty ones since they have already been read */
 	req = wm->read_req;
+	while (req && req->dirty)
+		req = req->next;
+	if (!req)
+		return;
 
 	/* the offset is in big endian */
 	*(int*)(buf) = BIG_ENDIAN_LONG(req->addr);

@@ -248,6 +248,7 @@ void wiiuse_disconnect(struct wiimote_t* wm) {
 
 	wm->out_sock = -1;
 	wm->in_sock = -1;
+	wm->event = WIIUSE_NONE;
 
 	WIIMOTE_DISABLE_STATE(wm, WIIMOTE_STATE_CONNECTED);
 	WIIMOTE_DISABLE_STATE(wm, WIIMOTE_STATE_HANDSHAKE);

@@ -161,6 +161,8 @@ void wiiuse_disconnect(struct wiimote_t* wm) {
 
 	ResetEvent(&wm->hid_overlap);
 
+	wm->event = WIIUSE_NONE;
+
 	WIIMOTE_DISABLE_STATE(wm, WIIMOTE_STATE_CONNECTED);
 	WIIMOTE_DISABLE_STATE(wm, WIIMOTE_STATE_HANDSHAKE);
 }

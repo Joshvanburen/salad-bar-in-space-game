@@ -52,7 +52,7 @@
 #include "definitions.h"
 
 /* wiiuse version */
-#define WIIUSE_VERSION					"0.10"
+#define WIIUSE_VERSION					"0.12"
 
 /********************
  *
@@ -113,8 +113,16 @@
 #define WM_REG_IR_MODENUM			0x04B00033
 
 /* ir block data */
-#define WM_IR_BLOCK1_CLIFF			"\x02\x00\x00\x71\x01\x00\xAA\x00\x64"
-#define WM_IR_BLOCK2_CLIFF			"\x63\x03"
+#define WM_IR_BLOCK1_LEVEL1			"\x02\x00\x00\x71\x01\x00\x64\x00\xfe"
+#define WM_IR_BLOCK2_LEVEL1			"\xfd\x05"
+#define WM_IR_BLOCK1_LEVEL2			"\x02\x00\x00\x71\x01\x00\x96\x00\xb4"
+#define WM_IR_BLOCK2_LEVEL2			"\xb3\x04"
+#define WM_IR_BLOCK1_LEVEL3			"\x02\x00\x00\x71\x01\x00\xaa\x00\x64"
+#define WM_IR_BLOCK2_LEVEL3			"\x63\x03"
+#define WM_IR_BLOCK1_LEVEL4			"\x02\x00\x00\x71\x01\x00\xc8\x00\x36"
+#define WM_IR_BLOCK2_LEVEL4			"\x35\x03"
+#define WM_IR_BLOCK1_LEVEL5			"\x07\x00\x00\x71\x01\x00\x72\x00\x20"
+#define WM_IR_BLOCK2_LEVEL5			"\x1f\x03"
 
 #define WM_IR_TYPE_BASIC			0x01
 #define WM_IR_TYPE_EXTENDED			0x03
@@ -154,16 +162,22 @@
  ********************/
 
 /* wiimote state flags - (some duplicated in wiiuse.h)*/
-#define WIIMOTE_INIT_STATES					0x000
-#define WIIMOTE_STATE_DEV_FOUND				0x001
-#define WIIMOTE_STATE_HANDSHAKE				0x002	/* actual connection exists but no handshake yet */
-#define WIIMOTE_STATE_HANDSHAKE_COMPLETE	0x004	/* actual connection exists but no handshake yet */
-#define WIIMOTE_STATE_CONNECTED				0x008
-#define WIIMOTE_STATE_RUMBLE				0x010
-#define WIIMOTE_STATE_ACC					0x020
-#define WIIMOTE_STATE_EXP					0x040
-#define WIIMOTE_STATE_IR					0x080
-#define WIIMOTE_STATE_SPEAKER				0x100
+#define WIIMOTE_STATE_DEV_FOUND				0x0001
+#define WIIMOTE_STATE_HANDSHAKE				0x0002	/* actual connection exists but no handshake yet */
+#define WIIMOTE_STATE_HANDSHAKE_COMPLETE	0x0004	/* actual connection exists but no handshake yet */
+#define WIIMOTE_STATE_CONNECTED				0x0008
+#define WIIMOTE_STATE_RUMBLE				0x0010
+#define WIIMOTE_STATE_ACC					0x0020
+#define WIIMOTE_STATE_EXP					0x0040
+#define WIIMOTE_STATE_IR					0x0080
+#define WIIMOTE_STATE_SPEAKER				0x0100
+#define WIIMOTE_STATE_IR_SENS_LVL1			0x0200
+#define WIIMOTE_STATE_IR_SENS_LVL2			0x0400
+#define WIIMOTE_STATE_IR_SENS_LVL3			0x0800
+#define WIIMOTE_STATE_IR_SENS_LVL4			0x1000
+#define WIIMOTE_STATE_IR_SENS_LVL5			0x2000
+
+#define WIIMOTE_INIT_STATES					(WIIMOTE_STATE_IR_SENS_LVL3)
 
 /* macro to manage states */
 #define WIIMOTE_IS_SET(wm, s)			((wm->state & (s)) == (s))
@@ -203,6 +217,7 @@ extern "C" {
 int wiiuse_set_report_type(struct wiimote_t* wm);
 void wiiuse_send_next_pending_read_request(struct wiimote_t* wm);
 int wiiuse_send(struct wiimote_t* wm, byte report_type, byte* msg, int len);
+int wiiuse_read_data_cb(struct wiimote_t* wm, wiiuse_read_cb read_cb, byte* buffer, unsigned int offset, unsigned short len);
 
 #ifdef __cplusplus
 }

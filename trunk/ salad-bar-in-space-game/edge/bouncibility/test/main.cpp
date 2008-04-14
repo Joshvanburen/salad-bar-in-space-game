@@ -1,4 +1,6 @@
 
+#include <boost/thread/thread.hpp>
+
 
 
 #include "irrlicht.h"
@@ -40,6 +42,8 @@ void PrintString(std::string& str){
 irr::scene::ISceneManager* smgr;
 irr::IrrlichtDevice *device;
 
+bool running = true;
+
 bool init(){
 
 	ScriptManager::getSingleton().init();
@@ -54,14 +58,16 @@ bool init(){
 
 	smgr = device->getSceneManager();
 
+	WorldEntityAIManager::getSingleton().init();
 	//PhysicsManager must be initialized before LevelManager because Entity initialization requires physics.
 	PhysicsManager::getSingleton().init(device);
 
 	GameSystem::getSingleton().init();
 
+
 	LevelManager::getSingleton().init(device, "./res/scenarios/tutorial.xml");
 
-	WorldEntityAIManager::getSingleton().init();
+
 
 	
 	LevelManager::getSingleton().startGame();
@@ -69,6 +75,13 @@ bool init(){
 
 
 	return true;
+}
+
+void getInput()
+{
+	while(running){
+		InputManager::getSingleton().getInput();
+	}
 }
 
 /*
@@ -89,6 +102,8 @@ int main()
 	*/
 	device->setWindowCaption(L"Hello World! - Irrlicht Engine Demo");
 
+	Input::Action* quit = InputManager::getSingleton().createAction("quit", InputManager::getSingleton().getKeyboard(), Input::Keyboard::KEY_ESC, Input::Action::BEHAVIOR_DETECT_TAP);
+	quit->addCode(Input::Wiimote::WII_HOME_BUTTON, InputManager::getSingleton().getWiimote());
 	/*
 	Get a pointer to the video driver, the SceneManager and the
 	graphical user interface environment, so that
@@ -131,11 +146,12 @@ int main()
 	To look at the mesh, we place a camera into 3d space at the position
 	(0, 30, -40). The camera looks from there to (0,5,0).
 	*/
-	smgr->addCameraSceneNode(0, irr::core::vector3df(0,-240,-150), irr::core::vector3df(0,250,200));
+	smgr->addCameraSceneNode(0, irr::core::vector3df(0,0,-300), irr::core::vector3df(0,0,0));
 
 
 	//Makes the mouse invisible
 	device->getCursorControl()->setVisible(false);
+	
 	/*
 	Ok, now we have set up the scene, lets draw everything:
 	We run the device in a while() loop, until the device does not
@@ -144,6 +160,11 @@ int main()
 	*/
 
 	bool show = false;
+
+
+
+	boost::thread inputThread(&getInput);
+
 	while(device->run())
 	{
 		/*
@@ -154,7 +175,6 @@ int main()
 		everything is presented on the screen.
 		*/
 		InputManager::getSingleton().stopPolling();
-		InputManager::getSingleton().getInput();
 		PhysicsManager::getSingleton().update();
 		LevelManager::getSingleton().update();
 		GameSystem::getSingleton().update();
@@ -163,6 +183,11 @@ int main()
 			guienv->drawAll();
 		driver->endScene();
 
+		if(quit->isPressed()){
+			running = false;
+			inputThread.join();
+			break;
+		}
 		InputManager::getSingleton().resumePolling();
 	}
 

@@ -170,6 +170,22 @@ typedef enum ir_position_t {
  */
 #define IS_JUST_PRESSED(dev, button)	(IS_PRESSED(dev, button) && !IS_HELD(dev, button))
 
+/**
+ *	@brief Return the IR sensitivity level.
+ *	@param wm		Pointer to a wiimote_t structure.
+ *	@param lvl		[out] Pointer to an int that will hold the level setting.
+ *	If no level is set 'lvl' will be set to 0.
+ */
+#define WIIUSE_GET_IR_SENSITIVITY(dev, lvl)									\
+			do {														\
+				if ((wm->state & 0x0200) == 0x0200) 		*lvl = 1;	\
+				else if ((wm->state & 0x0400) == 0x0400) 	*lvl = 2;	\
+				else if ((wm->state & 0x0800) == 0x0800) 	*lvl = 3;	\
+				else if ((wm->state & 0x1000) == 0x1000) 	*lvl = 4;	\
+				else if ((wm->state & 0x2000) == 0x2000) 	*lvl = 5;	\
+				else									*lvl = 0;		\
+			} while (0)
+
 #define WIIUSE_USING_ACC(wm)			((wm->state & 0x020) == 0x020)
 #define WIIUSE_USING_EXP(wm)			((wm->state & 0x040) == 0x040)
 #define WIIUSE_USING_IR(wm)				((wm->state & 0x080) == 0x080)
@@ -222,13 +238,14 @@ typedef void (*wiiuse_read_cb)(struct wiimote_t* wm, byte* data, unsigned short 
  *	@brief Data read request structure.
  */
 struct read_req_t {
-	wiiuse_read_cb cb;			/**< read data callback						*/
-	byte* buf;					/**< buffer where read data is written		*/
-	unsigned int addr;			/**< the offset that the read started at	*/
-	unsigned short size;		/**< the length of the data read			*/
-	unsigned short wait;		/**< num bytes still needed to finish read	*/
+	wiiuse_read_cb cb;			/**< read data callback											*/
+	byte* buf;					/**< buffer where read data is written							*/
+	unsigned int addr;			/**< the offset that the read started at						*/
+	unsigned short size;		/**< the length of the data read								*/
+	unsigned short wait;		/**< num bytes still needed to finish read						*/
+	byte dirty;					/**< set to 1 if not using callback and needs to be cleaned up	*/
 
-	struct read_req_t* next;	/**< next read request in the queue			*/
+	struct read_req_t* next;	/**< next read request in the queue								*/
 };
 
 
@@ -393,6 +410,9 @@ typedef struct nunchuk_t {
 	byte btns_held;					/**< what buttons are being held down		*/
 	byte btns_released;				/**< what buttons were just released this	*/
 
+	float orient_threshold;			/**< threshold for orient to generate an event */
+	int accel_threshold;			/**< threshold for accel to generate an event */
+
 	struct vec3b_t accel;			/**< current raw acceleration data			*/
 	struct orient_t orient;			/**< current orientation on each axis		*/
 	struct gforce_t gforce;			/**< current gravity forces on each axis	*/
@@ -469,6 +489,7 @@ typedef struct wiimote_state_t {
 	float exp_rjs_mag;
 	unsigned short exp_btns;
 	struct orient_t exp_orient;
+	struct vec3b_t exp_accel;
 	float exp_r_shoulder;
 	float exp_l_shoulder;
 
@@ -492,9 +513,17 @@ typedef enum WIIUSE_EVENT_TYPE {
 	WIIUSE_NONE = 0,
 	WIIUSE_EVENT,
 	WIIUSE_STATUS,
-	WIIUSE_DISCONNECT
+	WIIUSE_CONNECT,
+	WIIUSE_DISCONNECT,
+	WIIUSE_UNEXPECTED_DISCONNECT,
+	WIIUSE_READ_DATA,
+	WIIUSE_NUNCHUK_INSERTED,
+	WIIUSE_NUNCHUK_REMOVED,
+	WIIUSE_CLASSIC_CTRL_INSERTED,
+	WIIUSE_CLASSIC_CTRL_REMOVED,
+	WIIUSE_GUITAR_HERO_3_CTRL_INSERTED,
+	WIIUSE_GUITAR_HERO_3_CTRL_REMOVED
 } WIIUSE_EVENT_TYPE;
-
 
 /**
  *	@struct wiimote_t
@@ -583,7 +612,7 @@ WIIUSE_EXPORT extern void wiiuse_rumble(struct wiimote_t* wm, int status);
 WIIUSE_EXPORT extern void wiiuse_toggle_rumble(struct wiimote_t* wm);
 WIIUSE_EXPORT extern void wiiuse_set_leds(struct wiimote_t* wm, int leds);
 WIIUSE_EXPORT extern void wiiuse_motion_sensing(struct wiimote_t* wm, int status);
-WIIUSE_EXPORT extern int wiiuse_read_data(struct wiimote_t* wm, wiiuse_read_cb read_cb, byte* buffer, unsigned int offset, unsigned short len);
+WIIUSE_EXPORT extern int wiiuse_read_data(struct wiimote_t* wm, byte* buffer, unsigned int offset, unsigned short len);
 WIIUSE_EXPORT extern int wiiuse_write_data(struct wiimote_t* wm, unsigned int addr, byte* data, byte len);
 WIIUSE_EXPORT extern void wiiuse_status(struct wiimote_t* wm);
 WIIUSE_EXPORT extern struct wiimote_t* wiiuse_get_by_id(struct wiimote_t** wm, int wiimotes, int unid);
@@ -593,6 +622,7 @@ WIIUSE_EXPORT extern void wiiuse_set_bluetooth_stack(struct wiimote_t** wm, int 
 WIIUSE_EXPORT extern void wiiuse_set_orient_threshold(struct wiimote_t* wm, float threshold);
 WIIUSE_EXPORT extern void wiiuse_resync(struct wiimote_t* wm);
 WIIUSE_EXPORT extern void wiiuse_set_timeout(struct wiimote_t** wm, int wiimotes, byte normal_timeout, byte exp_timeout);
+WIIUSE_EXPORT extern void wiiuse_set_accel_threshold(struct wiimote_t* wm, int threshold);
 
 /* connect.c */
 WIIUSE_EXPORT extern int wiiuse_find(struct wiimote_t** wm, int max_wiimotes, int timeout);
@@ -607,6 +637,12 @@ WIIUSE_EXPORT extern void wiiuse_set_ir(struct wiimote_t* wm, int status);
 WIIUSE_EXPORT extern void wiiuse_set_ir_vres(struct wiimote_t* wm, unsigned int x, unsigned int y);
 WIIUSE_EXPORT extern void wiiuse_set_ir_position(struct wiimote_t* wm, enum ir_position_t pos);
 WIIUSE_EXPORT extern void wiiuse_set_aspect_ratio(struct wiimote_t* wm, enum aspect_t aspect);
+WIIUSE_EXPORT extern void wiiuse_set_ir_sensitivity(struct wiimote_t* wm, int level);
+
+/* nunchuk.c */
+WIIUSE_EXPORT extern void wiiuse_set_nunchuk_orient_threshold(struct wiimote_t* wm, float threshold);
+WIIUSE_EXPORT extern void wiiuse_set_nunchuk_accel_threshold(struct wiimote_t* wm, int threshold);
+
 
 #ifdef __cplusplus
 }

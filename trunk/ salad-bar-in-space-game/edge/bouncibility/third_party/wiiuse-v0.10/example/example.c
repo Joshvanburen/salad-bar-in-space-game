@@ -182,8 +182,6 @@ void handle_event(struct wiimote_t* wm) {
 		printf("Guitar joystick angle:      %f\n", gh3->js.ang);
 		printf("Guitar joystick magnitude:  %f\n", gh3->js.mag);
 	}
-
-
 }
 
 
@@ -260,6 +258,12 @@ void handle_disconnect(wiimote* wm) {
 }
 
 
+void test(struct wiimote_t* wm, byte* data, unsigned short len) {
+	printf("test: %i [%x %x %x %x]\n", len, data[0], data[1], data[2], data[3]);
+}
+
+
+
 /**
  *	@brief main()
  *
@@ -269,8 +273,6 @@ void handle_disconnect(wiimote* wm) {
 int main(int argc, char** argv) {
 	wiimote** wiimotes;
 	int found, connected;
-
-	//printf("wiiuse version = %s\n", wiiuse_version());
 
 	/*
 	 *	Initialize an array of wiimote objects.
@@ -330,7 +332,6 @@ int main(int argc, char** argv) {
 		Sleep(200);
 	#endif
 
-
 	wiiuse_rumble(wiimotes[0], 0);
 	wiiuse_rumble(wiimotes[1], 0);
 
@@ -354,7 +355,7 @@ int main(int argc, char** argv) {
 	 *	(it doesn't matter if some of those wiimotes are not used
 	 *	or are not connected).
 	 *
-	 *	This function will invoke the callbacks set in wiiuse_init()
+	 *	This function will set the event flag for each wiimote
 	 *	when the wiimote has things to report.
 	 */
 	while (1) {
@@ -377,8 +378,47 @@ int main(int argc, char** argv) {
 						break;
 
 					case WIIUSE_DISCONNECT:
+					case WIIUSE_UNEXPECTED_DISCONNECT:
 						/* the wiimote disconnected */
 						handle_disconnect(wiimotes[i]);
+						break;
+
+					case WIIUSE_READ_DATA:
+						/*
+						 *	Data we requested to read was returned.
+						 *	Take a look at wiimotes[i]->read_req
+						 *	for the data.
+						 */
+						break;
+
+					case WIIUSE_NUNCHUK_INSERTED:
+						/*
+						 *	a nunchuk was inserted
+						 *	This is a good place to set any nunchuk specific
+						 *	threshold values.  By default they are the same
+						 *	as the wiimote.
+						 */
+						 //wiiuse_set_nunchuk_orient_threshold((struct nunchuk_t*)&wiimotes[i]->exp.nunchuk, 90.0f);
+						 //wiiuse_set_nunchuk_accel_threshold((struct nunchuk_t*)&wiimotes[i]->exp.nunchuk, 100);
+						printf("Nunchuk inserted.\n");
+						break;
+
+					case WIIUSE_CLASSIC_CTRL_INSERTED:
+						printf("Classic controller inserted.\n");
+						break;
+
+					case WIIUSE_GUITAR_HERO_3_CTRL_INSERTED:
+						/* some expansion was inserted */
+						handle_ctrl_status(wiimotes[i]);
+						printf("Guitar Hero 3 controller inserted.\n");
+						break;
+
+					case WIIUSE_NUNCHUK_REMOVED:
+					case WIIUSE_CLASSIC_CTRL_REMOVED:
+					case WIIUSE_GUITAR_HERO_3_CTRL_REMOVED:
+						/* some expansion was removed */
+						handle_ctrl_status(wiimotes[i]);
+						printf("An expansion was removed.\n");
 						break;
 
 					default:
