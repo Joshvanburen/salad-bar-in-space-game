@@ -94,22 +94,7 @@ void calculate_orientation(struct accel_t* ac, struct vec3b_t* accel, struct ori
 	/* if it is over 1g then it is probably accelerating and not reliable */
 	if (abs(accel->x - ac->cal_zero.x) <= ac->cal_g.x) {
 		/* roll */
-		int s = -1;
-
-		/* keep track of the sign but make x negative for the atan() equation */
-		if (x >= 0) {
-			s = 1;
-			x *= -1;
-		}
-
-		if (x > -0.01f)
-			x = -0.01f;
-
-		x = (RAD_TO_DEGREE(atanf(z / x)) + 90);
-
-		/* reapply the raw sign */
-		if (s == -1)
-			x *= -1;
+		x = RAD_TO_DEGREE(atan2f(x, z));
 
 		orient->roll = x;
 		orient->a_roll = x;
@@ -117,20 +102,7 @@ void calculate_orientation(struct accel_t* ac, struct vec3b_t* accel, struct ori
 
 	if (abs(accel->y - ac->cal_zero.y) <= ac->cal_g.y) {
 		/* pitch */
-		int s = 1;
-
-		if (y >= 0) {
-			s = -1;
-			y *= -1;
-		}
-
-		if (y > -0.01f)
-			y = -0.01f;
-
-		y = (RAD_TO_DEGREE(atanf(z / y)) + 90);
-
-		if (s == -1)
-			y *= -1;
+		y = RAD_TO_DEGREE(atan2f(y, z));
 
 		orient->pitch = y;
 		orient->a_pitch = y;

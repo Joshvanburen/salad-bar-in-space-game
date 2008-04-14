@@ -40,7 +40,7 @@
 extern "C" {
 #endif
 
-void nunchuk_handshake(struct wiimote_t* wm, struct nunchuk_t* nc, byte* data, unsigned short len);
+int nunchuk_handshake(struct wiimote_t* wm, struct nunchuk_t* nc, byte* data, unsigned short len);
 
 void nunchuk_disconnected(struct nunchuk_t* nc);
 

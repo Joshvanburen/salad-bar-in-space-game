@@ -65,7 +65,7 @@ void wiiuse_handshake(struct wiimote_t* wm, byte* data, unsigned short len) {
 			wiiuse_set_leds(wm, WIIMOTE_LED_NONE);
 
 			buf = (byte*)malloc(sizeof(byte) * 8);
-			wiiuse_read_data(wm, wiiuse_handshake, buf, WM_MEM_OFFSET_CALIBRATION, 7);
+			wiiuse_read_data_cb(wm, wiiuse_handshake, buf, WM_MEM_OFFSET_CALIBRATION, 7);
 			wm->handshake_state++;
 
 			wiiuse_set_leds(wm, WIIMOTE_LED_NONE);

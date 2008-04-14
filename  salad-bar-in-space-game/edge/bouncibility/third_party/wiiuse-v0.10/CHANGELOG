@@ -9,6 +9,45 @@ http://wiiuse.sourceforge.net/
 http://sourceforge.net/projects/wiiuse/
 
 ---------------------------
+v0.12 -- 2 Apr 2008
+---------------------------
+
+	Added:
+		- API function wiiuse_set_ir_sensitivity()
+		- Macro WIIUSE_GET_IR_SENSITIVITY()
+		- Event type WIIUSE_READ_DATA
+		- Event type WIIUSE_UNEXPECTED_DISCONNECT
+
+	Fixed:
+		- [Linux] Ability to try to select() nothing
+		- [Linux] Changed Makefile to include debug output when compiling in debug mode
+
+	Changed:
+		- wiiuse_set_nunchuk_orient_threshold() now takes a wiimote_t pointer
+		- wiiuse_set_nunchuk_accel_threshold() now takes a wiimote_t pointer
+		- wiiuse_read_data() generates an event WIIUSE_READ_DATA rather than executing a callback
+
+---------------------------
+v0.11 -- 25 Feb 2008
+---------------------------
+
+	Added:
+		- API function wiiuse_set_nunchuk_orient_threshold()
+		- API function wiiuse_set_nunchuk_accel_threshold()
+		- Event type WIIUSE_NUNCHUK_INSERTED
+		- Event type WIIUSE_NUNCHUK_REMOVED
+		- Event type WIIUSE_CLASSIC_CTRL_INSERTED
+		- Event type WIIUSE_CLASSIC_CTRL_REMOVED
+		- Event type WIIUSE_GUITAR_HERO_3_CTRL_INSERTED
+		- Event type WIIUSE_GUITAR_HERO_3_CTRL_REMOVED
+
+	Fixed:
+		- Added some missing function prototypes to wiiuse.h
+		- [Linux] Fixed Makefile to link libmath and libbluetooth
+		- Status event is set when a status report comes in
+		- Orientation threshold not being saved in lstate
+
+---------------------------
 v0.10 -- 11 Feb 2008
 ---------------------------
 

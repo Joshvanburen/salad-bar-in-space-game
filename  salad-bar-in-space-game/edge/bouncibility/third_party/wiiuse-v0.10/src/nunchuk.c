@@ -49,8 +49,10 @@ static void nunchuk_pressed_buttons(struct nunchuk_t* nc, byte now);
  *	@param nc		A pointer to a nunchuk_t structure.
  *	@param data		The data read in from the device.
  *	@param len		The length of the data block, in bytes.
+ *
+ *	@return	Returns 1 if handshake was successful, 0 if not.
  */
-void nunchuk_handshake(struct wiimote_t* wm, struct nunchuk_t* nc, byte* data, unsigned short len) {
+int nunchuk_handshake(struct wiimote_t* wm, struct nunchuk_t* nc, byte* data, unsigned short len) {
 	int i;
 	int offset = 0;
 
@@ -82,9 +84,9 @@ void nunchuk_handshake(struct wiimote_t* wm, struct nunchuk_t* nc, byte* data, u
 			byte* handshake_buf = malloc(EXP_HANDSHAKE_LEN * sizeof(byte));
 
 			WIIUSE_DEBUG("Nunchuk handshake appears invalid, trying again.");
-			wiiuse_read_data(wm, handshake_expansion, handshake_buf, WM_EXP_MEM_CALIBR, EXP_HANDSHAKE_LEN);
+			wiiuse_read_data_cb(wm, handshake_expansion, handshake_buf, WM_EXP_MEM_CALIBR, EXP_HANDSHAKE_LEN);
 
-			return;
+			return 0;
 		} else
 			offset += 16;
 	}
@@ -102,6 +104,10 @@ void nunchuk_handshake(struct wiimote_t* wm, struct nunchuk_t* nc, byte* data, u
 	nc->js.min.y = data[offset + 12];
 	nc->js.center.y = data[offset + 13];
 
+	/* default the thresholds to the same as the wiimote */
+	nc->orient_threshold = wm->orient_threshold;
+	nc->accel_threshold = wm->accel_threshold;
+
 	/* handshake done */
 	wm->exp.type = EXP_NUNCHUK;
 
@@ -109,6 +115,7 @@ void nunchuk_handshake(struct wiimote_t* wm, struct nunchuk_t* nc, byte* data, u
 	wm->timeout = WIIMOTE_DEFAULT_TIMEOUT;
 	#endif
 
+	return 1;
 }
 
 
@@ -170,4 +177,34 @@ static void nunchuk_pressed_buttons(struct nunchuk_t* nc, byte now) {
 
 	/* buttons pressed now */
 	nc->btns = now;
+}
+
+
+/**
+ *	@brief	Set the orientation event threshold for the nunchuk.
+ *
+ *	@param wm			Pointer to a wiimote_t structure with a nunchuk attached.
+ *	@param threshold	The decimal place that should be considered a significant change.
+ *
+ *	See wiiuse_set_orient_threshold() for details.
+ */
+void wiiuse_set_nunchuk_orient_threshold(struct wiimote_t* wm, float threshold) {
+	if (!wm)	return;
+
+	wm->exp.nunchuk.orient_threshold = threshold;
+}
+
+
+/**
+ *	@brief	Set the accelerometer event threshold for the nunchuk.
+ *
+ *	@param wm			Pointer to a wiimote_t structure with a nunchuk attached.
+ *	@param threshold	The decimal place that should be considered a significant change.
+ *
+ *	See wiiuse_set_orient_threshold() for details.
+ */
+void wiiuse_set_nunchuk_accel_threshold(struct wiimote_t* wm, int threshold) {
+	if (!wm)	return;
+
+	wm->exp.nunchuk.accel_threshold = threshold;
 }

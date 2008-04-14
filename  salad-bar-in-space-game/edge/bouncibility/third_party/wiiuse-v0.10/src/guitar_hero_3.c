@@ -53,8 +53,10 @@ static void guitar_hero_3_pressed_buttons(struct guitar_hero_3_t* gh3, short now
  *	@param cc		A pointer to a classic_ctrl_t structure.
  *	@param data		The data read in from the device.
  *	@param len		The length of the data block, in bytes.
+ *
+ *	@return	Returns 1 if handshake was successful, 0 if not.
  */
-void guitar_hero_3_handshake(struct wiimote_t* wm, struct guitar_hero_3_t* gh3, byte* data, unsigned short len) {
+int guitar_hero_3_handshake(struct wiimote_t* wm, struct guitar_hero_3_t* gh3, byte* data, unsigned short len) {
 	int i;
 	int offset = 0;
 
@@ -89,9 +91,9 @@ void guitar_hero_3_handshake(struct wiimote_t* wm, struct guitar_hero_3_t* gh3, 
 			byte* handshake_buf = malloc(EXP_HANDSHAKE_LEN * sizeof(byte));
 
 			WIIUSE_DEBUG("Guitar Hero 3 handshake appears invalid, trying again.");
-			wiiuse_read_data(wm, handshake_expansion, handshake_buf, WM_EXP_MEM_CALIBR, EXP_HANDSHAKE_LEN);
+			wiiuse_read_data_cb(wm, handshake_expansion, handshake_buf, WM_EXP_MEM_CALIBR, EXP_HANDSHAKE_LEN);
 
-			return;
+			return 0;
 		} else
 			offset += 16;
 	}
@@ -110,6 +112,8 @@ void guitar_hero_3_handshake(struct wiimote_t* wm, struct guitar_hero_3_t* gh3, 
 	#ifdef WIN32
 	wm->timeout = WIIMOTE_DEFAULT_TIMEOUT;
 	#endif
+
+	return 1;
 }
 
 

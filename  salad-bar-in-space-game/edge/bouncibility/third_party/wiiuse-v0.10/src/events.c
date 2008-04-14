@@ -39,6 +39,7 @@
 #ifndef WIN32
 	#include <sys/time.h>
 	#include <unistd.h>
+	#include <errno.h>
 #else
 	#include <winsock2.h>
 #endif
@@ -58,6 +59,7 @@
 #include "events.h"
 
 static void idle_cycle(struct wiimote_t* wm);
+static void clear_dirty_reads(struct wiimote_t* wm);
 static void propagate_event(struct wiimote_t* wm, byte event, byte* msg);
 static void event_data_read(struct wiimote_t* wm, byte* msg);
 static void event_status(struct wiimote_t* wm, byte* msg);
@@ -89,7 +91,7 @@ int wiiuse_poll(struct wiimote_t** wm, int wiimotes) {
 		fd_set fds;
 		int r;
 		int i;
-		int highest_fd = 0;
+		int highest_fd = -1;
 
 		if (!wm) return 0;
 
@@ -112,6 +114,10 @@ int wiiuse_poll(struct wiimote_t** wm, int wiimotes) {
 			wm[i]->event = WIIUSE_NONE;
 		}
 
+		if (highest_fd == -1)
+			/* nothing to poll */
+			return 0;
+
 		if (select(highest_fd + 1, &fds, NULL, NULL, &tv) == -1) {
 			WIIUSE_ERROR("Unable to select() the wiimote interrupt socket(s).");
 			perror("Error Details");
@@ -128,12 +134,23 @@ int wiiuse_poll(struct wiimote_t** wm, int wiimotes) {
 				/* clear out the event buffer */
 				memset(wm[i]->event_buf, 0, sizeof(wm[i]->event_buf));
 
+				/* clear out any old read requests */
+				clear_dirty_reads(wm[i]);
+
 				/* read the pending message into the buffer */
 				r = read(wm[i]->in_sock, wm[i]->event_buf, sizeof(wm[i]->event_buf));
 				if (r == -1) {
 					/* error reading data */
 					WIIUSE_ERROR("Receiving wiimote data (id %i).", wm[i]->unid);
 					perror("Error Details");
+
+					if (errno == ENOTCONN) {
+						/* this can happen if the bluetooth dongle is disconnected */
+						WIIUSE_ERROR("Bluetooth appears to be disconnected.  Wiimote unid %i will be disconnected.", wm[i]->unid);
+						wiiuse_disconnect(wm[i]);
+						wm[i]->event = WIIUSE_UNEXPECTED_DISCONNECT;
+					}
+
 					continue;
 				}
 				if (!r) {
@@ -198,6 +215,27 @@ static void idle_cycle(struct wiimote_t* wm) {
 	if (WIIUSE_USING_ACC(wm) && WIIMOTE_IS_FLAG_SET(wm, WIIUSE_SMOOTHING)) {
 		apply_smoothing(&wm->accel_calib, &wm->orient, SMOOTH_ROLL);
 		apply_smoothing(&wm->accel_calib, &wm->orient, SMOOTH_PITCH);
+	}
+
+	/* clear out any old read requests */
+	clear_dirty_reads(wm);
+}
+
+
+/**
+ *	@brief Clear out all old 'dirty' read requests.
+ *
+ *	@param wm		Pointer to a wiimote_t structure.
+ */
+static void clear_dirty_reads(struct wiimote_t* wm) {
+	struct read_req_t* req = wm->read_req;
+
+	while (req && req->dirty) {
+		WIIUSE_DEBUG("Cleared old read request for address: %x", req->addr);
+
+		wm->read_req = req->next;
+		free(req);
+		req = wm->read_req;
 	}
 }
 
@@ -387,6 +425,10 @@ static void event_data_read(struct wiimote_t* wm, byte* msg) {
 
 	wiiuse_pressed_buttons(wm, msg);
 
+	/* find the next non-dirty request */
+	while (req && req->dirty)
+		req = req->next;
+
 	/* if we don't have a request out then we didn't ask for this packet */
 	if (!req) {
 		WIIUSE_WARNING("Received data packet when no request was made.");
@@ -445,13 +487,26 @@ static void event_data_read(struct wiimote_t* wm, byte* msg) {
 	}
 	#endif
 
-	/* if all data has been received, execute the read event callback */
+	/* if all data has been received, execute the read event callback or generate event */
 	if (!req->wait) {
-		req->cb(wm, req->buf, req->size);
+		if (req->cb) {
+			/* this was a callback, so invoke it now */
+			req->cb(wm, req->buf, req->size);
 
-		/* delete this request */
-		wm->read_req = req->next;
-		free(req);
+			/* delete this request */
+			wm->read_req = req->next;
+			free(req);
+		} else {
+			/*
+			 *	This should generate an event.
+			 *	We need to leave the event in the array so the client
+			 *	can access it still.  We'll flag is as being 'dirty'
+			 *	and give the client one cycle to use it.  Next event
+			 *	we will remove it from the list.
+			 */
+			wm->event = WIIUSE_READ_DATA;
+			req->dirty = 1;
+		}
 
 		/* if another request exists send it to the wiimote */
 		if (wm->read_req)
@@ -473,6 +528,13 @@ static void event_status(struct wiimote_t* wm, byte* msg) {
 	int attachment = 0;
 	int ir = 0;
 	int exp_changed = 0;
+
+	/*
+	 *	An event occured.
+	 *	This event can be overwritten by a more specific
+	 *	event type during a handshake or expansion removal.
+	 */
+	wm->event = WIIUSE_STATUS;
 
 	wiiuse_pressed_buttons(wm, msg);
 
@@ -529,9 +591,6 @@ static void event_status(struct wiimote_t* wm, byte* msg) {
 		wiiuse_set_ir(wm, 1);
 	} else
 		wiiuse_set_report_type(wm);
-
-	/* an event occured */
-	wm->event = WIIUSE_EVENT;
 }
 
 
@@ -565,6 +624,9 @@ static void handle_expansion(struct wiimote_t* wm, byte* msg) {
  *	@param data		The data read in from the device.
  *	@param len		The length of the data block, in bytes.
  *
+ *	Tries to determine what kind of expansion was attached
+ *	and invoke the correct handshake function.
+ *
  *	If the data is NULL then this function will try to start
  *	a handshake with the expansion.
  */
@@ -588,7 +650,7 @@ void handshake_expansion(struct wiimote_t* wm, byte* data, unsigned short len) {
 
 		/* get the calibration data */
 		handshake_buf = malloc(EXP_HANDSHAKE_LEN * sizeof(byte));
-		wiiuse_read_data(wm, handshake_expansion, handshake_buf, WM_EXP_MEM_CALIBR, EXP_HANDSHAKE_LEN);
+		wiiuse_read_data_cb(wm, handshake_expansion, handshake_buf, WM_EXP_MEM_CALIBR, EXP_HANDSHAKE_LEN);
 
 		/* tell the wiimote to send expansion data */
 		WIIMOTE_ENABLE_STATE(wm, WIIMOTE_STATE_EXP);
@@ -601,17 +663,28 @@ void handshake_expansion(struct wiimote_t* wm, byte* data, unsigned short len) {
 	/* call the corresponding handshake function for this expansion */
 	switch (id) {
 		case EXP_ID_CODE_NUNCHUK:
-			nunchuk_handshake(wm, &wm->exp.nunchuk, data, len);
+		{
+			if (nunchuk_handshake(wm, &wm->exp.nunchuk, data, len))
+				wm->event = WIIUSE_NUNCHUK_INSERTED;
 			break;
+		}
 		case EXP_ID_CODE_CLASSIC_CONTROLLER:
-			classic_ctrl_handshake(wm, &wm->exp.classic, data, len);
+		{
+			if (classic_ctrl_handshake(wm, &wm->exp.classic, data, len))
+				wm->event = WIIUSE_CLASSIC_CTRL_INSERTED;
 			break;
+		}
 		case EXP_ID_CODE_GUITAR:
-			guitar_hero_3_handshake(wm, &wm->exp.gh3, data, len);
+		{
+			if (guitar_hero_3_handshake(wm, &wm->exp.gh3, data, len))
+				wm->event = WIIUSE_GUITAR_HERO_3_CTRL_INSERTED;
 			break;
+		}
 		default:
+		{
 			WIIUSE_WARNING("Unknown expansion type. Code: 0x%x", id);
 			break;
+		}
 	}
 
 	free(data);
@@ -633,23 +706,26 @@ void disable_expansion(struct wiimote_t* wm) {
 	if (!WIIMOTE_IS_SET(wm, WIIMOTE_STATE_EXP))
 		return;
 
-	WIIMOTE_DISABLE_STATE(wm, WIIMOTE_STATE_EXP);
-	wm->exp.type = EXP_NONE;
-
 	/* tell the assoicated module the expansion was removed */
 	switch (wm->exp.type) {
 		case EXP_NUNCHUK:
 			nunchuk_disconnected(&wm->exp.nunchuk);
+			wm->event = WIIUSE_NUNCHUK_REMOVED;
 			break;
 		case EXP_CLASSIC:
 			classic_ctrl_disconnected(&wm->exp.classic);
+			wm->event = WIIUSE_CLASSIC_CTRL_REMOVED;
 			break;
 		case EXP_GUITAR_HERO_3:
 			guitar_hero_3_disconnected(&wm->exp.gh3);
+			wm->event = WIIUSE_GUITAR_HERO_3_CTRL_REMOVED;
 			break;
 		default:
 			break;
 	}
+
+	WIIMOTE_DISABLE_STATE(wm, WIIMOTE_STATE_EXP);
+	wm->exp.type = EXP_NONE;
 }
 
 
@@ -675,6 +751,7 @@ static void save_state(struct wiimote_t* wm) {
 			wm->lstate.exp_ljs_ang = wm->exp.nunchuk.js.ang;
 			wm->lstate.exp_ljs_mag = wm->exp.nunchuk.js.mag;
 			wm->lstate.exp_btns = wm->exp.nunchuk.btns;
+			wm->lstate.exp_accel = wm->exp.nunchuk.accel;
 			break;
 
 		case EXP_CLASSIC:
@@ -766,7 +843,8 @@ static int state_changed(struct wiimote_t* wm) {
 			STATE_CHANGED(wm->lstate.exp_ljs_mag, wm->exp.nunchuk.js.mag);
 			STATE_CHANGED(wm->lstate.exp_btns, wm->exp.nunchuk.btns);
 
-			CROSS_THRESH(wm->lstate.exp_orient, wm->exp.nunchuk.orient, wm->orient_threshold);
+			CROSS_THRESH(wm->lstate.exp_orient, wm->exp.nunchuk.orient, wm->exp.nunchuk.orient_threshold);
+			CROSS_THRESH_XYZ(wm->lstate.exp_accel, wm->exp.nunchuk.accel, wm->exp.nunchuk.accel_threshold);
 			break;
 		}
 		case EXP_CLASSIC:

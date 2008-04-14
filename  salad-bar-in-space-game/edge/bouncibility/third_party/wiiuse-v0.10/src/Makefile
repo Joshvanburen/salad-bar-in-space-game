@@ -20,7 +20,8 @@ CFLAGS = -Wall -pipe -fPIC -funroll-loops
 
 ifeq ($(debug),1)
 	OBJ_PREFIX = debug
-	CFLAGS += -g -pg
+	CFLAGS += -g -pg -DWITH_WIIUSE_DEBUG
+
 else
 	OBJ_PREFIX = release
 	CFLAGS += -O2
@@ -31,7 +32,7 @@ OBJ_DIR = $(OBJ_PREFIX)-$(shell $(CC) -v 2>&1|grep ^Target:|cut -d' ' -f2)
 #
 # Linking flags
 #
-LDFLAGS = -shared
+LDFLAGS = -shared -lm -lbluetooth
 
 #
 # Target binaries (always created as BIN)
@@ -72,7 +73,10 @@ distclean:
 	@-rm -r debug-* release-* 2> /dev/null
 
 install:
-	@cp -v $(BIN) /usr/lib
+	@if [ -e $(BIN) ]; then \
+		cp -v $(BIN) /usr/lib ; \
+	fi
+	@cp -v wiiuse.h /usr/include
 
 $(BIN): mkdir $(OBJS)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) -o $(BIN)
