@@ -6,8 +6,7 @@ using namespace video;
 using namespace scene;
 
 Core::Core () {
-        dev = createDevice (EDT_OPENGL, core::dimension2d<s32>(800, 600), 16, false,
-                        false, false, this);
+        dev = createDevice (EDT_OPENGL, core::dimension2d<s32>(800, 600), 16, false, true, false, this);
         drv = dev->getVideoDriver ();
         smgr = dev->getSceneManager ();
         dev->getCursorControl ()->setVisible (false);
@@ -23,11 +22,11 @@ Core::Core () {
         rend = new IrrlichtRenderer (dev, false);
         // Create CEGUI, we specify only renderer, we take all the rest parameters
         // by default (you can see them all in CEGUI API)
-        new     System (rend);
+        new System (rend);
 
         // Get default resource provider
         DefaultResourceProvider* rp = static_cast<DefaultResourceProvider*> (
-                        System::getSingleton ().getResourceProvider ());
+										System::getSingleton ().getResourceProvider ());
         // Set defaults for resource groups
         // This will allow us to use resource groups instead of writing full path
         // to resources every time we need it
@@ -205,7 +204,7 @@ void Core::Run () {
 
                         int fps = drv->getFPS ();
                         if (last_fps != fps) {
-                                core::stringw str = L"Irrlicht 1.2 & CEGUI 0.6   FPS: ";
+                                core::stringw str = L"Irrlicht 1.4 & CEGUI 0.6   FPS: ";
                                 str += fps;
                                 dev->setWindowCaption (str.c_str ());
                                 last_fps = fps;
