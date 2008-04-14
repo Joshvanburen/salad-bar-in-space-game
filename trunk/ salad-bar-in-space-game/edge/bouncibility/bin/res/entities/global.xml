@@ -1,5 +1,5 @@
 <worldentities>
-	<entity name="enemy" file="./res/entities/definitions/enemy.xml" type="ball" script="enemy"/>
+	<entity name="enemy" file="./res/entities/definitions/enemy.xml" type="enemy" script="enemy"/>
 	<entity name="gravship" file="./res/entities/definitions/gravship.xml" type="gravship" script="gravship"/>
 	<entity name="gravship_helper" file="./res/entities/definitions/gravship.xml" type="gravship_helper" script="gravship_helper"/>
 	<entity name="obstacle_one" file="./res/entities/definitions/obstacle_one.xml" type="obstacle" script="obstacle"/>
