@@ -1,1 +1,1 @@
-<enemy name="enemy" mesh="res/sydney.md2" texture="res/textures/blue_ball_texture.png" enable_physics="1" material="enemy" enable_gravity="1" radius="8.5" color="yellow" ai="stupid"/>
+<enemy name="enemy" mesh="res/sydney.md2" texture="res/textures/blue_ball_texture.png" enable_physics="1" material="enemy" enable_gravity="1" radius="8.5" color="yellow" mass="1" ai="stupid"/>

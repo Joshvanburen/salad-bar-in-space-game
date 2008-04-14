@@ -4,7 +4,7 @@ void main()
 }
 int update(Enemy &enemy)
 {
-	PrintString("In stupid ai Script");
+	//PrintString("In stupid ai Script");
 
 	return 1;
 }

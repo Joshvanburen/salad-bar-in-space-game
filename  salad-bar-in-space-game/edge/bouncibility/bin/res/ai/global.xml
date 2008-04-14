@@ -1,6 +1,4 @@
 <?xml version="1.0" ?>
 <ai>
-  <ai_function>
-    <ai_function type="stupid" scriptName="stupid_ai" />
-  </ai_function>
+    <ai_function type="stupid" script="stupid_ai" />
 </ai>

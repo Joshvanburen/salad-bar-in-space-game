@@ -1,2 +1,2 @@
-<gravship name="gravship" mesh="res/sydney.md2" texture="res/textures/blue_ball_texture.png" material="gravship" radius="8.5" mass="10"/>
-<gravship_helper name="gravship_helper" mesh="res/sydney.md2" texture="res/textures/blue_ball_texture.png" material="gravship_helper" orbit_radius="25" field_radius="75" radius="6.5" gravity_pull="1000" mass="100"/>
+<gravship name="gravship" mesh="res/sydney.md2" texture="res/textures/blue_ball_texture.png" material="gravship" radius="8.5" mass="10" helper="gravship_helper"/>
+<gravship_helper name="gravship_helper" mesh="res/sydney.md2" texture="res/textures/blue_ball_texture.png" material="gravship_helper" orbit_radius="25" field_radius="75" radius="6.5" gravity_pull="100000" mass="100"/>
