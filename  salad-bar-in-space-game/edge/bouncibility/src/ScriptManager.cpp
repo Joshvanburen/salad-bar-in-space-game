@@ -3,6 +3,7 @@
 #include "WorldEntity.h"
 #include "Enemy.h"
 #include "scriptstring.h"
+#include "Enemy.h"
 #include "irrXML.h"	
 #include "ScriptManager.h"
 

@@ -90,10 +90,8 @@ class GameSystem : public CSingleton<GameSystem>
 		Input::Action* morph;
 		Input::Action* hover;
 		Input::Action* pause;
+		Input::Action* resync;		
 
-
-
-		irr::scene::ISceneNode* m_Cursor;
 		int m_CursorX;
 		int m_CursorY;
 			

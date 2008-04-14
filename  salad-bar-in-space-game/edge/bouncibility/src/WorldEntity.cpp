@@ -98,7 +98,7 @@ float WorldEntity::getBoundingSphereRadius(){
 	return m_Radius;
 }
 void WorldEntity::setLocation(irr::core::vector3df newLocation){
-
+	this->location = newLocation;
 	if (m_Physics_Body){
 		m_Physics_Body->setPosition(newLocation);
 	}

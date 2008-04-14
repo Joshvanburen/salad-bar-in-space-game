@@ -79,6 +79,8 @@ bool Input::Mouse::buttonStatus(int code) const{
 			break;
 	}
 
+	return false;
+
 }
 
 bool Input::Mouse::operator()(int code) const{
@@ -233,7 +235,7 @@ float Input::Wiimote::joystickAngle(){
 	if (!found){
 		return 0.0;
 	}
-	return wiimotes[0]->exp.nunchuk.js.ang;
+	return angle;
 }
 
 
@@ -241,10 +243,43 @@ float Input::Wiimote::joystickMagnitude(){
 	if (!found){
 		return 0.0;
 	}
-	return wiimotes[0]->exp.nunchuk.js.mag;
+	return magnitude;
 }
 void Input::Wiimote::handle_event(struct wiimote_t* wm){
+	
+		printf("\n\n--- EVENT [id %i] ---\n", wm->unid);
 
+	/* if a button is pressed, report it */
+	if (IS_PRESSED(wm, WIIMOTE_BUTTON_A))		printf("A pressed\n");
+	if (IS_PRESSED(wm, WIIMOTE_BUTTON_B))		printf("B pressed\n");
+	if (IS_PRESSED(wm, WIIMOTE_BUTTON_UP))		printf("UP pressed\n");
+	if (IS_PRESSED(wm, WIIMOTE_BUTTON_DOWN))	printf("DOWN pressed\n");
+	if (IS_PRESSED(wm, WIIMOTE_BUTTON_LEFT))	printf("LEFT pressed\n");
+	if (IS_PRESSED(wm, WIIMOTE_BUTTON_RIGHT))	printf("RIGHT pressed\n");
+	if (IS_PRESSED(wm, WIIMOTE_BUTTON_MINUS))	printf("MINUS pressed\n");
+	if (IS_PRESSED(wm, WIIMOTE_BUTTON_PLUS))	printf("PLUS pressed\n");
+	if (IS_PRESSED(wm, WIIMOTE_BUTTON_ONE))		printf("ONE pressed\n");
+	if (IS_PRESSED(wm, WIIMOTE_BUTTON_TWO))		printf("TWO pressed\n");
+	if (IS_PRESSED(wm, WIIMOTE_BUTTON_HOME))	printf("HOME pressed\n");
+
+	/* show events specific to supported expansions */
+	if (wm->exp.type == EXP_NUNCHUK) {
+		/* nunchuk */
+		struct nunchuk_t* nc = (nunchuk_t*)&wm->exp.nunchuk;
+
+		if (IS_PRESSED(nc, NUNCHUK_BUTTON_C))		printf("Nunchuk: C pressed\n");
+		if (IS_PRESSED(nc, NUNCHUK_BUTTON_Z))		printf("Nunchuk: Z pressed\n");
+
+		printf("nunchuk roll  = %f\n", nc->orient.roll);
+		printf("nunchuk pitch = %f\n", nc->orient.pitch);
+		printf("nunchuk yaw   = %f\n", nc->orient.yaw);
+
+		printf("nunchuk joystick angle:     %f\n", nc->js.ang);
+		printf("nunchuk joystick magnitude: %f\n", nc->js.mag);
+
+		magnitude = nc->js.mag;
+		angle = nc->js.ang;
+	}
 }
 
 
@@ -264,6 +299,11 @@ int* Input::Wiimote::whichLEDs(){
 	return LEDs;
 }
 
+void Input::Wiimote::resync(){
+
+	wiiuse_resync(wiimotes[0]);
+
+}
 bool Input::Wiimote::hasAttachement(){
 	if (!found){
 		return false;
@@ -274,7 +314,8 @@ bool Input::Wiimote::hasAttachement(){
 Input::Wiimote::Wiimote() : InputDevice(), battery_level(0), attachment(0), moteID(0), wiimotes(NULL), found(false){
 	LEDs[0] = LEDs[1] = LEDs[2] = LEDs[3] = false;
 
-
+	magnitude = 0;
+	angle = 0;
 
 }
 Input::Wiimote::~Wiimote(){

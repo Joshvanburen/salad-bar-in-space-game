@@ -84,9 +84,9 @@ WorldEntity& Entity::GravshipHelperFactory::loadEntity(const std::string& XMLFil
 
 				
 				material = PhysicsManager::getSingleton().getMaterial(materialName);
+				
 
-
-
+				
 				irr::newton::SBodyFromNode physics_node;
 
 				physics_node.Node = node;
@@ -94,17 +94,20 @@ WorldEntity& Entity::GravshipHelperFactory::loadEntity(const std::string& XMLFil
 
 				irr::newton::IBody* body = PhysicsManager::getSingleton().getPhysicsWorld()->createBody(physics_node);
 				
-				body->setContinuousCollisionMode(false);
+				body->setContinuousCollisionMode(true);
 
 				body->setMaterial(material);
+
+				((GravshipHelper*)entity)->m_Material = material;
+
 
 				body->setUserData(entity);
 
 				body->addForceContinuous(irr::core::vector3df(0,0, PhysicsManager::getSingleton().getGravity()));
 
 				body->setMass(irr::f32(mass));
+
 				entity->setPhysicsBody(body);
-				
 				
 
 			
@@ -232,6 +235,7 @@ WorldEntity& Entity::EnemyFactory::loadEntity(const std::string& XMLFilename){
 	std::string materialName;
 	irr::newton::IMaterial* material;
 	float radius = 1;
+	float mass = 1;
 	Enemy* entity = NULL;
 
 	while(xml && xml->read())
@@ -252,6 +256,7 @@ WorldEntity& Entity::EnemyFactory::loadEntity(const std::string& XMLFilename){
 				radius = xml->getAttributeValueAsFloat("radius");
 				color = xml->getAttributeValue("color");
 				ai_type = xml->getAttributeValue("ai");
+				mass = xml->getAttributeValueAsFloat("mass");
 				irr::scene::ISceneNode* node = LevelManager::getSceneManager()->addSphereSceneNode(irr::f32(radius));
 
 				if (node){
@@ -289,6 +294,7 @@ WorldEntity& Entity::EnemyFactory::loadEntity(const std::string& XMLFilename){
 
 					body->setUserData(entity);
 
+					body->setMass(mass);
 					if (gravity_enabled){
 						body->addForceContinuous(irr::core::vector3df(0,0, PhysicsManager::getSingleton().getGravity()));
 					}
@@ -298,8 +304,9 @@ WorldEntity& Entity::EnemyFactory::loadEntity(const std::string& XMLFilename){
 			
 				}
 
-				Scripting::WorldEntityAIFunction* ai_script = dynamic_cast<Scripting::WorldEntityAIFunction*>(WorldEntityAIManager::getSingleton().getAI(ai_type));
-			entity->setAi(ai_script);
+				Scripting::WorldEntityAIFunction* ai_script = ((Scripting::WorldEntityAIFunction*)(WorldEntityAIManager::getSingleton().getAI(ai_type)));
+
+				entity->setAi(ai_script);
 
 			//entity->changeState(startState)
 							
@@ -367,7 +374,7 @@ WorldEntity& Entity::ObstacleFactory::loadEntity(const std::string& XMLFilename)
 					//Gets the start state of the object
 					
 					//Gets the radius
-					radius = xml->getAttributeValueAsFloat("radius");
+					radius = 10;
 					
 					//Gets the width
 					width = xml->getAttributeValueAsFloat("width");
@@ -427,7 +434,7 @@ WorldEntity& Entity::ObstacleFactory::loadEntity(const std::string& XMLFilename)
 					irr::newton::IBody* body = PhysicsManager::getSingleton().getPhysicsWorld()->createBody(physics_node);
 					
 					//Sets continuous collision on
-					body->setContinuousCollisionMode(true);
+					body->setContinuousCollisionMode(false);
 
 					//Sets the material
 					body->setMaterial(material);
@@ -439,7 +446,7 @@ WorldEntity& Entity::ObstacleFactory::loadEntity(const std::string& XMLFilename)
 					body->addForceContinuous(irr::core::vector3df(0,0, PhysicsManager::getSingleton().getGravity()));
 					
 					//Sets the mass
-					body->setMass(150);
+					body->setMass(15000);
 					
 					//Sets the physics body of the entity
 					entity->setPhysicsBody(body);
@@ -604,6 +611,8 @@ bool EntityManager::init(const std::string& XMLEntityDefinition){
 
 	this->m_Loader.registerFactory("enemy", new Entity::EnemyFactory());
 	this->m_Loader.registerFactory("gravship", new Entity::GravshipFactory());
+	this->m_Loader.registerFactory("gravship_helper", new Entity::GravshipHelperFactory());
+	this->m_Loader.registerFactory("obstacle", new Entity::ObstacleFactory());
 
 	irr::io::IrrXMLReader* xml = irr::io::createIrrXMLReader(XMLEntityDefinition.c_str());
 
@@ -679,7 +688,7 @@ WorldEntity& EntityManager::createEntity(const std::string& name, const std::str
 	Entity::StrEntityMap::iterator entityItr = m_EntityMap.find(name);
 	//If the Entity wasn't found, return false
 	if(entityItr == m_EntityMap.end()){
-		std::cout << "entity not found. throwing exception!\n";
+		std::cout << "entity \"" << name << "\" not found. throwing exception!\n";
 		throw Entity::EntityCreationFailed();
 	}
 	WorldEntity* entity = &(m_Loader.loadEntity(entityItr->second));

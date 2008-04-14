@@ -52,6 +52,10 @@ public:
 	void changeVelocity(float x_speed, float y_speed);
 
 	void setGravityFieldRadius(float newRadius);
+
+	std::set<WorldEntity*> getOrbitingEntities(){
+		return m_OrbitingEntities;
+	}
 private: 
  	
 	WorldEntity* clone();
@@ -62,6 +66,8 @@ private:
 
 	//This is the Gravship's gravity helper object
 	WorldEntity* m_Helper;
+
+	irr::newton::IMaterial* m_EmptyMaterial;
 
 	//We are trying to use as few as possible parameters
 	//These two parameter can describe many states
