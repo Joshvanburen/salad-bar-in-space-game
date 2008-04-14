@@ -176,7 +176,8 @@ namespace Input{
 		bool both_hands_down;
 		bool right_hand_right;
 		bool right_hand_left;
-
+		float magnitude;
+		float angle;
 
 
 		void handle_event(struct wiimote_t* wm);
@@ -197,6 +198,8 @@ namespace Input{
 
 
 	public:
+
+		void resync();
 
 		void toggleRumble();
 

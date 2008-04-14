@@ -14,6 +14,8 @@ void Enemy::update(){
 
 	this->m_Physics_Body->setPosition(irr::core::vector3df(position.X,position.Y, 0));
 	//this->m_Physics_Body->setVelocity(this->velocity);
+
+	ai_script->callFunction(this);
 }
 
 WorldEntity* Enemy::clone(){

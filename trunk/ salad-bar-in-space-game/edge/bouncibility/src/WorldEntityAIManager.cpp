@@ -102,7 +102,7 @@ bool WorldEntityAIManager::readInXML(const std::string& XMLMaterialDefinition){
 					std::cout << "AI with type: " << type << "already exists. Continuing...\n";
 				}
 				else{
-					m_AIFunctionMap.insert(std::make_pair(type, dynamic_cast<Scripting::WorldEntityAIFunction*>(scriptFunction)));
+					m_AIFunctionMap.insert(std::make_pair(type, (Scripting::WorldEntityAIFunction*)scriptFunction));
 				}
 
 			}

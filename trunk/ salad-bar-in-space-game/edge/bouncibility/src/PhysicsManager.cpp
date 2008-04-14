@@ -144,8 +144,19 @@ bool PhysicsManager::init(irr::IrrlichtDevice* device){
 
 	m_MaterialDefinition = "./res/physics/global.xml";
 
-	return readInXML(m_MaterialDefinition);
+	bool result = readInXML(m_MaterialDefinition);
 
+	irr::newton::IMaterial* material = m_World->createMaterial();
+
+	m_MaterialMap.insert(std::make_pair("empty", material));
+
+	m_MaterialItr = m_MaterialMap.begin();
+
+	for (; m_MaterialItr != m_MaterialMap.end(); m_MaterialItr++){
+		material->setCollidable(m_MaterialItr->second, false);
+	}
+
+	return result;
 
 }
 
@@ -235,7 +246,17 @@ bool PhysicsManager::readInXML(const std::string& XMLMaterialDefinition){
 }
 bool PhysicsManager::addNewDefinitions(const std::string& XMLMaterialDefinition){
 
-	return readInXML(XMLMaterialDefinition);
+	bool result = readInXML(XMLMaterialDefinition);
+	
+	irr::newton::IMaterial* material = this->getMaterial("empty");
+	m_MaterialItr = m_MaterialMap.begin();
+
+	for (; m_MaterialItr != m_MaterialMap.end(); m_MaterialItr++){
+		material->setCollidable(m_MaterialItr->second, false);
+	}
+
+	return result;
+
 
 }
 

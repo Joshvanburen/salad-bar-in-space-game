@@ -8,8 +8,12 @@
 #include "GravshipHelper.h"
 #include "PhysicsManager.h"
 
+#define MAXUINT     ((unsigned int)~((unsigned int)0))
+#define MAXINT      ((int)(MAXUINT >> 1))
+#define MININT      ((int)~MAXINT)
+
 void GravshipHelper::load(){
-	
+	m_EmptyMaterial = PhysicsManager::getSingleton().getMaterial("empty");
 }
 
 void GravshipHelper::update(){
@@ -21,7 +25,12 @@ void GravshipHelper::update(){
 	updateOrbitingEntities();
 	//If gravity field is on, Apply force to any entities in our orbiting range
 	if (this->m_GravityOn){
+		this->m_Physics_Body->setMaterial(m_Material);
+
 		applyGravityToOrbitingEntities();
+	}
+	else{
+		this->m_Physics_Body->setMaterial(m_EmptyMaterial);
 	}
 
 
@@ -31,7 +40,6 @@ void GravshipHelper::applyGravityToOrbitingEntities(){
 	for (m_OrbitingEntitiesItr = m_OrbitingEntities.begin(); m_OrbitingEntitiesItr != m_OrbitingEntities.end(); m_OrbitingEntitiesItr++){
 		WorldEntity* otherEntity = (*m_OrbitingEntitiesItr);
 		irr::core::vector3df  distance =  this->getSceneNode()->getPosition() - otherEntity->getSceneNode()->getPosition();
-
 		//create the relative movement vector
 		//irr::core::vector3df movevec(0, 0, 0);
 
@@ -56,12 +64,14 @@ void GravshipHelper::applyGravityToOrbitingEntities(){
 		//then they won't collide
 		irr::core::vector3df gravityForce(distance);
 		gravityForce.normalize();
-		gravityForce = gravityForce *  this->m_GravitationalPull * (this->getPhysicsBody()->getMass() * (*m_OrbitingEntitiesItr)->getPhysicsBody()->getMass()) / distanceSQ;
+		gravityForce = gravityForce *  (this->m_GravitationalPull  / std::max(distanceSQ, 1.0f)) / (*m_OrbitingEntitiesItr)->getPhysicsBody()->getMass();
+
 		if (this->m_GravitationalPull < 0){
 			//multiplier for reverse gravity
 			gravityForce = gravityForce * 2.5;
 			
 		}
+		
 		otherEntity->getPhysicsBody()->addForce(gravityForce);
 	}
 }

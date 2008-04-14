@@ -20,6 +20,7 @@ GameSystem::GameSystem(){
 	//Set all to null
 	reverseGravity, gravityOn, up_momentum, right_momentum, left_momentum, up_momentum, melee, cycle_melee, shoot, cycle_weapon, cycle_morph, morph, hover, pause = NULL;
 
+	resync = NULL;
 	m_Gravship = NULL;
 
 
@@ -45,7 +46,7 @@ void GameSystem::shutdown(){
 	m_Input_Mgr->deleteAction("right_momentum");
 	m_Input_Mgr->deleteAction("left_momentum");
 	m_Input_Mgr->deleteAction("up_momentum");
-
+	m_Input_Mgr->deleteAction("resync");
 
 
 	m_Input_Mgr->deleteAction("reverse_gravity");
@@ -76,7 +77,7 @@ void GameSystem::init(){
 
 	gravityOn->addCode(Input::Wiimote::WII_B_BUTTON, *m_Wiimote);
 	
-
+	resync = m_Input_Mgr->createAction("resync", *m_Wiimote, Input::Wiimote::WII_2_BUTTON, Input::Action::BEHAVIOR_DETECT_PRESS);
 	up_momentum->addCode(Input::Wiimote::WII_UP_BUTTON, *m_Wiimote);
 	down_momentum->addCode(Input::Wiimote::WII_DOWN_BUTTON, *m_Wiimote);
 	right_momentum->addCode(Input::Wiimote::WII_RIGHT_BUTTON, *m_Wiimote);
@@ -151,19 +152,31 @@ void GameSystem::update() {
 	irr::core::vector3df cursor_position = m_Gravship->getHelper()->getLocation();
 	m_Gravship->getHelper()->setLocation(irr::core::vector3df(cursor_position.X-mouse_change.X, cursor_position.Y + mouse_change.Y, 0.0f));
 	
+	irr::core::vector3df direction(0.0f, 1.0f, 0.0f);
+
+	direction.rotateXYBy(-m_Wiimote->joystickAngle(),irr::core::vector3df(0.0f, 0.0f, 0.0f ));
+	
+	direction = direction * 5 * m_Wiimote->joystickMagnitude();
+
+
+	m_Gravship->getPhysicsBody()->setVelocity(direction);
 	if (up_momentum->isPressed()){
-		m_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(0.0f, 3.0f, 0.0f));
+		m_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(m_Gravship->getPhysicsBody()->getVelocity().X, 3.0f, 0.0f));
 	}
 	if(down_momentum->isPressed()){
-		m_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(0.0f, -3.0f, 0.0f));
+		m_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(m_Gravship->getPhysicsBody()->getVelocity().X, -3.0f, 0.0f));
 	}
 	if(right_momentum->isPressed()){
-		m_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(3.0f, 0.0f, 0.0f));
+		m_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(3.0f, m_Gravship->getPhysicsBody()->getVelocity().Y, 0.0f));
 	}
 	if(left_momentum->isPressed()){
-		m_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(-3.0f, 0.0f, 0.0f));
+		m_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(-3.0f, m_Gravship->getPhysicsBody()->getVelocity().Y, 0.0f));
 	}
 
+	if (resync->isPressed()){
+		m_Wiimote->resync();
+
+	}	
 	if(gravityOn->isPressed()){
 		m_Gravship->enableGravityField(true);
 	}

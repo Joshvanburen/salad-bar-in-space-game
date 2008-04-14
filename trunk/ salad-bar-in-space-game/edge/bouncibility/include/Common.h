@@ -12,6 +12,7 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <math.h>
 #include <set>
 #include <list>
 #include <vector>

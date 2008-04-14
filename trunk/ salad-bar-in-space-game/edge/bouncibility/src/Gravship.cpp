@@ -20,14 +20,7 @@ void Gravship::update(){
 	if (this->m_GravityOn){
 	}
 
-	if (this->m_GravityOn){
-	irr::core::line3d<irr::f32> line(this->m_Physics_Body->getPosition(),m_Helper->getPhysicsBody()->getPosition());
 
-	irr::newton::SIntersectionPoint i_point = this->m_Physics_Body->getWorld()->getCollisionManager()->getCollisionFirstPoint(line);
-	std::cout << "line from " << line.start.X << " to " << i_point.point.X << "\n";
-	LevelManager::getDriver()->draw3DLine(line.start, i_point.point, irr::video::SColor(155, 100, 200,100));
-
-	}
 	m_Helper->update();
 	
 }
@@ -72,7 +65,32 @@ WorldEntity* Gravship::clone(){
 void Gravship::enableGravityField(bool enabled){
 	m_GravityOn = enabled;
 
-	m_Helper->enableGravityField(enabled);
+	if (this->m_GravityOn){
+		irr::core::line3d<irr::f32> line(this->m_Physics_Body->getPosition(),m_Helper->getPhysicsBody()->getPosition());
+
+		irr::core::array<irr::newton::IBody*> orbiting_bodies;
+
+		std::set<WorldEntity*> orbitingEntities = m_Helper->getOrbitingEntities();
+		std::set<WorldEntity*>::iterator orbitingEntitiesItr = orbitingEntities.begin();
+
+		for (; orbitingEntitiesItr != orbitingEntities.end(); orbitingEntitiesItr++){
+			orbiting_bodies.push_back((*orbitingEntitiesItr)->getPhysicsBody());
+		}
+
+		irr::newton::SIntersectionPoint i_point = this->m_Physics_Body->getWorld()->getCollisionManager()->getCollisionFirstPointEx(line, orbiting_bodies);
+		if (i_point.body){
+			if (((WorldEntity*)(i_point.body->getUserData()))->getID() == m_Helper->getID()){
+				m_Helper->enableGravityField(enabled);
+			}
+			else{
+				//do something cool looking
+			}
+		}
+	}
+	else{
+		m_Helper->enableGravityField(false);
+	}
+
 }
 
 void Gravship::changeState(const std::string name){

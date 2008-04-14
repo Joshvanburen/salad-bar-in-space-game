@@ -28,13 +28,12 @@ class WorldEntity;
 class WorldEntityAIManager;
 
 //! namepsace containing methods to help with implementation of WorldEntityAIManager
-namespace WorldEntityAI{
 
-	typedef std::map<std::string, Scripting::WorldEntityAIFunction*> StrAIFunctionMap;
+
+typedef std::map<std::string, Scripting::WorldEntityAIFunction*> StrAIFunctionMap;
 
 
 	
-};
 
 //! WorldEntityAIManager loads in the given XML file for the defines of AIs.  It tells the WorldEntity update() how to move or shoot.
 class WorldEntityAIManager :
@@ -57,9 +56,9 @@ public:
 	//! Initialize the WorldEntityAIManager system. Provide the filename of the XML file that has the definition of the scenario to play.  Returns false if failed.
 	bool init(); 
 
-	WorldEntityAI::StrAIFunctionMap m_AIFunctionMap; //!< The map of AI types to AI script functions.
+	StrAIFunctionMap m_AIFunctionMap; //!< The map of AI types to AI script functions.
 
-	WorldEntityAI::StrAIFunctionMap::iterator m_AIFunctionItr; //!< An iterator for the AI type to script map.
+	StrAIFunctionMap::iterator m_AIFunctionItr; //!< An iterator for the AI type to script map.
 
 	Scripting::ScriptFunction* getAI(const std::string type);
 
