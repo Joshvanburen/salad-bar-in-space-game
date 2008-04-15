@@ -252,6 +252,8 @@ bool ScriptManager::init(){
 
 	registerObjectMethod("WorldEntity", "void move()", ::asMETHOD(WorldEntity, move));
 	registerReferenceObject("Enemy");
+	registerObjectMethod("Enemy", "void moveToPlayer()", ::asMETHOD(Enemy, moveToPlayer));
+
 	this->registerAsGlobal("Enemy& EntityToEnemy(WorldEntity&)", ::asFUNCTION(Enemy::EntityToEnemy));
 
 
