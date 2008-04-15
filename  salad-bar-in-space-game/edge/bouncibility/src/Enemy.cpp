@@ -18,9 +18,10 @@ void Enemy::update(){
 	//this->m_Physics_Body->setVelocity(this->velocity);
 
 		
-	irr::core::vector3df vel = this->m_Physics_Body->getVelocity();
-	float spd = vel.getLengthSQ;
-	if (spd == 1.0 || spd == 0 || timer > 1000) {
+	//irr::core::vector3df vel = this->m_Physics_Body->getVelocity();
+	//float spd = vel.getLengthSQ;
+	//if (spd == 1.0 || spd == 0 || timer > 1000) {
+	if (timer > 1000) {
 		ai_script->callFunction(this);
 
 		if (timer > 1000)
