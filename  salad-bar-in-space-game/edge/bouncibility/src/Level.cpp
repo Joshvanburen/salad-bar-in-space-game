@@ -28,6 +28,8 @@ Level::Level() : m_SceneNode(NULL), m_Mesh(NULL), m_Physics_Body(NULL){
 	m_Time = 0;
 	m_StartingX = 0;
 	m_StartingY = 0;
+	m_LevelDimensions.Height = 0;
+	m_LevelDimensions.Width = 0;
 }
 
 Level::~Level(){
@@ -71,6 +73,7 @@ bool Level::load(const std::string& LevelDefinition)
 	std::string entityStartState;
 	std::string handle = "";
 
+
 	m_XmlFile = LevelDefinition;
 
 	while(xml && xml->read())
@@ -91,6 +94,8 @@ bool Level::load(const std::string& LevelDefinition)
 				m_StartingX = xml->getAttributeValueAsInt("startingx");
 				m_StartingY = xml->getAttributeValueAsInt("startingy");
 				m_LevelFile = xml->getAttributeValue("map");
+				m_LevelDimensions.Height = xml->getAttributeValueAsInt("height");
+				m_LevelDimensions.Width = xml->getAttributeValueAsInt("width");
 				PhysicsManager::getSingleton().setGravity(xml->getAttributeValueAsFloat("gravity"));
 
 			}

@@ -3,6 +3,8 @@
 #include "LevelManager.h"
 #include "Enemy.h"
 #include "PhysicsManager.h"
+#include "GameSystem.h"
+#include "Gravship.h"
 #include "WorldEntityAIManager.h"
 
 void Enemy::load(){
@@ -120,18 +122,17 @@ void Enemy::setAi(Scripting::WorldEntityAIFunction* newAIScript){
 
 void Enemy::moveToPlayer(){
 
-	const irr::core::vector3df playerLoc = GameSystem::getSingleton().getGravship()->getSceneNode()->getPosition;
+	const irr::core::vector3df playerLoc = GameSystem::getSingleton().getGravship()->getSceneNode()->getPosition();
 	const irr::core::vector3df myLoc = this->getSceneNode()->getPosition();
 
-	irr::core::vector3df conn = playLoc - myLoc;
+	irr::core::vector3df conn = playerLoc - myLoc;
 	conn = conn.normalize();
 
-	irr::core::vector3df vel = this->m_Physics_Body->getVelocity();
-	float spd = vel.getLengthSQ();
-
+	//irr::core::vector3df vel = this->m_Physics_Body->getVelocity();
+	float spd = 1;
 	conn = conn * spd;
 
-	this->m_Physical_Body->setVelocity(conn);
+	this->m_Physics_Body->setVelocity(conn);
 
 }
 

@@ -137,7 +137,7 @@ WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename)
 	std::string materialName;
 	std::string helper;
 	irr::newton::IMaterial* material;
-
+	float scale = 1;
 	float radius = 1;
 	int mass = 1;
 	WorldEntity* entity = NULL;
@@ -159,12 +159,15 @@ WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename)
 				radius = xml->getAttributeValueAsFloat("radius");
 				mass = xml->getAttributeValueAsInt("mass");
 				helper = xml->getAttributeValue("helper");
-				irr::scene::ISceneNode* node = LevelManager::getSceneManager()->addSphereSceneNode(irr::f32(radius));
-		
+				scale = xml->getAttributeValueAsFloat("scale");
+				irr::scene::IAnimatedMesh* mesh = LevelManager::getSceneManager()->getMesh(meshFile.c_str());
+				irr::scene::IAnimatedMeshSceneNode* node = LevelManager::getSceneManager()->addAnimatedMeshSceneNode(mesh);
+
 				
+				mesh
 
 				if (node){
-					node->setScale(irr::core::vector3df(1.0f, 1.0f, 1.0f));
+					node->setScale(irr::core::vector3df(scale, scale, scale));
 					node->setMaterialFlag(irr::video::EMF_LIGHTING, true);
 					
 				}
@@ -172,11 +175,11 @@ WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename)
 			
 				entity = new Gravship();
 				
-				entity->setMesh(NULL);
+				entity->setMesh(node->getMesh());
 				
 				
 				entity->setSceneNode(node);
-				node->setMaterialTexture(0,LevelManager::getSingleton().getDriver()->getTexture(textureFile.c_str()));
+				//node->setMaterialTexture(0,LevelManager::getSingleton().getDriver()->getTexture(textureFile.c_str()));
 
 				materialName = xml->getAttributeValue("material");
 
