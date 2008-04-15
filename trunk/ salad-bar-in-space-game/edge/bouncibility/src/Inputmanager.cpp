@@ -101,6 +101,10 @@ bool Input::Wiimote::init(Input::InputDeviceInit &deviceInit){
 	
 	wiimotes =  wiiuse_init(1);
 
+	wiiuse_set_timeout(wiimotes, 1, 10, 20);
+	wiiuse_set_nunchuk_accel_threshold(wiimotes[0], 5);
+	wiiuse_set_nunchuk_orient_threshold(wiimotes[0], 10);
+
 	found = wiiuse_find(wiimotes, 1, 5);
 	if (!found)
 		return false;
@@ -118,7 +122,12 @@ bool Input::Wiimote::init(Input::InputDeviceInit &deviceInit){
 	Sleep(200);
 
 	wiiuse_rumble(wiimotes[0], 0);
-	wiiuse_motion_sensing(wiimotes[0], 1);
+	wiiuse_motion_sensing(wiimotes[0], 0);
+	wiiuse_set_ir(wiimotes[0], 1);
+	wiiuse_set_ir_vres(wiimotes[0], 1000, 1000);
+	wiiuse_set_ir_position(wiimotes[0], WIIUSE_IR_BELOW);
+
+
 
 	return true;
 }
@@ -280,6 +289,33 @@ void Input::Wiimote::handle_event(struct wiimote_t* wm){
 		magnitude = nc->js.mag;
 		angle = nc->js.ang;
 	}
+
+	/*
+	 *	If IR tracking is enabled then print the coordinates
+	 *	on the virtual screen that the wiimote is pointing to.
+	 *
+	 *	Also make sure that we see at least 1 dot.
+	 */
+	if (WIIUSE_USING_IR(wm)) {
+		int i = 0;
+
+		/* go through each of the 4 possible IR sources */
+		for (; i < 4; ++i) {
+			/* check if the source is visible */
+			if (wm->ir.dot[i].visible)
+				printf("IR source %i: (%u, %u)\n", i, wm->ir.dot[i].x, wm->ir.dot[i].y);
+		}
+
+		printf("IR cursor: (%u, %u)\n", wm->ir.x, wm->ir.y);
+		printf("IR z distance: %f\n", wm->ir.z);
+
+		if (wm->ir.x != 0 && wm->ir.y != 0){
+			this->ir_dx += wm->ir.x - ir_x; 
+			this->ir_dy += wm->ir.y - ir_y;
+			this->ir_x = wm->ir.x;
+			this->ir_y = wm->ir.y;
+		}
+	}
 }
 
 
@@ -316,6 +352,10 @@ Input::Wiimote::Wiimote() : InputDevice(), battery_level(0), attachment(0), mote
 
 	magnitude = 0;
 	angle = 0;
+	ir_x = 0;
+	ir_y = 0;
+	ir_dx = 0;
+	ir_dy = 0;
 
 }
 Input::Wiimote::~Wiimote(){

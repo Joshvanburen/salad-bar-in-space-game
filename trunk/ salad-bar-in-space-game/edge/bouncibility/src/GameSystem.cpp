@@ -10,6 +10,7 @@
 #include "LevelManager.h"
 #include "irrnewt.hpp"
 #include "Gravship.h"
+#include "Level.h"
 #include "GravshipHelper.h"
 #include "GameSystem.h"
 
@@ -22,7 +23,7 @@ GameSystem::GameSystem(){
 
 	resync = NULL;
 	m_Gravship = NULL;
-
+	m_Camera = NULL;
 
 	m_Input_Mgr = InputManager::getSingletonPtr();
 	m_Keyboard = &(m_Input_Mgr->getKeyboard());
@@ -33,6 +34,11 @@ GameSystem::GameSystem(){
 
 	m_CursorX = 0;
 	m_CursorY = 0;
+
+	m_MaxX = 0;
+	m_MaxY = 0;
+	m_MinX = 0;
+	m_MinY = 0;
 }
 
 
@@ -132,6 +138,16 @@ void GameSystem::startGame(){
 		//node->setPosition(irr::core::vector3df(0.0f, 0.0f, -15.0f));
 
 	}
+
+	irr::core::dimension2di dimensions= LevelManager::getSingleton().getCurrentLevel().getDimensions();
+	m_MinY = -dimensions.Height/2;
+	m_MaxY = dimensions.Height/2;
+	m_MinX = -dimensions.Width/2;
+	m_MaxX = dimensions.Width/2;
+	m_Camera = LevelManager::getSceneManager()->addCameraSceneNode(0, irr::core::vector3df(0,0,-300), irr::core::vector3df(0,0,0));
+
+	positionCamera();
+
 }
 
 void GameSystem::recoverAfterLevelChange(){
@@ -147,11 +163,57 @@ void GameSystem::recoverAfterLevelChange(){
 		this->m_Gravship = dynamic_cast<Gravship*>(&(EntityManager::getSingleton().getEntity(entity_ID)));
 	}
 }
+
+void GameSystem::positionCamera(){
+	irr::core::vector3df camera_location(m_Camera->getPosition());
+	irr::core::vector3df camera_look(m_Camera->getTarget());
+	camera_location.rotateYZBy(-20, camera_look);
+	
+	m_Camera->setPosition(camera_location);
+	//std::cout << "Level Dimensions are: " << LevelManager::getSingleton().getCurrentLevel().getDimensions().Width << " x " << LevelManager::getSingleton().getCurrentLevel().getDimensions().Height << "\n";
+	
+
+	//const irr::scene::SViewFrustum* frustum = m_Camera->getViewFrustum();
+
+	//std::cout << frustum->planes[irr::scene::SViewFrustum::VF_LEFT_PLANE].classifyPointRelation(irr::core::vector3df(1.0f, 0.0f, 0.0f));
+
+	//while(frustum->planes[irr::scene::SViewFrustum::VF_RIGHT_PLANE].classifyPointRelation(irr::core::vector3df(LevelManager::getSingleton().getCurrentLevel().getDimensions().Width, 0.0f, 0.0f)) == irr::core::ISREL3D_FRONT){
+	//	camera_location.Z -= 1;
+	//	m_Camera->setPosition(camera_location);
+	//	frustum = m_Camera->getViewFrustum();
+
+		//std::cout << "moving z, new location is " << camera_location.Z << "\n";
+	//}
+	/*while(frustum->planes[irr::scene::SViewFrustum::VF_BOTTOM_PLANE].classifyPointRelation(irr::core::vector3df(0.0f, LevelManager::getSingleton().getCurrentLevel().getDimensions().Height, 0.0f)) == irr::core::ISREL3D_BACK){
+		camera_location.Y += 1;
+		m_Camera->setPosition(camera_location);
+		//std::cout << "momving y, new location is " << camera_location.Y << "\n";
+	}*/
+
+}
 void GameSystem::update() {
 	irr::core::position2di mouse_change = InputManager::getSingleton().getMouse().getRelativePosition();
+
+	irr::core::position2di wiimote_change = m_Wiimote->getRelativePosition();
+
 	irr::core::vector3df cursor_position = m_Gravship->getHelper()->getLocation();
-	m_Gravship->getHelper()->setLocation(irr::core::vector3df(cursor_position.X-mouse_change.X, cursor_position.Y + mouse_change.Y, 0.0f));
-	
+	float newX = cursor_position.X+wiimote_change.X;
+	float newY = cursor_position.Y-wiimote_change.Y;
+	std::cout << "wiimotechangeX = " << wiimote_change.X << " and wiimotechangeY = " << wiimote_change.Y << "\n";
+	if (newX > m_MaxX){
+		newX = m_MaxX;
+	}
+	else if (newY > m_MaxY){
+		newY = m_MaxY;
+	}
+	else if (newX < m_MinX){
+		newX = m_MinX;
+	}
+	else if (newY < m_MinY){
+		newY = m_MinY;
+	}
+	m_Gravship->getHelper()->setLocation(irr::core::vector3df(newX, newY, 0.0f));
+	//m_Gravship->getHelper()->setLocation(irr::core::vector3df(cursor_position.X-wiimote_change.X, cursor_position.Y + wiimote_change.Y, 0.0f));
 	irr::core::vector3df direction(0.0f, 1.0f, 0.0f);
 
 	direction.rotateXYBy(-m_Wiimote->joystickAngle(),irr::core::vector3df(0.0f, 0.0f, 0.0f ));
@@ -190,6 +252,7 @@ void GameSystem::update() {
 	else{
 		m_Gravship->getHelper()->reverseGravityField(false);
 	}
+
 }
 
 // Draws the User Interface
