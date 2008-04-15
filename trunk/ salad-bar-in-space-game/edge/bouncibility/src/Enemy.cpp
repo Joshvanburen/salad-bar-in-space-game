@@ -17,7 +17,18 @@ void Enemy::update(){
 	this->m_Physics_Body->setPosition(irr::core::vector3df(position.X,position.Y, 0));
 	//this->m_Physics_Body->setVelocity(this->velocity);
 
-	ai_script->callFunction(this);
+		
+	irr::core::vector3df vel = this->m_Physics_Body->getVelocity();
+	float spd = vel.getLengthSQ;
+	if (spd == 1.0 || spd == 0 || timer > 1000) {
+		ai_script->callFunction(this);
+
+		if (timer > 1000)
+			timer = 0;
+	}
+	else {
+		timer++;
+	}
 }
 
 WorldEntity* Enemy::clone(){
@@ -144,6 +155,7 @@ void Enemy::moveToPlayer(){
 //
 Enemy::Enemy() {
 	color = '0';
+	timer = 0;
 }
 
 Enemy::~Enemy(){
