@@ -101,13 +101,17 @@ bool Input::Wiimote::init(Input::InputDeviceInit &deviceInit){
 	
 	wiimotes =  wiiuse_init(1);
 
+	std::cout << "wiimotes = " << wiimotes[0] << std::endl;
+	found = wiiuse_find(wiimotes, 1, 5);
+std::cout << "wiimotes = " << wiimotes[0] << std::endl;
+	if (!found)
+		return false;
+
+	
 	wiiuse_set_timeout(wiimotes, 1, 10, 20);
 	wiiuse_set_nunchuk_accel_threshold(wiimotes[0], 5);
 	wiiuse_set_nunchuk_orient_threshold(wiimotes[0], 10);
 
-	found = wiiuse_find(wiimotes, 1, 5);
-	if (!found)
-		return false;
 	connected = wiiuse_connect(wiimotes, 1);
 	if (connected)
 		printf("Connected to %i wiimotes (of %i found).\n", connected, found);
@@ -336,7 +340,9 @@ int* Input::Wiimote::whichLEDs(){
 }
 
 void Input::Wiimote::resync(){
-
+	if (!found){
+		return;
+	}
 	wiiuse_resync(wiimotes[0]);
 
 }
@@ -794,11 +800,11 @@ bool InputManager::init(){
 
 
 	if (!m_Wiimote.init(m_WiimoteInit))
-		throw Input::InputManagerInitException();
+		;//throw Input::InputManagerInitException();
 	if (!m_Keyboard.init(m_KeyboardInit))
-		throw Input::InputManagerInitException();
+		;//throw Input::InputManagerInitException();
 	if (!m_Mouse.init(m_MouseInit))
-		throw Input::InputManagerInitException();
+		;//throw Input::InputManagerInitException();
 	Input::InputDevice* pMouse = &m_Mouse;
 	Input::InputDevice* pKeyboard = &m_Keyboard;
 	Input::InputDevice* pWiimote = &m_Wiimote;

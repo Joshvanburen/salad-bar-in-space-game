@@ -1,6 +1,8 @@
 #include "WorldEntity.h"
 #include "irrnewt.hpp"
 #include "EntityManager.h"
+#include "LevelManager.h"
+#include "Level.h"
 #include "irrlicht.h"
 // default constructor
 WorldEntity::WorldEntity() : m_SceneNode(NULL), m_Mesh(NULL), m_Physics_Body(NULL){
@@ -8,6 +10,10 @@ WorldEntity::WorldEntity() : m_SceneNode(NULL), m_Mesh(NULL), m_Physics_Body(NUL
 	location.Y = 0;
 	location.Z = 0;
 	m_Radius = 0.0f;
+	m_EnableRotation = false;
+	m_EnableMovement = true;
+	m_MaxSpeed = 5;
+	m_MaxSpeedSQ = 25;
 }
 
 // lets user set the id
@@ -20,6 +26,29 @@ WorldEntity::WorldEntity(int iID): m_SceneNode(NULL), m_Mesh(NULL), m_Physics_Bo
 	m_Mass = 1;
 }
 
+void WorldEntity::update(){
+	if (!m_EnableRotation){
+		this->m_Physics_Body->setRotation(m_Rotation);
+	}
+	irr::core::vector3df position  = this->m_Physics_Body->getPosition();
+
+
+
+	if (position.X > LevelManager::getSingleton().getCurrentLevel().getMaxX()){
+		position.X =  LevelManager::getSingleton().getCurrentLevel().getMaxX();
+	}
+	else if (position.Y > LevelManager::getSingleton().getCurrentLevel().getMaxY()){
+		position.Y = LevelManager::getSingleton().getCurrentLevel().getMaxY();
+	}
+	else if (position.X < LevelManager::getSingleton().getCurrentLevel().getMinX()){
+		position.X = LevelManager::getSingleton().getCurrentLevel().getMinX();
+	}
+	else if (position.Y < LevelManager::getSingleton().getCurrentLevel().getMinY()){
+		position.Y = LevelManager::getSingleton().getCurrentLevel().getMinY();
+	}
+
+	this->m_Physics_Body->setPosition(irr::core::vector3df(position.X,position.Y, -15.0f));
+}
 WorldEntity::~WorldEntity(){
 	if (m_SceneNode){
 		this->m_SceneNode->drop();
@@ -62,6 +91,7 @@ void WorldEntity::calculateBoundingSphere(){
     const irr::core::aabbox3df& bb = m_SceneNode->getTransformedBoundingBox();
     m_Radius = 0.5f*(bb.getExtent().X - bb.getCenter().X);
     m_Radius = irr::core::max_(m_Radius, 0.5f*(bb.getExtent().Y - bb.getCenter().Y) );
+	m_Radius /=4;
     //No need to check Z-extents of bounding box
 }
 void WorldEntity::move(){

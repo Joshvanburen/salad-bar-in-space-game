@@ -80,8 +80,10 @@ void GameSystem::init(){
 	gravityOn = m_Input_Mgr->createAction("gravity_on", *m_Keyboard, Input::Keyboard::KEY_SPACE, Input::Action::BEHAVIOR_DETECT_PRESS);
 
 	reverseGravity = m_Input_Mgr->createAction("reverse_gravity", *m_Keyboard, Input::Keyboard::KEY_R, Input::Action::BEHAVIOR_DETECT_PRESS);
+	
+	reverseGravity->addCode(Input::Wiimote::WII_B_BUTTON, *m_Wiimote);
 
-	gravityOn->addCode(Input::Wiimote::WII_B_BUTTON, *m_Wiimote);
+	gravityOn->addCode(Input::Wiimote::WII_A_BUTTON, *m_Wiimote);
 	
 	resync = m_Input_Mgr->createAction("resync", *m_Wiimote, Input::Wiimote::WII_2_BUTTON, Input::Action::BEHAVIOR_DETECT_PRESS);
 	up_momentum->addCode(Input::Wiimote::WII_UP_BUTTON, *m_Wiimote);
@@ -136,7 +138,6 @@ void GameSystem::startGame(){
 		//irr::scene::ISceneNode* node = LevelManager::getSingleton().getSceneManager()->addCubeSceneNode(5.0, m_Gravship->getSceneNode());
 		//node->setMaterialTexture(0, LevelManager::getSingleton().getDriver()->getTexture("./res/textures/neon_green.png"));
 		//node->setPosition(irr::core::vector3df(0.0f, 0.0f, -15.0f));
-
 	}
 
 	irr::core::dimension2di dimensions= LevelManager::getSingleton().getCurrentLevel().getDimensions();
@@ -144,7 +145,7 @@ void GameSystem::startGame(){
 	m_MaxY = dimensions.Height/2;
 	m_MinX = -dimensions.Width/2;
 	m_MaxX = dimensions.Width/2;
-	m_Camera = LevelManager::getSceneManager()->addCameraSceneNode(0, irr::core::vector3df(0,0,-300), irr::core::vector3df(0,0,0));
+	m_Camera = LevelManager::getSceneManager()->addCameraSceneNode(0, irr::core::vector3df(0,-300,-450), irr::core::vector3df(0,0,0));
 
 	positionCamera();
 
@@ -197,9 +198,9 @@ void GameSystem::update() {
 	irr::core::position2di wiimote_change = m_Wiimote->getRelativePosition();
 
 	irr::core::vector3df cursor_position = m_Gravship->getHelper()->getLocation();
-	float newX = cursor_position.X+wiimote_change.X;
-	float newY = cursor_position.Y-wiimote_change.Y;
-	std::cout << "wiimotechangeX = " << wiimote_change.X << " and wiimotechangeY = " << wiimote_change.Y << "\n";
+	float newX = cursor_position.X+wiimote_change.X-mouse_change.X;
+	float newY = cursor_position.Y-wiimote_change.Y+mouse_change.Y;;
+
 	if (newX > m_MaxX){
 		newX = m_MaxX;
 	}
@@ -212,14 +213,16 @@ void GameSystem::update() {
 	else if (newY < m_MinY){
 		newY = m_MinY;
 	}
-	m_Gravship->getHelper()->setLocation(irr::core::vector3df(newX, newY, 0.0f));
+	m_Gravship->getHelper()->setLocation(irr::core::vector3df(newX, newY, -15.0f));
 	//m_Gravship->getHelper()->setLocation(irr::core::vector3df(cursor_position.X-wiimote_change.X, cursor_position.Y + wiimote_change.Y, 0.0f));
 	irr::core::vector3df direction(0.0f, 1.0f, 0.0f);
 
-	direction.rotateXYBy(-m_Wiimote->joystickAngle(),irr::core::vector3df(0.0f, 0.0f, 0.0f ));
 	
+	direction.rotateXYBy(-m_Wiimote->joystickAngle(),irr::core::vector3df(0.0f, 0.0f, 0.0f ));
 	direction = direction * 5 * m_Wiimote->joystickMagnitude();
-
+	irr::core::vector3df rotation(direction.getHorizontalAngle());
+	m_Gravship->setRotation(irr::core::vector3df(m_Gravship->getSceneNode()->getRotation().X, m_Gravship->getSceneNode()->getRotation().Y, rotation.Y - rotation.X));
+	std::cout << "xrotation = " << rotation.X << ", yrotation = " << rotation.Y << "\n";
 
 	m_Gravship->getPhysicsBody()->setVelocity(direction);
 	if (up_momentum->isPressed()){

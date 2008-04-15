@@ -36,6 +36,11 @@ WorldEntity& Entity::GravshipHelperFactory::loadEntity(const std::string& XMLFil
 	float fieldRadius = 1;
 	float gravityPull = 1;
 	int mass = 1;
+	float rotX = 0;
+	float rotY = 0;
+	float rotZ = 0;
+	float maxOrbitSpeed = 1;
+	float maxForce = 1;
 	WorldEntity* entity = NULL;
 
 	while(xml && xml->read())
@@ -57,6 +62,11 @@ WorldEntity& Entity::GravshipHelperFactory::loadEntity(const std::string& XMLFil
 				orbitRadius = xml->getAttributeValueAsFloat("orbit_radius");
 				gravityPull = xml->getAttributeValueAsFloat("gravity_pull");
 				mass = xml->getAttributeValueAsInt("mass");
+				rotX = xml->getAttributeValueAsFloat("rotX");
+				rotY = xml->getAttributeValueAsFloat("rotY");
+				rotZ = xml->getAttributeValueAsFloat("rotZ");
+				maxOrbitSpeed = xml->getAttributeValueAsFloat("max_orbit_speed");
+				maxForce = xml->getAttributeValueAsFloat("max_gravity_force");
 				irr::scene::ISceneNode* node = LevelManager::getSceneManager()->addSphereSceneNode(irr::f32(radius));
 		
 				
@@ -66,17 +76,19 @@ WorldEntity& Entity::GravshipHelperFactory::loadEntity(const std::string& XMLFil
 					node->setMaterialFlag(irr::video::EMF_LIGHTING, true);
 					
 				}
-
+				
+				
 			
 				entity = new GravshipHelper();
 				
 				entity->setMesh(NULL);
-				
+				entity->setRotation(irr::core::vector3df(rotX, rotY, rotZ));
 				
 				((GravshipHelper*)entity)->m_GravityFieldRadius = fieldRadius;
 				((GravshipHelper*)entity)->m_OrbitRingRadius = orbitRadius;
 				((GravshipHelper*)entity)->m_GravitationalPull = gravityPull;
-
+				((GravshipHelper*)entity)->setMaxOrbitSpeed(maxOrbitSpeed);
+				((GravshipHelper*)entity)->setMaxForce(maxForce);
 				entity->setSceneNode(node);
 				node->setMaterialTexture(0,LevelManager::getSingleton().getDriver()->getTexture(textureFile.c_str()));
 
@@ -140,6 +152,10 @@ WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename)
 	float scale = 1;
 	float radius = 1;
 	int mass = 1;
+	float rotX = 0;
+	float rotY = 0;
+	float rotZ = 0;
+
 	WorldEntity* entity = NULL;
 
 	while(xml && xml->read())
@@ -160,24 +176,30 @@ WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename)
 				mass = xml->getAttributeValueAsInt("mass");
 				helper = xml->getAttributeValue("helper");
 				scale = xml->getAttributeValueAsFloat("scale");
+								rotX = xml->getAttributeValueAsFloat("rotX");
+				rotY = xml->getAttributeValueAsFloat("rotY");
+				rotZ = xml->getAttributeValueAsFloat("rotZ");
+
 				irr::scene::IAnimatedMesh* mesh = LevelManager::getSceneManager()->getMesh(meshFile.c_str());
 				irr::scene::IAnimatedMeshSceneNode* node = LevelManager::getSceneManager()->addAnimatedMeshSceneNode(mesh);
 
-				
-				mesh
+			
 
 				if (node){
 					node->setScale(irr::core::vector3df(scale, scale, scale));
 					node->setMaterialFlag(irr::video::EMF_LIGHTING, true);
 					
 				}
+				
+				node->setAnimationSpeed(5);
 
+				node->setFrameLoop(2, 21);
 			
 				entity = new Gravship();
 				
 				entity->setMesh(node->getMesh());
 				
-				
+				entity->setRotation(irr::core::vector3df(rotX, rotY, rotZ));
 				entity->setSceneNode(node);
 				//node->setMaterialTexture(0,LevelManager::getSingleton().getDriver()->getTexture(textureFile.c_str()));
 
@@ -186,11 +208,13 @@ WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename)
 				material = PhysicsManager::getSingleton().getMaterial(materialName);
 
 				((Gravship*)entity)->m_Helper = (GravshipHelper*)&(EntityManager::getSingleton().createEntity(helper));
+				((Gravship*)entity)->m_Helper->setLocation(entity->getLocation());
+				
 
 				irr::newton::SBodyFromNode physics_node;
-
+				physics_node.Mesh = mesh->getMesh(2);
 				physics_node.Node = node;
-				physics_node.Type = irr::newton::EBT_PRIMITIVE_ELLIPSOID;
+				physics_node.Type = irr::newton::EBT_PRIMITIVE_BOX;
 
 				irr::newton::IBody* body = PhysicsManager::getSingleton().getPhysicsWorld()->createBody(physics_node);
 				
@@ -239,6 +263,11 @@ WorldEntity& Entity::EnemyFactory::loadEntity(const std::string& XMLFilename){
 	irr::newton::IMaterial* material;
 	float radius = 1;
 	float mass = 1;
+	float scale = 1;
+	float maxSpeed = 1;
+		float rotX = 0;
+	float rotY = 0;
+	float rotZ = 0;
 	Enemy* entity = NULL;
 
 	while(xml && xml->read())
@@ -260,23 +289,29 @@ WorldEntity& Entity::EnemyFactory::loadEntity(const std::string& XMLFilename){
 				color = xml->getAttributeValue("color");
 				ai_type = xml->getAttributeValue("ai");
 				mass = xml->getAttributeValueAsFloat("mass");
-				irr::scene::ISceneNode* node = LevelManager::getSceneManager()->addSphereSceneNode(irr::f32(radius));
+				scale = xml->getAttributeValueAsFloat("scale");
+				rotX = xml->getAttributeValueAsFloat("rotX");
+				rotY = xml->getAttributeValueAsFloat("rotY");
+				rotZ = xml->getAttributeValueAsFloat("rotZ");
+				maxSpeed = xml->getAttributeValueAsFloat("max_speed");
+				irr::scene::IAnimatedMesh* mesh = LevelManager::getSceneManager()->getMesh(meshFile.c_str());
+				irr::scene::IAnimatedMeshSceneNode* node = LevelManager::getSceneManager()->addAnimatedMeshSceneNode(mesh);
 
 				if (node){
-					node->setScale(irr::core::vector3df(1.0f, 1.0f, 1.0f));
+					node->setScale(irr::core::vector3df(scale, scale, scale));
 					node->setMaterialFlag(irr::video::EMF_LIGHTING, true);
 					
 				}
-
-			
+				
 				entity = new Enemy();
 				
-				entity->setMesh(NULL);
+				entity->setRotation(irr::core::vector3df(rotX, rotY, rotZ));
+				entity->setMesh(node->getMesh());
 				
 				((Enemy*)entity)->setColor(color);
 				((Enemy*)entity)->setRadius(radius);
 				entity->setSceneNode(node);
-				node->setMaterialTexture(0,LevelManager::getSingleton().getDriver()->getTexture(textureFile.c_str()));
+				//node->setMaterialTexture(0,LevelManager::getSingleton().getDriver()->getTexture(textureFile.c_str()));
 				if (physics_enabled){
 					gravity_enabled = xml->getAttributeValueAsInt("enable_gravity");
 					materialName = xml->getAttributeValue("material");
@@ -286,8 +321,9 @@ WorldEntity& Entity::EnemyFactory::loadEntity(const std::string& XMLFilename){
 
 
 					irr::newton::SBodyFromNode physics_node;
+					physics_node.Mesh = mesh->getMesh(2);
 					physics_node.Node = node;
-					physics_node.Type = irr::newton::EBT_PRIMITIVE_ELLIPSOID;
+					physics_node.Type = irr::newton::EBT_PRIMITIVE_BOX;
 
 					irr::newton::ICharacterController* body = PhysicsManager::getSingleton().getPhysicsWorld()->createCharacterController(PhysicsManager::getSingleton().getPhysicsWorld()->createBody(physics_node));
 					body->setRotationUpdate(false);

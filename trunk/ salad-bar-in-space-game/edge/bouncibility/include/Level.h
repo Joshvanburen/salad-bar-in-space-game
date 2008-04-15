@@ -1,13 +1,8 @@
 #pragma once
 
 #include "Common.h"
-
+#include "irrlicht.h"
 namespace irr{
-	namespace scene{
-		class ISceneNode;
-		class ISceneManager;
-		class IMesh;
-	}
 	namespace newton{
 		class IMaterial;
 		class IBody;
@@ -41,6 +36,10 @@ class Level
 			int m_Time;
 			//!Current status of level
 			int m_Status;
+
+			irr::core::dimension2di m_LevelDimensions;
+
+			int m_MinX, m_MinY, m_MaxX, m_MaxY;
 
 			int m_StartingX;
 
@@ -90,4 +89,21 @@ class Level
 			int status();
 			//!Allows someone else to set the status of this level to FINISHED, WAITING_REPEAT, or any other possible statuses.  This would be accessed by the UserInterface or possibly a finished marker worldentity.
 			void setStatus(int newStatus);
+			//!Returns the dimensions specified in the XML as the bounds of the level.  Might be used by camera and input system.
+			irr::core::dimension2di getDimensions(){
+				return m_LevelDimensions;
+			}
+
+			float getMinX(){
+				return m_MinX;
+			}
+			float getMinY(){
+				return m_MinY;
+			}
+			float getMaxX(){
+				return m_MaxX;
+			}
+			float getMaxY(){
+				return m_MaxY;
+			}
 };
