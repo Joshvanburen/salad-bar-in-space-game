@@ -97,6 +97,8 @@ private:
 	// point to the ai scripting function
 	Scripting::WorldEntityAIFunction* ai_script;
 
+	int timer;
+
 };
 
 
