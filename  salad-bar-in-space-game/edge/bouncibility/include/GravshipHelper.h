@@ -53,6 +53,16 @@ public:
 
 	void setGravityFieldRadius(float newRadius);
 
+	void setMaxOrbitSpeed(float newSpeed){
+		m_MaxOrbiterSpeed = newSpeed;
+		m_MaxOrbiterSpeedSQ = newSpeed*newSpeed;
+	}
+
+	void setMaxForce(float newForce){
+		m_MaxForce = newForce;
+		m_MaxForceSQ = newForce * newForce;
+	}
+
 	std::set<WorldEntity*> getOrbitingEntities(){
 		return m_OrbitingEntities;
 	}
@@ -103,5 +113,11 @@ private:
 	float m_GravitationCentripetalForce;
 
 	float m_OrbitRingRadius;
+
+	float m_MaxOrbiterSpeed;
+	float m_MaxOrbiterSpeedSQ;
+	float m_MaxForce;
+	float m_MaxForceSQ;
+
 
 };

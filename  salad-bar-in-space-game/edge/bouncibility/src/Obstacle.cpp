@@ -7,7 +7,7 @@
 #include "PhysicsManager.h"
 
 //Constructor
-Obstacle::Obstacle() 
+Obstacle::Obstacle() : WorldEntity()
 {
 	//By default obstacles are not destructable
 	destructable = false;
@@ -26,6 +26,7 @@ void Obstacle::load()
 //Update method to be used if the obstacle should be moved or something for some odd reason
 void Obstacle::update()
 {
+	WorldEntity::update();
 	//Gets the current physics position of the object as a 3d float vector
 	const irr::core::vector3df position  = this->m_Physics_Body->getPosition();
 	

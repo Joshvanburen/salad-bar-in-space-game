@@ -178,6 +178,10 @@ namespace Input{
 		bool right_hand_left;
 		float magnitude;
 		float angle;
+		float ir_x;
+		float ir_y;
+		float ir_dx;
+		float ir_dy;
 
 
 		void handle_event(struct wiimote_t* wm);
@@ -202,6 +206,21 @@ namespace Input{
 		void resync();
 
 		void toggleRumble();
+
+		int getX(){
+			return ir_x;
+		}
+
+		int getY(){
+			return ir_y;
+		}
+
+		irr::core::position2di getRelativePosition(){
+			irr::core::position2di temp(ir_dx, ir_dy);
+			ir_dx = 0;
+			ir_dy = 0;
+			return temp;
+		}
 
 		float getBatteryLevel();
 

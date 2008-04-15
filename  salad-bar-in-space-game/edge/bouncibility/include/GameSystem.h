@@ -58,6 +58,9 @@ class GameSystem : public CSingleton<GameSystem>
 		~GameSystem();
 		GameSystem& operator=(const GameSystem& rhs);
 
+		//!Find the position the camera should be to enclose the set width and height of the current level.
+		void positionCamera();
+
 		InputManager* m_Input_Mgr;
 		// Score variable
 		int m_Score;
@@ -94,6 +97,13 @@ class GameSystem : public CSingleton<GameSystem>
 
 		int m_CursorX;
 		int m_CursorY;
+
+		int m_MinX;
+		int m_MinY;
+		int m_MaxX;
+		int m_MaxY;
+
+		irr::scene::ICameraSceneNode* m_Camera; 
 			
 	// Public methods and variables
 	public:

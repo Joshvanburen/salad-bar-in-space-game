@@ -60,6 +60,13 @@ public:
 		return m_SceneNode;
 	}
 
+	void setMaxSpeed(float newSpeed){
+		m_MaxSpeed = newSpeed;
+		m_MaxSpeedSQ = newSpeed * newSpeed;
+	}
+	void setRotation(irr::core::vector3df newRotation){
+		m_Rotation = newRotation;
+	}
 	void setSceneNode(irr::scene::ISceneNode* node){
 		m_SceneNode = node;
 		calculateBoundingSphere();
@@ -92,6 +99,14 @@ public:
 
 	virtual void load() = 0;
 
+	void enableRotation(bool enabled){
+		m_EnableRotation = enabled;
+	}
+
+	void enableMovement(bool enabled){
+		m_EnableMovement = enabled;
+	}
+
 	// There are many WorldEntities that we may wish to pass a change of state to,
 	// so the world Entity should be where the current state object is held. It
 	// provides a virtual function for manipulating the state.
@@ -109,6 +124,8 @@ protected:
 	irr::core::vector3df location;
 	int id;// Unique ID
 
+	float m_MaxSpeed;
+	float m_MaxSpeedSQ;
 	//!Radius of bounding sphere
 	float m_Radius;
 
@@ -123,6 +140,11 @@ protected:
 
 	irr::newton::IBody* m_Physics_Body;
 
+	irr::core::vector3df m_Rotation;
+
+	bool m_EnableRotation;
+
+	bool m_EnableMovement;
 };
 
 #endif

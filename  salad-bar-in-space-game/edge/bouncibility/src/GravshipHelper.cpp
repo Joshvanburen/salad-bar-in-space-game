@@ -32,8 +32,6 @@ void GravshipHelper::update(){
 	else{
 		this->m_Physics_Body->setMaterial(m_EmptyMaterial);
 	}
-
-
 }
 
 void GravshipHelper::applyGravityToOrbitingEntities(){
@@ -48,7 +46,7 @@ void GravshipHelper::applyGravityToOrbitingEntities(){
 		//float sumradii = (this->m_OrbitRingRadius + otherEntity->getBoundingSphereRadius() );
         //float sumradiisq = sumradii * sumradii;
 		
-		float distanceSQ = distance.getLengthSQ();
+		float length = distance.getLengthSQ();
 		//Normalise the movevec
 		//irr::core::vector3df N(movevec);
 		//N.normalize();
@@ -64,15 +62,35 @@ void GravshipHelper::applyGravityToOrbitingEntities(){
 		//then they won't collide
 		irr::core::vector3df gravityForce(distance);
 		gravityForce.normalize();
-		gravityForce = gravityForce *  (this->m_GravitationalPull  / std::max(distanceSQ, 1.0f)) / (*m_OrbitingEntitiesItr)->getPhysicsBody()->getMass();
+		gravityForce = gravityForce *  (this->m_GravitationalPull  / std::max(length, 1.0f)) / (*m_OrbitingEntitiesItr)->getPhysicsBody()->getMass();
 
 		if (this->m_GravitationalPull < 0){
 			//multiplier for reverse gravity
 			gravityForce = gravityForce * 2.5;
 			
+			if(gravityForce.getLengthSQ() > m_MaxForceSQ*2.5){
+				otherEntity->getPhysicsBody()->addForce(gravityForce.normalize() * m_MaxForce*2.5);
+			}
+			else{
+				otherEntity->getPhysicsBody()->addForce(gravityForce);
+			}
+
+
 		}
-		
-		otherEntity->getPhysicsBody()->addForce(gravityForce);
+		else{
+			if(gravityForce.getLengthSQ() > m_MaxForceSQ){
+				otherEntity->getPhysicsBody()->addForce(gravityForce.normalize() * m_MaxForce);
+			}
+			else{
+				otherEntity->getPhysicsBody()->addForce(gravityForce);
+			}
+			irr::core::vector3df velocity = otherEntity->getPhysicsBody()->getVelocity();
+			if (velocity.getLengthSQ() > this->m_MaxOrbiterSpeedSQ){
+				this->m_Physics_Body->setVelocity(velocity.normalize() * m_MaxOrbiterSpeed);
+			}
+		}
+
+
 	}
 }
 
@@ -81,6 +99,12 @@ void GravshipHelper::updateOrbitingEntities(){
 	Entity::IdEntityMap entities = EntityManager::getSingleton().getEntities();
 	//Remove entities from the list of returned entities that we already know were orbiting us last frame by using their ID. and the player entity
 	for (m_OrbitingEntitiesItr = m_OrbitingEntities.begin(); m_OrbitingEntitiesItr != m_OrbitingEntities.end(); m_OrbitingEntitiesItr++){
+		if (m_GravityOn){
+			(*m_OrbitingEntitiesItr)->enableRotation(true);
+		}
+		else{
+			(*m_OrbitingEntitiesItr)->enableRotation(false);
+		}
 		entities.erase((*m_OrbitingEntitiesItr)->getID());
 	}
 	entities.erase(GameSystem::getSingleton().getGravship()->getID());
@@ -165,6 +189,7 @@ void GravshipHelper::updateOrbitingEntities(){
        //IT IS CONFIRMED THAT THE OBJECTS WILL COLLIDE!!!
 
 	   this->m_OrbitingEntities.insert(otherEntity);
+		(otherEntity)->enableRotation(true);
 	   continue;
        /*********************************************************************************************************/
 	}
@@ -212,6 +237,7 @@ void GravshipHelper::updateOrbitingEntities(){
 	}
 	std::list<WorldEntity*>::iterator entitiesToRemoveItr;
 	for (entitiesToRemoveItr = entitiesToRemove.begin(); entitiesToRemoveItr != entitiesToRemove.end(); entitiesToRemoveItr++){
+		(*entitiesToRemoveItr)->enableRotation(false);
 		m_OrbitingEntities.erase((*entitiesToRemoveItr));
 	}
 
@@ -272,7 +298,10 @@ GravshipHelper* GravshipHelper::EntityToGravshipHelper(WorldEntity* entity){
 }
 
 GravshipHelper::GravshipHelper() : m_GravityOn(true), m_Helper(NULL){
-
+	m_MaxOrbiterSpeed = 1;
+	m_MaxOrbiterSpeedSQ = 1;
+	m_MaxForce = 1;
+	m_MaxForceSQ = 1;
 }
 
 GravshipHelper::~GravshipHelper(){

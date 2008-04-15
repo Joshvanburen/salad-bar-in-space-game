@@ -30,6 +30,11 @@ Level::Level() : m_SceneNode(NULL), m_Mesh(NULL), m_Physics_Body(NULL){
 	m_StartingY = 0;
 	m_LevelDimensions.Height = 0;
 	m_LevelDimensions.Width = 0;
+	m_MinX = 0;
+	m_MinY = 0;
+	m_MaxX = 0;
+	m_MaxY = 0;
+
 }
 
 Level::~Level(){
@@ -109,7 +114,7 @@ bool Level::load(const std::string& LevelDefinition)
 				}
 				WorldEntity& entity = EntityManager::getSingleton().createEntity(entityName, handle);
 
-				entity.setLocation((float)entityX, (float)entityY, 0);
+				entity.setLocation((float)entityX,(float)entityY, -15.0f);
 				entity.changeState(entityStartState);
 				m_WorldEntities.push_back(&entity);
 
@@ -125,6 +130,7 @@ bool Level::load(const std::string& LevelDefinition)
 	LevelManager::getSingleton().getSceneManager()->loadScene(m_LevelFile.c_str());
 
 	this->m_SceneNode = (irr::scene::IMeshSceneNode*)(LevelManager::getSingleton().getSceneManager()->getSceneNodeFromName("level_main"));
+	
 	m_Mesh = m_SceneNode->getMesh();
 	
 	irr::newton::SBodyFromNode mapData;
@@ -138,6 +144,11 @@ bool Level::load(const std::string& LevelDefinition)
 	m_Physics_Body = PhysicsManager::getSingleton().getPhysicsWorld()->createBody(mapData);
 
 	m_Music->play(true);
+
+	m_MinY = -m_LevelDimensions.Height/2;
+	m_MaxY = m_LevelDimensions.Height/2;
+	m_MinX = -m_LevelDimensions.Width/2;
+	m_MaxX = m_LevelDimensions.Width/2;
 
 	delete xml;
 

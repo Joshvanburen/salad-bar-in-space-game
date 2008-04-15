@@ -79,7 +79,6 @@ namespace Physics{
 	class MaterialDoesntExist {  };
 };
 
-//! LevelManager organizes the transition of levels.  It The current level should be retrieved from LevelManager. It loads in the given XML file for the global defintion of levels.  It tells the entitymanager how to initialize.
 class PhysicsManager :
 	public CSingleton<PhysicsManager>{
 private:

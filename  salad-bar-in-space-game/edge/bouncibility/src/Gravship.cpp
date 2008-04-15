@@ -12,9 +12,8 @@ void Gravship::load(){
 }
 
 void Gravship::update(){
-	const irr::core::vector3df position  = this->m_Physics_Body->getPosition();
-	this->m_Physics_Body->setPosition(irr::core::vector3df(position.X,position.Y, 0));
-	//this->m_Physics_Body->setVelocity(this->velocity);
+	WorldEntity::update();
+
 
 	//If gravity field is on, Apply force to any entities in our orbiting range
 	if (this->m_GravityOn){
@@ -65,7 +64,7 @@ WorldEntity* Gravship::clone(){
 void Gravship::enableGravityField(bool enabled){
 	m_GravityOn = enabled;
 
-	if (this->m_GravityOn){
+	/*if (this->m_GravityOn){
 		irr::core::line3d<irr::f32> line(this->m_Physics_Body->getPosition(),m_Helper->getPhysicsBody()->getPosition());
 
 		irr::core::array<irr::newton::IBody*> orbiting_bodies;
@@ -87,9 +86,9 @@ void Gravship::enableGravityField(bool enabled){
 			}
 		}
 	}
-	else{
-		m_Helper->enableGravityField(false);
-	}
+	else{*/
+		m_Helper->enableGravityField(enabled);
+	//}
 
 }
 
