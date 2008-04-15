@@ -18,6 +18,8 @@ namespace Scripting{
 	class WorldEntityAIFunction;
 }
 
+class GameSystem;
+
 class Enemy : public WorldEntity {
 
 public:
@@ -65,6 +67,8 @@ public:
 	}
 
 	void setAi(Scripting::WorldEntityAIFunction*);
+
+	void moveToPlayer();
 
 private: 
  	
