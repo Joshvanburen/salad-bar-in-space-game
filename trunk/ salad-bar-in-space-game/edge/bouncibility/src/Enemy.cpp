@@ -118,6 +118,29 @@ void Enemy::setAi(Scripting::WorldEntityAIFunction* newAIScript){
 
 }
 
+void Enemy::moveToPlayer(){
+
+	const irr::core::vector3df playerLoc = GameSystem::getSingleton().getGravship()->getSceneNode()->getPosition;
+	const irr::core::vector3df myLoc = this->getSceneNode()->getPosition();
+
+	irr::core::vector3df conn = playLoc - myLoc;
+	conn = conn.normalize();
+
+	irr::core::vector3df vel = this->m_Physics_Body->getVelocity();
+	float spd = vel.getLengthSQ();
+
+	conn = conn * spd;
+
+	this->m_Physical_Body->setVelocity(conn);
+
+}
+
+//void Enemy::moveRandomly(){
+//
+//	irr::core::vector3df dirct = 
+//
+//}
+//
 Enemy::Enemy() {
 	color = '0';
 }
