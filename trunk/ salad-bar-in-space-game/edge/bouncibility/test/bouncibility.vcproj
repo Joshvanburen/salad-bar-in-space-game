@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\include;..\third_party\irrxml\include;&quot;..\third_party\wiiuse-v0.10\src&quot;;..\third_party\irrnewt\include;..\third_party\newton\sdk;..\third_party\irrlicht\include;..\third_party\irrklang\include;..\third_party\angelscript\include"
+				AdditionalIncludeDirectories="..\include;..\third_party\irrxml\include;&quot;..\third_party\wiiuse-v0.10\src&quot;;..\third_party\irrnewt\include;..\third_party\newton\sdk;..\third_party\irrlicht\include;..\third_party\irrklang\include;..\third_party\angelscript\include;..\third_party\boost\"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -59,10 +59,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="irrlicht.lib irrklang.lib wiiuse.lib irrxml.lib newton.lib irrnewt.lib angelscriptd.lib"
+				AdditionalDependencies="libboost_thread-vc80-mt-1_34_1.lib irrlicht.lib irrklang.lib wiiuse.lib irrxml.lib newton.lib irrnewt.lib angelscriptd.lib"
 				OutputFile="..\bin\Demo.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\lib;&quot;..\third_party\wiiuse-v0.10\lib&quot;;..\third_party\irrxml\lib;..\third_party\newton\sdk\dll;..\third_party\irrnewt\lib;..\third_party\irrklang\lib;..\third_party\irrlicht\lib;..\third_party\angelscript\lib"
+				AdditionalLibraryDirectories="..\lib;&quot;..\third_party\wiiuse-v0.10\lib&quot;;..\third_party\irrxml\lib;..\third_party\newton\sdk\dll;..\third_party\irrnewt\lib;..\third_party\irrklang\lib;..\third_party\irrlicht\lib;..\third_party\angelscript\lib;..\third_party\boost\lib\"
 				GenerateDebugInformation="true"
 				SubSystem="0"
 				RandomizedBaseAddress="1"
@@ -118,11 +118,16 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
+				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="1"
+				AdditionalIncludeDirectories="..\include;..\third_party\irrxml\include;&quot;..\third_party\wiiuse-v0.10\src&quot;;..\third_party\irrnewt\include;..\third_party\newton\sdk;..\third_party\irrlicht\include;..\third_party\irrklang\include;..\third_party\angelscript\include;..\third_party\boost\"
+				PreprocessorDefinitions=""
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"
 				DebugInformationFormat="3"
+				EnablePREfast="false"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -135,6 +140,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="libboost_thread-vc80-mt-1_34_1.lib irrlicht.lib irrklang.lib wiiuse.lib irrxml.lib newton.lib irrnewt.lib angelscript.lib "
+				OutputFile="..\bin\Demo.exe"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories="..\lib;&quot;..\third_party\wiiuse-v0.10\lib&quot;;..\third_party\irrxml\lib;..\third_party\newton\sdk\dll;..\third_party\irrnewt\lib;..\third_party\irrklang\lib;..\third_party\irrlicht\lib;..\third_party\angelscript\lib;..\third_party\boost\lib\;..\third_party\angelscript\lib"
+				GenerateManifest="true"
 				GenerateDebugInformation="true"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -184,11 +194,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\include\GameIncludes.h"
+				>
+			</File>
+			<File
 				RelativePath="..\include\GameSystem.h"
 				>
 			</File>
 			<File
 				RelativePath="..\include\Gravship.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\GravshipHelper.h"
 				>
 			</File>
 			<File
@@ -393,6 +411,10 @@
 			</File>
 			<File
 				RelativePath="..\src\Gravship.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\GravshipHelper.cpp"
 				>
 			</File>
 			<File

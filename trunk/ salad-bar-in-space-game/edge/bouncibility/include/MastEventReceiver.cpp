@@ -52,7 +52,7 @@ class MastEventReceiver : public irr::IEventReceiver
 
    processStateENUM processState; // STARTED = handling events, ENDED = not handling events
 
-   virtual bool OnEvent(irr::SEvent event)
+   virtual bool OnEvent(const irr::SEvent& event)
    {
       bool eventprocessed = false;
 

@@ -203,20 +203,22 @@ namespace Input{
 
 	public:
 
+
+		void poll();
 		void resync();
 
 		void toggleRumble();
 
-		int getX(){
+		float getX(){
 			return ir_x;
 		}
 
-		int getY(){
+		float getY(){
 			return ir_y;
 		}
 
-		irr::core::position2di getRelativePosition(){
-			irr::core::position2di temp(ir_dx, ir_dy);
+		irr::core::position2df getRelativePosition(){
+			irr::core::position2df temp(ir_dx, ir_dy);
 			ir_dx = 0;
 			ir_dy = 0;
 			return temp;

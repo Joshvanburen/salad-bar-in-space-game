@@ -1,23 +1,11 @@
-
-#include <boost/thread/thread.hpp>
-
-
-
-#include "irrlicht.h"
-#include "MastEventReceiver.cpp"
 #include "Common.h"
-#include "EntityManager.h"
-#include "InputManager.h"
-#include "ScriptManager.h"
-#include "irrnewt.hpp"
-#include "PhysicsManager.h"
-#include "LevelManager.h"
-#include "SoundManager.h"
-#include "Level.h"
-#include "GameSystem.h"
-#include "WorldEntity.h"
-#include "WorldEntityAIManager.h"
-#include <stdio.h>
+#include "MastEventReceiver.cpp"
+#include "GameIncludes.h"
+
+
+#define WIN32_LEAN_AND_MEAN
+#include "windows.h"
+
 
 /* 
 There are 5 sub namespaces in the Irrlicht Engine. Take a look 
@@ -53,7 +41,7 @@ bool init(){
 	ScriptManager::getSingleton().registerAsGlobal("void PrintString(string &in)", ::asFUNCTION(PrintString));
 	InputManager::getSingleton().init();
 
-	device = irr::createDevice( irr::video::EDT_OPENGL, irr::core::dimension2d<irr::s32>(800, 600), 16,
+	device = irr::createDevice( irr::video::EDT_DIRECT3D9, irr::core::dimension2d<irr::s32>(1280, 1024), 16,
 		false, false, false, InputManager::getSingleton().getEventReceiver());
 
 	smgr = device->getSceneManager();
@@ -77,10 +65,12 @@ bool init(){
 	return true;
 }
 
+InputManager* m_InputMgr = InputManager::getSingletonPtr();
 void getInput()
 {
 	while(running){
-		InputManager::getSingleton().getInput();
+		m_InputMgr->getWiimote().poll();
+		::Sleep(10);
 	}
 }
 
@@ -111,14 +101,7 @@ int main()
 	device->getSceneManager() and device->getGUIEnvironment().
 	*/
 	IVideoDriver* driver = device->getVideoDriver();
-	IGUIEnvironment* guienv = device->getGUIEnvironment();
 
-	/*
-	We add a hello world label to the window, using the GUI environment.
-	*/
-	
-	guienv->addStaticText(L"Hello World! This is the Irrlicht Software renderer!",
-		rect<irr::s32>(10,10,260,22), true);
 
 	/*
 	To display something interesting, we load a Quake 2 model 
@@ -146,25 +129,19 @@ int main()
 	To look at the mesh, we place a camera into 3d space at the position
 	(0, 30, -40). The camera looks from there to (0,5,0).
 	*/
-	smgr->addCameraSceneNode(0, irr::core::vector3df(0,0,-300), irr::core::vector3df(0,0,0));
-
 
 	//Makes the mouse invisible
 	device->getCursorControl()->setVisible(false);
-	
-	/*
-	Ok, now we have set up the scene, lets draw everything:
-	We run the device in a while() loop, until the device does not
-	want to run any more. This would be when the user closed the window
-	or pressed ALT+F4 in windows.
-	*/
-
-	bool show = false;
-
 
 
 	boost::thread inputThread(&getInput);
 
+	//LevelManager::getSingleton().getSceneManager()->loadScene("./res/levels/football.irr");
+	//smgr->addSkyDomeSceneNode(driver->getTexture("./res/textures/skyWarp_evening.jpg"), 10, 10, 1.0f, 1.0f);
+	
+	PhysicsManager* m_PhysicsMgr = PhysicsManager::getSingletonPtr();
+	LevelManager* m_LevelMgr = LevelManager::getSingletonPtr();
+	GameSystem* m_GameSystem = GameSystem::getSingletonPtr();
 	while(device->run())
 	{
 		/*
@@ -174,13 +151,13 @@ int main()
 		GUI Environment draw their content. With the endScene() call
 		everything is presented on the screen.
 		*/
-		InputManager::getSingleton().stopPolling();
-		PhysicsManager::getSingleton().update();
-		LevelManager::getSingleton().update();
-		GameSystem::getSingleton().update();
+		m_InputMgr->stopPolling();
+		m_PhysicsMgr->update();
+		m_LevelMgr->update();
+		m_GameSystem->update();
+		m_InputMgr->getInput();
 		driver->beginScene(true, true, SColor(255,100,101,140));
 			smgr->drawAll();
-			guienv->drawAll();
 		driver->endScene();
 
 		if(quit->isPressed()){
@@ -188,7 +165,7 @@ int main()
 			inputThread.join();
 			break;
 		}
-		InputManager::getSingleton().resumePolling();
+		m_InputMgr->resumePolling();
 	}
 
 	/*
@@ -202,11 +179,12 @@ int main()
 	for more information.
 	*/
 
-	InputManager::getSingleton().shutdown();
-	LevelManager::getSingleton().shutdown();
+	m_InputMgr->shutdown();
+	m_LevelMgr->shutdown();
 	SoundManager::getSingleton().shutdown();
-	PhysicsManager::getSingleton().shutdown();
+	m_PhysicsMgr->shutdown();
 	ScriptManager::getSingleton().shutdown();
+	WorldEntityAIManager::getSingleton().shutdown();
 	device->drop();
 
 	return 0;

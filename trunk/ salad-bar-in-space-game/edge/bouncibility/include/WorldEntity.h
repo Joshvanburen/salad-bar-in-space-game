@@ -145,6 +145,8 @@ protected:
 	bool m_EnableRotation;
 
 	bool m_EnableMovement;
+
+	LevelManager* m_LevelMgr;
 };
 
 #endif

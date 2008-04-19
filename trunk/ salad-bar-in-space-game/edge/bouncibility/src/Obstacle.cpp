@@ -1,10 +1,5 @@
-#include "irrlicht.h"
 #include "Common.h"
-#include "irrnewt.hpp"
-#include "LevelManager.h"
-#include "EntityManager.h"
-#include "Obstacle.h"
-#include "PhysicsManager.h"
+#include "GameIncludes.h"
 
 //Constructor
 Obstacle::Obstacle() : WorldEntity()

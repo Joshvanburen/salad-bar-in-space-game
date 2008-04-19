@@ -1,9 +1,5 @@
-#include "WorldEntity.h"
-#include "irrnewt.hpp"
-#include "EntityManager.h"
-#include "LevelManager.h"
-#include "Level.h"
-#include "irrlicht.h"
+#include "Common.h"
+#include "GameIncludes.h"
 // default constructor
 WorldEntity::WorldEntity() : m_SceneNode(NULL), m_Mesh(NULL), m_Physics_Body(NULL){
 	location.X = 0;
@@ -14,6 +10,7 @@ WorldEntity::WorldEntity() : m_SceneNode(NULL), m_Mesh(NULL), m_Physics_Body(NUL
 	m_EnableMovement = true;
 	m_MaxSpeed = 5;
 	m_MaxSpeedSQ = 25;
+	m_LevelMgr = LevelManager::getSingletonPtr();
 }
 
 // lets user set the id
@@ -24,27 +21,28 @@ WorldEntity::WorldEntity(int iID): m_SceneNode(NULL), m_Mesh(NULL), m_Physics_Bo
 	location.Z = 0;
 	m_Radius = 0.0f;
 	m_Mass = 1;
+	m_LevelMgr = LevelManager::getSingletonPtr();
 }
 
 void WorldEntity::update(){
-	if (!m_EnableRotation){
+	if (m_EnableRotation){
 		this->m_Physics_Body->setRotation(m_Rotation);
 	}
 	irr::core::vector3df position  = this->m_Physics_Body->getPosition();
 
 
 
-	if (position.X > LevelManager::getSingleton().getCurrentLevel().getMaxX()){
-		position.X =  LevelManager::getSingleton().getCurrentLevel().getMaxX();
+	if (position.X > m_LevelMgr->getCurrentLevel().getMaxX()){
+		position.X =  m_LevelMgr->getCurrentLevel().getMaxX();
 	}
-	else if (position.Y > LevelManager::getSingleton().getCurrentLevel().getMaxY()){
-		position.Y = LevelManager::getSingleton().getCurrentLevel().getMaxY();
+	else if (position.Y > m_LevelMgr->getCurrentLevel().getMaxY()){
+		position.Y = m_LevelMgr->getCurrentLevel().getMaxY();
 	}
-	else if (position.X < LevelManager::getSingleton().getCurrentLevel().getMinX()){
-		position.X = LevelManager::getSingleton().getCurrentLevel().getMinX();
+	else if (position.X < m_LevelMgr->getCurrentLevel().getMinX()){
+		position.X = m_LevelMgr->getCurrentLevel().getMinX();
 	}
-	else if (position.Y < LevelManager::getSingleton().getCurrentLevel().getMinY()){
-		position.Y = LevelManager::getSingleton().getCurrentLevel().getMinY();
+	else if (position.Y < m_LevelMgr->getCurrentLevel().getMinY()){
+		position.Y = m_LevelMgr->getCurrentLevel().getMinY();
 	}
 
 	this->m_Physics_Body->setPosition(irr::core::vector3df(position.X,position.Y, -15.0f));

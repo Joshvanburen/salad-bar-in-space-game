@@ -1,0 +1,26 @@
+Temps: 1, 2
+
+    0   0 *    PUSH     2
+- 7,2 -
+    1   2 *    SUSPEND
+    2   2 *    STR      0         (l:19 s:"In stupid ")
+    3   4 *    CALLSYS  30           (string@ ?(const int, const uint8&))
+    5   2 *    STOREOBJ v1
+    6   2 *    ChkNullV v1
+    7   2 *    VAR      v1
+    8   3 *    GETOBJREF 0
+    9   3 *    CALLSYS  65           (void PrintString(string&in))
+   11   2 *    PSF      v1
+   12   3 *    FREE     0x1627bd8
+- 9,2 -
+   14   2 *    SUSPEND
+   15   2 *    PSF      v0
+   16   3 *    CHKREF
+   17   3 *    RDS4
+   18   3 *    CALLSYS  63           (void Enemy::moveToPlayer())
+- 11,2 -
+   20   2 *    SUSPEND
+   21   2 *    SetV4    v2, 0x1          (i:1, f:1.4013e-045)
+   23   2 *    CpyVtoR4 v2
+   24   2 * 0:
+   24   0 *    RET      1
