@@ -5,7 +5,7 @@
 #ifndef __I_MESH_CACHE_H_INCLUDED__
 #define __I_MESH_CACHE_H_INCLUDED__
 
-#include "IUnknown.h"
+#include "IReferenceCounted.h"
 #include "irrString.h"
 
 namespace irr
@@ -24,12 +24,12 @@ namespace scene
 	this interface, it is possible to manually add new loaded meshes (if
 	ISceneManager::getMesh() is not sufficient), to remove them and to iterate through
 	already loaded meshes.  */
-	class IMeshCache : public virtual IUnknown
+	class IMeshCache : public virtual IReferenceCounted
 	{
 	public:
 
 		//! destructor
-		virtual ~IMeshCache() {};
+		virtual ~IMeshCache() {}
 
 		//! Adds a mesh to the internal list of loaded meshes.
 		/** Usually, ISceneManager::getMesh() is called to load a mesh from a file.
@@ -112,8 +112,15 @@ namespace scene
 
 		//! Clears the whole mesh cache, removing all meshes.
 		/** All meshes will be reloaded completely when using ISceneManager::getMesh()
-		after calling this method. */
+		after calling this method. 
+		Warning: If you have pointers to meshes that were loaded with ISceneManager::getMesh() 
+		and you did not grab them, then they may become invalid. */
 		virtual void clear() = 0;
+
+		//! Clears all meshes that are held in the mesh cache but not used anywhere else.
+		/** Warning: If you have pointers to meshes that were loaded with ISceneManager::getMesh() 
+		and you did not grab them, then they may become invalid. */
+		virtual void clearUnusedMeshes() = 0;
 	};
 
 

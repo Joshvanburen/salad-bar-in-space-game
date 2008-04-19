@@ -18,11 +18,11 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 
-  Please note that the Irrlicht Engine is based in part on the work of the 
+  Please note that the Irrlicht Engine is based in part on the work of the
   Independent JPEG Group, the zlib and the libPng. This means that if you use
   the Irrlicht Engine in your product, you must acknowledge somewhere in your
   documentation that you've used the IJG code. It would also be nice to mention
-  that you use the Irrlicht Engine, the zlib and libPng. See the README files 
+  that you use the Irrlicht Engine, the zlib and libPng. See the README files
   in the jpeglib, the zlib and libPng for further informations.
 */
 
@@ -31,25 +31,25 @@
 
 #include "IrrCompileConfig.h"
 #include "aabbox3d.h"
+#include "coreutil.h"
 #include "irrArray.h"
 #include "irrMap.h"
+#include "irrMath.h"
+#include "irrString.h"
+#include "irrTypes.h"
 #include "SColor.h"
 #include "SLight.h"
 #include "dimension2d.h"
 #include "EDriverTypes.h"
-#include "heapsort.h"
 #include "IAttributes.h"
 #include "IAttributeExchangingObject.h"
 #include "IAnimatedMesh.h"
 #include "IAnimatedMeshMD2.h"
 #include "IAnimatedMeshMD3.h"
-#include "IAnimatedMeshMS3D.h"
-#include "IAnimatedMeshMS3D.h"
 #include "IQ3LevelMesh.h"
-#include "IAnimatedMeshX.h"
-#include "IAnimatedMeshB3d.h"
 #include "IAnimatedMeshSceneNode.h"
 #include "IBillboardSceneNode.h"
+#include "IBoneSceneNode.h"
 #include "ICameraSceneNode.h"
 #include "IDummyTransformationSceneNode.h"
 #include "IEventReceiver.h"
@@ -58,13 +58,14 @@
 #include "IGPUProgrammingServices.h"
 #include "IGUIButton.h"
 #include "IGUICheckBox.h"
-#include "IGUIContextMenu.h"
+#include "IGUIColorSelectDialog.h"
 #include "IGUIComboBox.h"
-#include "IGUIElement.h"
+#include "IGUIContextMenu.h"
 #include "IGUIEditBox.h"
+#include "IGUIElement.h"
+#include "IGUIElementFactory.h"
 #include "IGUIEnvironment.h"
 #include "IGUIFileOpenDialog.h"
-#include "IGUIColorSelectDialog.h"
 #include "IGUIFont.h"
 #include "IGUIFontBitmap.h"
 #include "IGUIImage.h"
@@ -73,10 +74,12 @@
 #include "IGUIMeshViewer.h"
 #include "IGUIScrollBar.h"
 #include "IGUISkin.h"
+#include "IGUISpinBox.h"
+#include "IGUISpriteBank.h"
 #include "IGUIStaticText.h"
 #include "IGUITabControl.h"
-#include "IGUIWindow.h"
 #include "IGUIToolbar.h"
+#include "IGUIWindow.h"
 #include "IImage.h"
 #include "ILightSceneNode.h"
 #include "ILogger.h"
@@ -87,11 +90,10 @@
 #include "IMeshCache.h"
 #include "IMeshSceneNode.h"
 #include "IMeshManipulator.h"
+#include "IMeshWriter.h"
 #include "IMetaTriangleSelector.h"
 #include "IReadFile.h"
 #include "IrrlichtDevice.h"
-#include "irrMath.h"
-#include "irrString.h"
 #include "ISceneManager.h"
 #include "ISceneNode.h"
 #include "ISceneUserDataSerializer.h"
@@ -102,13 +104,12 @@
 #include "ISceneNodeAnimatorFactory.h"
 #include "ISceneNodeAnimatorCollisionResponse.h"
 #include "IShaderConstantSetCallBack.h"
-#include "IParticleSystemSceneNode.h"
+#include "IParticleSystemSceneNode.h" // also includes all emitters and attractors
+#include "ISkinnedMesh.h"
 #include "ITerrainSceneNode.h"
 #include "ITextSceneNode.h"
-#include "IParticleEmitter.h"
-#include "IParticleAffector.h"
 #include "ITexture.h"
-#include "IUnknown.h"
+#include "IReferenceCounted.h"
 #include "IVideoDriver.h"
 #include "IVideoModeList.h"
 #include "IWriteFile.h"
@@ -136,10 +137,8 @@
 #include "SMeshBufferLightMap.h"
 #include "SMeshBufferTangents.h"
 #include "SViewFrustum.h"
-#include "irrTypes.h"
-#include "coreutil.h"
 
-/*! \mainpage Irrlicht Engine 1.3.1 API documentation
+/*! \mainpage Irrlicht Engine 1.4 API documentation
  *
  * <div align="center"><img src="logobig.png" ></div>
  *
@@ -148,8 +147,8 @@
  * Welcome to the Irrlicht Engine API documentation.
  * Here you'll find any information you'll need to develop applications with
  * the Irrlicht Engine. If you are looking for a tutorial on how to start, you'll
- * find some on the homepage of the Irrlicht Engine at 
- * <A HREF="http://irrlicht.sourceforge.net" >irrlicht.sourceforge.net</A> 
+ * find some on the homepage of the Irrlicht Engine at
+ * <A HREF="http://irrlicht.sourceforge.net" >irrlicht.sourceforge.net</A>
  * or inside the SDK in the examples directory.
  *
  * The Irrlicht Engine is intended to be an easy-to-use 3d engine, so
@@ -167,7 +166,7 @@
  *
  * \section irrexample Short example
  *
- * A simple application, starting up the engine, loading a Quake 2 animated 
+ * A simple application, starting up the engine, loading a Quake 2 animated
  * model file and the corresponding texture, animating and displaying it
  * in front of a blue background and placing a user controlable 3d camera
  * would look like the following code. I think this example shows the usage
@@ -201,7 +200,7 @@
  *
  *	// add a first person shooter style user controlled camera
  *	scenemgr->addCameraSceneNodeFPS();
- * 
+ *
  *	// draw everything
  *	while(device->run() && driver)
  *	{
@@ -232,10 +231,10 @@
  *
  * As you can see, the engine uses namespaces. Everything in the engine is
  * placed into the namespace 'irr', but there are also 5 sub namespaces.
- * You can find a list of all namespaces with descriptions at the 
- * <A HREF="namespaces.html"> namespaces page</A>. 
+ * You can find a list of all namespaces with descriptions at the
+ * <A HREF="namespaces.html"> namespaces page</A>.
  * This is also a good place to start reading the documentation. If you
- * don't want to write the namespace names all the time, just use all namespaces like 
+ * don't want to write the namespace names all the time, just use all namespaces like
  * this:
  * \code
  * using namespace core;
@@ -258,7 +257,7 @@ namespace irr
 	//! Creates an Irrlicht device. The Irrlicht device is the root object for using the engine.
 	/** If you need more parameters to be passed to the creation of the Irrlicht Engine device,
 	use the createDeviceEx() function.
-	\param deviceType: Type of the device. This can currently be video::EDT_NULL, 
+	\param deviceType: Type of the device. This can currently be video::EDT_NULL,
 	video::EDT_SOFTWARE, video::EDT_BURNINGSVIDEO, video::EDT_DIRECT3D8, video::EDT_DIRECT3D9 and video::EDT_OPENGL.
 	\param windowSize: Size of the window or the video mode in fullscreen mode.
 	\param bits: Bits per pixel in fullscreen mode. Ignored if windowed mode.
@@ -267,7 +266,7 @@ namespace irr
 	\param stencilbuffer: Specifies if the stencil buffer should be enabled. Set this to true,
 	    if you want the engine be able to draw stencil buffer shadows. Note that not all
 		devices are able to use the stencil buffer. If they don't no shadows will be drawn.
-	\param vsync: Specifies vertical syncronisation: If set to true, the driver will wait 
+	\param vsync: Specifies vertical syncronisation: If set to true, the driver will wait
 		for the vertical retrace period, otherwise not.
 	\param receiver: A user created event receiver.
 	\param sdk_version_do_not_use: Don't use or change this parameter. Always set it to
@@ -285,13 +284,13 @@ namespace irr
 		IEventReceiver* receiver = 0,
 		const c8* sdk_version_do_not_use = IRRLICHT_SDK_VERSION);
 
-	//! Creates an Irrlicht device with the option to specify advanced parameters. 
+	//! Creates an Irrlicht device with the option to specify advanced parameters.
 	/** Usually you should used createDevice() for creating an Irrlicht Engine device.
 	Use this function only if you wish to specify advanced parameters like a window
 	handle in which the device should be created.
 	\param parameters: Structure containing advanced parameters for the creation of the device.
 	See irr::SIrrlichtCreationParameters for details.
-	\return Returns pointer to the created IrrlichtDevice or null if the 
+	\return Returns pointer to the created IrrlichtDevice or null if the
 	device could not be created. */
 	IRRLICHT_API IrrlichtDevice* IRRCALLCONV createDeviceEx(
 		const SIrrlichtCreationParameters& parameters);

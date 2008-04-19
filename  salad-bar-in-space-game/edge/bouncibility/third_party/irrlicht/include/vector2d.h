@@ -19,29 +19,33 @@ class vector2d
 {
 public:
 
-	vector2d() : X(0), Y(0) {};
-	vector2d(T nx, T ny) : X(nx), Y(ny) {};
-	vector2d(const vector2d<T>& other) : X(other.X), Y(other.Y) {};
+	vector2d() : X(0), Y(0) {}
+	vector2d(T nx, T ny) : X(nx), Y(ny) {}
+	vector2d(const vector2d<T>& other) : X(other.X), Y(other.Y) {}
 
 	// operators
 
-	vector2d<T> operator-() const { return vector2d<T>(-X, -Y);   }
+	vector2d<T> operator-() const { return vector2d<T>(-X, -Y); }
 
-	vector2d<T>& operator=(const vector2d<T>& other)	{ X = other.X; Y = other.Y; return *this; }
+	vector2d<T>& operator=(const vector2d<T>& other) { X = other.X; Y = other.Y; return *this; }
 
-	vector2d<T> operator+(const vector2d<T>& other) const { return vector2d<T>(X + other.X, Y + other.Y);	}
-	vector2d<T>& operator+=(const vector2d<T>& other)	{ X+=other.X; Y+=other.Y; return *this; }
+	vector2d<T> operator+(const vector2d<T>& other) const { return vector2d<T>(X + other.X, Y + other.Y); }
+	vector2d<T>& operator+=(const vector2d<T>& other) { X+=other.X; Y+=other.Y; return *this; }
+	vector2d<T> operator+(const T v) const { return vector2d<T>(X + v, Y + v); }
+	vector2d<T>& operator+=(const T v) { X+=v; Y+=v; return *this; }
 
-	vector2d<T> operator-(const vector2d<T>& other) const { return vector2d<T>(X - other.X, Y - other.Y);	}
-	vector2d<T>& operator-=(const vector2d<T>& other)	{ X-=other.X; Y-=other.Y; return *this; }
+	vector2d<T> operator-(const vector2d<T>& other) const { return vector2d<T>(X - other.X, Y - other.Y); }
+	vector2d<T>& operator-=(const vector2d<T>& other) { X-=other.X; Y-=other.Y; return *this; }
+	vector2d<T> operator-(const T v) const { return vector2d<T>(X - v, Y - v); }
+	vector2d<T>& operator-=(const T v) { X-=v; Y-=v; return *this; }
 
 	vector2d<T> operator*(const vector2d<T>& other) const { return vector2d<T>(X * other.X, Y * other.Y);	}
-	vector2d<T>& operator*=(const vector2d<T>& other)	{ X*=other.X; Y*=other.Y; return *this; }
+	vector2d<T>& operator*=(const vector2d<T>& other) { X*=other.X; Y*=other.Y; return *this; }
 	vector2d<T> operator*(const T v) const { return vector2d<T>(X * v, Y * v);	}
 	vector2d<T>& operator*=(const T v) { X*=v; Y*=v; return *this; }
 
 	vector2d<T> operator/(const vector2d<T>& other) const { return vector2d<T>(X / other.X, Y / other.Y);	}
-	vector2d<T>& operator/=(const vector2d<T>& other)	{ X/=other.X; Y/=other.Y; return *this; }
+	vector2d<T>& operator/=(const vector2d<T>& other) { X/=other.X; Y/=other.Y; return *this; }
 	vector2d<T> operator/(const T v) const { return vector2d<T>(X / v, Y / v);	}
 	vector2d<T>& operator/=(const T v) { X/=v; Y/=v; return *this; }
 
@@ -67,7 +71,7 @@ public:
 
 	//! Returns the length of the vector
 	//! \return Returns the length of the vector.
-	T getLength() const { return (T)sqrt(X*X + Y*Y); }
+	T getLength() const { return (T)sqrt((f64)(X*X + Y*Y)); }
 
 	//! Returns the squared length of this vector
 	/** This is useful because it is much faster than getLength(). */
@@ -180,7 +184,7 @@ public:
 		if (tmp == 0.0)
 			return 90.0;
 
-		tmp = tmp / sqrt((X*X + Y*Y) * (b.X*b.X + b.Y*b.Y));
+		tmp = tmp / sqrt((f64)((X*X + Y*Y) * (b.X*b.X + b.Y*b.Y)));
 		if (tmp < 0.0)
 			tmp = -tmp;
 

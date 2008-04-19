@@ -16,9 +16,7 @@ namespace core
     \brief File containing useful basic utility functions
 */
 
-// ----------------------------- some basic quite often used string functions --------------------------
-
-static const stringc irrEmtpyStringc = "";
+// ----------- some basic quite often used string functions -----------------
 
 //! cut the filename extension from a string
 inline stringc& cutFilenameExtension ( stringc &dest, const stringc &source )
