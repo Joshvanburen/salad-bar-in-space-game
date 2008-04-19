@@ -1,11 +1,7 @@
 #include "Common.h"
 #include "angelscript.h"
-#include "WorldEntity.h"
-#include "Enemy.h"
 #include "scriptstring.h"
-#include "Enemy.h"
-#include "irrXML.h"	
-#include "ScriptManager.h"
+#include "GameIncludes.h"
 
 void MessageCallback(const asSMessageInfo *msg, void *param)
 {
@@ -90,6 +86,7 @@ void Scripting::ScriptFunction::execute(){
 			std::cout << "sect: " << ScriptManager::getEngine()->GetFunctionSection(m_ID) << std::endl;
 			std::cout << "line: " << m_pContext->GetExceptionLineNumber() << std::endl;
 			std::cout << "desc: " << m_pContext->GetExceptionString() << std::endl;
+			
 		}
 		else
 			std::cout << "The script ended for some unforeseen reason (" << r << ")." << std::endl;

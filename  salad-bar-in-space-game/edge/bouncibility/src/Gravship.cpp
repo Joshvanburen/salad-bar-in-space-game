@@ -1,11 +1,6 @@
-#include "irrlicht.h"
 #include "Common.h"
-#include "irrnewt.hpp"
-#include "LevelManager.h"
-#include "EntityManager.h"
-#include "GravshipHelper.h"
-#include "Gravship.h"
-#include "PhysicsManager.h"
+#include "GameIncludes.h"
+
 
 void Gravship::load(){
 

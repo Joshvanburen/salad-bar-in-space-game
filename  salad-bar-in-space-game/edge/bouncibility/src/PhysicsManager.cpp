@@ -1,12 +1,5 @@
 #include "Common.h"
-#include "irrXML.h"	
-#include "irrlicht.h"
-#include "ScriptManager.h"
-#include "LevelManager.h"
-#include "SoundManager.h"
-#include "irrnewt.hpp"
-#include "WorldEntity.h"
-#include "PhysicsManager.h"
+#include "GameIncludes.h"
 
 using namespace irr;
 using namespace io;
@@ -52,14 +45,14 @@ int  Physics::WorldEntityCollisionCallback::ContactProcess (irr::newton::IMateri
 	m_ScriptItrEnd = m_CollisionHandlerScripts.end();
 
 	for (m_ScriptItr = m_CollisionHandlerScripts.begin(); m_ScriptItr != m_ScriptItrEnd; ++m_ScriptItr){
-		((Scripting::MaterialCollisionFunction*)(*m_ScriptItr))->callFunction(this->entity1, this->entity2);
+		//((Scripting::MaterialCollisionFunction*)(*m_ScriptItr))->callFunction(this->entity1, this->entity2);
 		//Call the script collision function with entity1 and entity2 pointers.
 	}
 
 	m_SoundsItrEnd = m_Sounds.end();
 
 	for (m_SoundsItr = m_Sounds.begin(); m_SoundsItr != m_SoundsItrEnd; ++m_SoundsItr){
-		(*m_SoundsItr)->play(false);
+		//(*m_SoundsItr)->play(false);
 	}
 	return 1;
 

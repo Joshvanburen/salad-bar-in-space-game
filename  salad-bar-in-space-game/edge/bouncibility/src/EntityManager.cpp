@@ -1,16 +1,5 @@
 #include "Common.h"
-#include "irrXML.h"	
-#include "irrlicht.h"
-#include ".\EntityManager.h"
-#include "LevelManager.h"
-#include "irrnewt.hpp"
-#include "ScriptManager.h"
-#include "PhysicsManager.h"
-#include "Enemy.h"
-#include "Gravship.h"
-#include "Obstacle.h"
-#include "GravshipHelper.h"
-#include "WorldEntity.h"
+#include "GameIncludes.h"
 
 using namespace irr;
 using namespace io;
@@ -197,7 +186,7 @@ WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename)
 			
 				entity = new Gravship();
 				
-				entity->setMesh(node->getMesh());
+				entity->setMesh(mesh);
 				
 				entity->setRotation(irr::core::vector3df(rotX, rotY, rotZ));
 				entity->setSceneNode(node);
@@ -306,7 +295,7 @@ WorldEntity& Entity::EnemyFactory::loadEntity(const std::string& XMLFilename){
 				entity = new Enemy();
 				
 				entity->setRotation(irr::core::vector3df(rotX, rotY, rotZ));
-				entity->setMesh(node->getMesh());
+				entity->setMesh(mesh);
 				
 				((Enemy*)entity)->setColor(color);
 				((Enemy*)entity)->setRadius(radius);

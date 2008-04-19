@@ -37,6 +37,8 @@ class Level
 			//!Current status of level
 			int m_Status;
 
+			irr::scene::ICameraSceneNode* m_Camera;
+
 			irr::core::dimension2di m_LevelDimensions;
 
 			int m_MinX, m_MinY, m_MaxX, m_MaxY;
@@ -73,6 +75,9 @@ class Level
 			</Level>
 			*/
 			bool load(const std::string& LevelDefinition);
+			irr::scene::ICameraSceneNode* getCamera(){
+				return m_Camera;
+			}
 			//!Releases all resources used.  Does not need to delete the entities it has, EntityManager does this.
 			void shutdown();
 			//!Updates the level and all children
@@ -95,15 +100,15 @@ class Level
 			}
 
 			float getMinX(){
-				return m_MinX;
+				return (float)m_MinX;
 			}
 			float getMinY(){
-				return m_MinY;
+				return (float)m_MinY;
 			}
 			float getMaxX(){
-				return m_MaxX;
+				return (float)m_MaxX;
 			}
 			float getMaxY(){
-				return m_MaxY;
+				return (float)m_MaxY;
 			}
 };

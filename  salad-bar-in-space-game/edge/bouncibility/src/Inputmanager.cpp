@@ -1,7 +1,6 @@
 #include "Common.h"
-#include ".\inputmanager.h"
-#include "LevelManager.h"
 #include "MastEventReceiver.cpp"
+#include "GameIncludes.h"
 #include "wiiuse.h"
 #define WIIUSE_PATH		"wiiuse.dll"
 //Interface methods don't need an implementation, yet.
@@ -49,13 +48,13 @@ bool Input::Mouse::init(Input::InputDeviceInit &deviceInit){
 
 bool Input::Mouse::read(){
 	if (m_ScreenCenter.X == 0 && m_ScreenCenter.Y == 0){
-		m_ScreenCenter = irr::core::position2di(LevelManager::getSingleton().getDriver()->getScreenSize().Width*0.5, LevelManager::getSingleton().getDriver()->getScreenSize().Height*0.5);
+		m_ScreenCenter = irr::core::position2di(LevelManager::getDriver()->getScreenSize().Width*0.5, LevelManager::getSingleton().getDriver()->getScreenSize().Height*0.5);
 	}
 	InputDevice::read();
-	irr::core::position2di mouse_pos = LevelManager::getSingleton().getDevice()->getCursorControl()->getPosition();
+	irr::core::position2di mouse_pos = LevelManager::getDevice()->getCursorControl()->getPosition();
 	this->m_dx += m_ScreenCenter.X - mouse_pos.X;
 	this->m_dy += m_ScreenCenter.Y - mouse_pos.Y;
-	LevelManager::getSingleton().getDevice()->getCursorControl()->setPosition(m_ScreenCenter); 
+	LevelManager::getDevice()->getCursorControl()->setPosition(m_ScreenCenter); 
 	
 	return true;
 }
@@ -135,11 +134,9 @@ std::cout << "wiimotes = " << wiimotes[0] << std::endl;
 
 	return true;
 }
-bool Input::Wiimote::read(){
-	InputDevice::read();
-
+void Input::Wiimote::poll(){
 	if (!found){
-		return false;
+		return;
 	}
 	if (wiiuse_poll(wiimotes, 1)) {
 	/*
@@ -169,6 +166,41 @@ bool Input::Wiimote::read(){
 			}
 		}
 	}
+}
+bool Input::Wiimote::read(){
+	InputDevice::read();
+
+	if (!found){
+		return false;
+	}
+//	if (wiiuse_poll(wiimotes, 1)) {
+	/*
+	 *	This happens if something happened on any wiimote.
+	 *	So go through each one and check if anything happened.
+	 */
+	//	int i = 0;
+	//	for (; i < 1; ++i) {
+	//		switch (wiimotes[i]->event) {
+	//			case WIIUSE_EVENT:
+	//				/* a generic event occured */
+	//				handle_event(wiimotes[i]);
+	//				break;
+
+	//			case WIIUSE_STATUS:
+	//				/* a status event occured */
+	//				handle_ctrl_status(wiimotes[i]);
+	//				break;
+
+	//			case WIIUSE_DISCONNECT:
+	//				/* the wiimote disconnected */
+	//				//handle_disconnect(wiimotes[i]);
+	//				break;
+
+	//			default:
+	//				break;
+	//		}
+	//	}
+	//}
 	return true;
 }
 
@@ -260,35 +292,12 @@ float Input::Wiimote::joystickMagnitude(){
 }
 void Input::Wiimote::handle_event(struct wiimote_t* wm){
 	
-		printf("\n\n--- EVENT [id %i] ---\n", wm->unid);
 
-	/* if a button is pressed, report it */
-	if (IS_PRESSED(wm, WIIMOTE_BUTTON_A))		printf("A pressed\n");
-	if (IS_PRESSED(wm, WIIMOTE_BUTTON_B))		printf("B pressed\n");
-	if (IS_PRESSED(wm, WIIMOTE_BUTTON_UP))		printf("UP pressed\n");
-	if (IS_PRESSED(wm, WIIMOTE_BUTTON_DOWN))	printf("DOWN pressed\n");
-	if (IS_PRESSED(wm, WIIMOTE_BUTTON_LEFT))	printf("LEFT pressed\n");
-	if (IS_PRESSED(wm, WIIMOTE_BUTTON_RIGHT))	printf("RIGHT pressed\n");
-	if (IS_PRESSED(wm, WIIMOTE_BUTTON_MINUS))	printf("MINUS pressed\n");
-	if (IS_PRESSED(wm, WIIMOTE_BUTTON_PLUS))	printf("PLUS pressed\n");
-	if (IS_PRESSED(wm, WIIMOTE_BUTTON_ONE))		printf("ONE pressed\n");
-	if (IS_PRESSED(wm, WIIMOTE_BUTTON_TWO))		printf("TWO pressed\n");
-	if (IS_PRESSED(wm, WIIMOTE_BUTTON_HOME))	printf("HOME pressed\n");
 
-	/* show events specific to supported expansions */
 	if (wm->exp.type == EXP_NUNCHUK) {
 		/* nunchuk */
 		struct nunchuk_t* nc = (nunchuk_t*)&wm->exp.nunchuk;
 
-		if (IS_PRESSED(nc, NUNCHUK_BUTTON_C))		printf("Nunchuk: C pressed\n");
-		if (IS_PRESSED(nc, NUNCHUK_BUTTON_Z))		printf("Nunchuk: Z pressed\n");
-
-		printf("nunchuk roll  = %f\n", nc->orient.roll);
-		printf("nunchuk pitch = %f\n", nc->orient.pitch);
-		printf("nunchuk yaw   = %f\n", nc->orient.yaw);
-
-		printf("nunchuk joystick angle:     %f\n", nc->js.ang);
-		printf("nunchuk joystick magnitude: %f\n", nc->js.mag);
 
 		magnitude = nc->js.mag;
 		angle = nc->js.ang;
@@ -302,16 +311,6 @@ void Input::Wiimote::handle_event(struct wiimote_t* wm){
 	 */
 	if (WIIUSE_USING_IR(wm)) {
 		int i = 0;
-
-		/* go through each of the 4 possible IR sources */
-		for (; i < 4; ++i) {
-			/* check if the source is visible */
-			if (wm->ir.dot[i].visible)
-				printf("IR source %i: (%u, %u)\n", i, wm->ir.dot[i].x, wm->ir.dot[i].y);
-		}
-
-		printf("IR cursor: (%u, %u)\n", wm->ir.x, wm->ir.y);
-		printf("IR z distance: %f\n", wm->ir.z);
 
 		if (wm->ir.x != 0 && wm->ir.y != 0){
 			this->ir_dx += wm->ir.x - ir_x; 

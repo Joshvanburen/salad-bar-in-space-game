@@ -17,12 +17,16 @@
 
 // Class definition
 
+Gravship* GameSystem::s_Gravship = NULL;
+Gravship* GameSystem::getGravship(){
+		return s_Gravship;
+}
 GameSystem::GameSystem(){
 	//Set all to null
 	reverseGravity, gravityOn, up_momentum, right_momentum, left_momentum, up_momentum, melee, cycle_melee, shoot, cycle_weapon, cycle_morph, morph, hover, pause = NULL;
 
 	resync = NULL;
-	m_Gravship = NULL;
+	s_Gravship = NULL;
 	m_Camera = NULL;
 
 	m_Input_Mgr = InputManager::getSingletonPtr();
@@ -130,12 +134,12 @@ void GameSystem::startGame(){
 	int entity_ID = EntityManager::getSingleton().getEntityID("player");
 
 	if (entity_ID < 0){
-		m_Gravship = NULL;
+		s_Gravship = NULL;
 		return;
 	}
 	else{
-		this->m_Gravship = dynamic_cast<Gravship*>(&(EntityManager::getSingleton().getEntity(entity_ID)));
-		//irr::scene::ISceneNode* node = LevelManager::getSingleton().getSceneManager()->addCubeSceneNode(5.0, m_Gravship->getSceneNode());
+		this->s_Gravship = dynamic_cast<Gravship*>(&(EntityManager::getSingleton().getEntity(entity_ID)));
+		//irr::scene::ISceneNode* node = LevelManager::getSingleton().getSceneManager()->addCubeSceneNode(5.0, s_Gravship->getSceneNode());
 		//node->setMaterialTexture(0, LevelManager::getSingleton().getDriver()->getTexture("./res/textures/neon_green.png"));
 		//node->setPosition(irr::core::vector3df(0.0f, 0.0f, -15.0f));
 	}
@@ -145,9 +149,8 @@ void GameSystem::startGame(){
 	m_MaxY = dimensions.Height/2;
 	m_MinX = -dimensions.Width/2;
 	m_MaxX = dimensions.Width/2;
-	m_Camera = LevelManager::getSceneManager()->addCameraSceneNode(0, irr::core::vector3df(0,-300,-450), irr::core::vector3df(0,0,0));
 
-	positionCamera();
+//	positionCamera();
 
 }
 
@@ -157,11 +160,11 @@ void GameSystem::recoverAfterLevelChange(){
 	int entity_ID = EntityManager::getSingleton().getEntityID("player");
 
 	if (entity_ID < 0){
-		m_Gravship = NULL;
+		s_Gravship = NULL;
 		return;
 	}
 	else{
-		this->m_Gravship = dynamic_cast<Gravship*>(&(EntityManager::getSingleton().getEntity(entity_ID)));
+		this->s_Gravship = dynamic_cast<Gravship*>(&(EntityManager::getSingleton().getEntity(entity_ID)));
 	}
 }
 
@@ -190,14 +193,13 @@ void GameSystem::positionCamera(){
 		m_Camera->setPosition(camera_location);
 		//std::cout << "momving y, new location is " << camera_location.Y << "\n";
 	}*/
-
 }
 void GameSystem::update() {
-	irr::core::position2di mouse_change = InputManager::getSingleton().getMouse().getRelativePosition();
+	irr::core::position2di mouse_change = m_Input_Mgr->getMouse().getRelativePosition();
 
-	irr::core::position2di wiimote_change = m_Wiimote->getRelativePosition();
+	irr::core::position2df wiimote_change = m_Wiimote->getRelativePosition();
 
-	irr::core::vector3df cursor_position = m_Gravship->getHelper()->getLocation();
+	irr::core::vector3df cursor_position = s_Gravship->getHelper()->getLocation();
 	float newX = cursor_position.X+wiimote_change.X-mouse_change.X;
 	float newY = cursor_position.Y-wiimote_change.Y+mouse_change.Y;;
 
@@ -213,29 +215,29 @@ void GameSystem::update() {
 	else if (newY < m_MinY){
 		newY = m_MinY;
 	}
-	m_Gravship->getHelper()->setLocation(irr::core::vector3df(newX, newY, -15.0f));
-	//m_Gravship->getHelper()->setLocation(irr::core::vector3df(cursor_position.X-wiimote_change.X, cursor_position.Y + wiimote_change.Y, 0.0f));
+	s_Gravship->getHelper()->setLocation(irr::core::vector3df(newX, newY, -15.0f));
+	//s_Gravship->getHelper()->setLocation(irr::core::vector3df(cursor_position.X-wiimote_change.X, cursor_position.Y + wiimote_change.Y, 0.0f));
 	irr::core::vector3df direction(0.0f, 1.0f, 0.0f);
 
 	
 	direction.rotateXYBy(-m_Wiimote->joystickAngle(),irr::core::vector3df(0.0f, 0.0f, 0.0f ));
 	direction = direction * 5 * m_Wiimote->joystickMagnitude();
 	irr::core::vector3df rotation(direction.getHorizontalAngle());
-	m_Gravship->setRotation(irr::core::vector3df(m_Gravship->getSceneNode()->getRotation().X, m_Gravship->getSceneNode()->getRotation().Y, rotation.Y - rotation.X));
+	s_Gravship->setRotation(irr::core::vector3df(s_Gravship->getSceneNode()->getRotation().X, s_Gravship->getSceneNode()->getRotation().Y, rotation.Y - rotation.X));
 	std::cout << "xrotation = " << rotation.X << ", yrotation = " << rotation.Y << "\n";
 
-	m_Gravship->getPhysicsBody()->setVelocity(direction);
+	s_Gravship->getPhysicsBody()->setVelocity(direction);
 	if (up_momentum->isPressed()){
-		m_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(m_Gravship->getPhysicsBody()->getVelocity().X, 3.0f, 0.0f));
+		s_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(s_Gravship->getPhysicsBody()->getVelocity().X, 3.0f, 0.0f));
 	}
 	if(down_momentum->isPressed()){
-		m_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(m_Gravship->getPhysicsBody()->getVelocity().X, -3.0f, 0.0f));
+		s_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(s_Gravship->getPhysicsBody()->getVelocity().X, -3.0f, 0.0f));
 	}
 	if(right_momentum->isPressed()){
-		m_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(3.0f, m_Gravship->getPhysicsBody()->getVelocity().Y, 0.0f));
+		s_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(3.0f, s_Gravship->getPhysicsBody()->getVelocity().Y, 0.0f));
 	}
 	if(left_momentum->isPressed()){
-		m_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(-3.0f, m_Gravship->getPhysicsBody()->getVelocity().Y, 0.0f));
+		s_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(-3.0f, s_Gravship->getPhysicsBody()->getVelocity().Y, 0.0f));
 	}
 
 	if (resync->isPressed()){
@@ -243,17 +245,17 @@ void GameSystem::update() {
 
 	}	
 	if(gravityOn->isPressed()){
-		m_Gravship->enableGravityField(true);
+		s_Gravship->enableGravityField(true);
 	}
 	else{
-		m_Gravship->enableGravityField(false);
+		s_Gravship->enableGravityField(false);
 	}
 
 	if(reverseGravity->isPressed()){
-		m_Gravship->getHelper()->reverseGravityField(true);
+		s_Gravship->getHelper()->reverseGravityField(true);
 	}
 	else{
-		m_Gravship->getHelper()->reverseGravityField(false);
+		s_Gravship->getHelper()->reverseGravityField(false);
 	}
 
 }

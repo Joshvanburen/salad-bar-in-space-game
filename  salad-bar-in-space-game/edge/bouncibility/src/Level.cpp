@@ -1,14 +1,6 @@
 
-#include <irrlicht.h>
 #include "Common.h"
-#include "EntityManager.h"
-#include "irrnewt.hpp"
-#include "LevelManager.h"
-#include "WorldEntity.h"
-#include "PhysicsManager.h"
-#include "SoundManager.h"
-#include "irrlicht.h"
-#include "Level.h"
+#include "GameIncludes.h"
 
 //Irrlicht namespace and standard namespace
 using namespace irr;
@@ -34,7 +26,7 @@ Level::Level() : m_SceneNode(NULL), m_Mesh(NULL), m_Physics_Body(NULL){
 	m_MinY = 0;
 	m_MaxX = 0;
 	m_MaxY = 0;
-
+	m_Camera = NULL;
 }
 
 Level::~Level(){
@@ -58,6 +50,8 @@ void Level::shutdown(){
 		m_Physics_Body = NULL;
 	}
 	m_Status = Level::STOPPED;
+	
+	m_Camera->drop();
 }
 
 
@@ -104,6 +98,20 @@ bool Level::load(const std::string& LevelDefinition)
 				PhysicsManager::getSingleton().setGravity(xml->getAttributeValueAsFloat("gravity"));
 
 			}
+			else if (!strcmp("camera", xml->getNodeName())){
+				float xloc, yloc, zloc, xlook, ylook, zlook;
+				xloc = xml->getAttributeValueAsFloat("xloc");
+				yloc = xml->getAttributeValueAsFloat("yloc");
+				zloc = xml->getAttributeValueAsFloat("zloc");
+				xlook = xml->getAttributeValueAsFloat("xlook");
+				ylook = xml->getAttributeValueAsFloat("ylook");
+				zlook = xml->getAttributeValueAsFloat("zlook");
+				
+				m_Camera = LevelManager::getSingleton().getSceneManager()->addCameraSceneNode(0, irr::core::vector3df(xloc, yloc, zloc), irr::core::vector3df(xlook, ylook, zlook));
+				
+				
+			
+			}
 			else if (!strcmp("entity", xml->getNodeName())){
 				entityName = xml->getAttributeValue("name");
 				entityStartState = xml->getAttributeValue("startstate");
@@ -139,7 +147,7 @@ bool Level::load(const std::string& LevelDefinition)
 
 	mapData.Mesh = this->m_Mesh;
 
-	mapData.Type = newton::EBT_TREE;
+	mapData.Type = newton::EBT_TREE_TERRAIN;
 
 	m_Physics_Body = PhysicsManager::getSingleton().getPhysicsWorld()->createBody(mapData);
 

@@ -1,14 +1,5 @@
 #include "Common.h"
-#include "irrXML.h"	
-#include "EntityManager.h"
-#include "irrlicht.h"
-#include "Level.h"
-#include "irrnewt.hpp"
-#include "PhysicsManager.h"
-#include "SoundManager.h"
-#include "GameSystem.h"
-#include "ScriptManager.h"
-#include "LevelManager.h"
+#include "GameIncludes.h"
 
 
 using namespace irr;

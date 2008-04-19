@@ -1,16 +1,6 @@
-#include "irrlicht.h"
 #include "Common.h"
-#include "irrnewt.hpp"
-#include "LevelManager.h"
-#include "GameSystem.h"
-#include "Gravship.h"
-#include "EntityManager.h"
-#include "GravshipHelper.h"
-#include "PhysicsManager.h"
+#include "GameIncludes.h"
 
-#define MAXUINT     ((unsigned int)~((unsigned int)0))
-#define MAXINT      ((int)(MAXUINT >> 1))
-#define MININT      ((int)~MAXINT)
 
 void GravshipHelper::load(){
 	m_EmptyMaterial = PhysicsManager::getSingleton().getMaterial("empty");
@@ -62,7 +52,7 @@ void GravshipHelper::applyGravityToOrbitingEntities(){
 		//then they won't collide
 		irr::core::vector3df gravityForce(distance);
 		gravityForce.normalize();
-		gravityForce = gravityForce *  (this->m_GravitationalPull  / std::max(length, 1.0f)) / (*m_OrbitingEntitiesItr)->getPhysicsBody()->getMass();
+		gravityForce = gravityForce *  (this->m_GravitationalPull  / max(length, 1.0f)) / (*m_OrbitingEntitiesItr)->getPhysicsBody()->getMass();
 
 		if (this->m_GravitationalPull < 0){
 			//multiplier for reverse gravity
@@ -107,7 +97,7 @@ void GravshipHelper::updateOrbitingEntities(){
 		}
 		entities.erase((*m_OrbitingEntitiesItr)->getID());
 	}
-	entities.erase(GameSystem::getSingleton().getGravship()->getID());
+	entities.erase(GameSystem::getGravship()->getID());
 	for (m_EntityItr = entities.begin(); m_EntityItr != entities.end(); m_EntityItr++){
 
 		//Check if current entity is colliding with the gravity field radius.

@@ -1,1 +1,1 @@
-<enemy name="enemy" mesh="res/sydney.md2" texture="res/textures/blue_ball_texture.png" enable_physics="1" material="enemy" enable_gravity="1" radius="8.5" color="yellow" mass="1" ai="stupid"/>
+<enemy name="cat" mesh="./res/meshes/dogcatrat/cat.b3d" texture="res/textures/blue_ball_texture.png" enable_physics="1" material="enemy" enable_gravity="1" radius="8.5" color="yellow" mass="1" ai="stupid" scale="2.5" rotX="270" rotY="0" rotZ="90" max_speed="5"/>

@@ -67,7 +67,7 @@ class GameSystem : public CSingleton<GameSystem>
 		// Life variable
 		int m_Lives;
 
-		Gravship* m_Gravship;
+		static Gravship* s_Gravship;
 		// Current powers (for display in UI)
 		//vector<Power> powers;
 		/**** Time? ****/
@@ -98,10 +98,10 @@ class GameSystem : public CSingleton<GameSystem>
 		int m_CursorX;
 		int m_CursorY;
 
-		int m_MinX;
-		int m_MinY;
-		int m_MaxX;
-		int m_MaxY;
+		float m_MinX;
+		float m_MinY;
+		float m_MaxX;
+		float m_MaxY;
 
 		irr::scene::ICameraSceneNode* m_Camera; 
 			
@@ -111,9 +111,7 @@ class GameSystem : public CSingleton<GameSystem>
 		void update();
 		void startGame();
 		void recoverAfterLevelChange();
-		Gravship* getGravship(){
-			return m_Gravship;
-		}
+		static Gravship* getGravship();
 		void draw();
 		void shutdown();
 
