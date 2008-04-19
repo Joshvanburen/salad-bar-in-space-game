@@ -5,7 +5,7 @@
 #ifndef __I_IMAGE_H_INCLUDED__
 #define __I_IMAGE_H_INCLUDED__
 
-#include "IUnknown.h"
+#include "IReferenceCounted.h"
 #include "position2d.h"
 #include "SColor.h"
 
@@ -39,12 +39,12 @@ enum ECOLOR_FORMAT
 /** Image loaders create these images from files. IVideoDrivers convert
 these images into their (hardware) textures.
 */
-class IImage : public virtual IUnknown
+class IImage : public virtual IReferenceCounted
 {
 public:
 
 	//! destructor
-	virtual ~IImage() {};
+	virtual ~IImage() {}
 
 	//! Lock function. Use this to get a pointer to the image data. After you
 	//! don't need the pointer anymore, you must call unlock().

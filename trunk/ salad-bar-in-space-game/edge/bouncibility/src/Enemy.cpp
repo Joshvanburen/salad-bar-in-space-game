@@ -1,35 +1,21 @@
-#include "irrlicht.h"
-#include "irrnewt.hpp"
-#include "LevelManager.h"
-#include "Enemy.h"
-#include "PhysicsManager.h"
-#include "GameSystem.h"
-#include "Gravship.h"
-#include "WorldEntityAIManager.h"
+#include "Common.h"
+#include "GameIncludes.h"
+
 
 void Enemy::load(){
 
 }
 
 void Enemy::update(){
-	const irr::core::vector3df position  = this->m_Physics_Body->getPosition();
+	WorldEntity::update();
 
-	this->m_Physics_Body->setPosition(irr::core::vector3df(position.X,position.Y, 0));
 	//this->m_Physics_Body->setVelocity(this->velocity);
 
-		
-	//irr::core::vector3df vel = this->m_Physics_Body->getVelocity();
-	//float spd = vel.getLengthSQ;
-	//if (spd == 1.0 || spd == 0 || timer > 1000) {
-	if (timer > 1000) {
+	if (m_EnableMovement){
 		ai_script->callFunction(this);
+	}
 
-		if (timer > 1000)
-			timer = 0;
-	}
-	else {
-		timer++;
-	}
+
 }
 
 WorldEntity* Enemy::clone(){
@@ -141,11 +127,16 @@ void Enemy::moveToPlayer(){
 	conn = conn.normalize();
 
 	//irr::core::vector3df vel = this->m_Physics_Body->getVelocity();
-	float spd = 1;
+	float spd = 75;
 	conn = conn * spd;
 
-	this->m_Physics_Body->setVelocity(conn);
 
+	this->m_Physics_Body->addForce(conn);
+
+	irr::core::vector3df velocity = this->m_Physics_Body->getVelocity();
+	if (velocity.getLengthSQ() > m_MaxSpeedSQ){
+		this->m_Physics_Body->setVelocity(velocity.normalize() * m_MaxSpeed);
+	}
 }
 
 //void Enemy::moveRandomly(){
@@ -154,7 +145,7 @@ void Enemy::moveToPlayer(){
 //
 //}
 //
-Enemy::Enemy() {
+Enemy::Enemy() : WorldEntity(){
 	color = '0';
 	timer = 0;
 }

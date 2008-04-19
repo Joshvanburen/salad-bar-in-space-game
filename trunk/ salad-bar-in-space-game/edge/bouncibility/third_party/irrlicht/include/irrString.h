@@ -24,7 +24,7 @@ so you can assign unicode to string<c8> and ascii to string<wchar_t>
 Note that the conversation between both is not done using an encoding.
 
 Known bugs:
-Special characters like 'Ä', 'Ü' and 'Ö' are ignored in the
+Special characters like umlauts are ignored in the
 methods make_upper, make_lower and equals_ignore_case.
 */
 template <typename T, typename TAlloc = irrAllocator<T> >
@@ -267,12 +267,18 @@ public:
 	}
 
 
-
 	//! Direct access operator
-	T& operator [](const u32 index) const
+	T& operator [](const u32 index)
 	{
 		_IRR_DEBUG_BREAK_IF(index>=used) // bad index
+		return array[index];
+	}
 
+
+	//! Direct access operator
+	const T& operator [](const u32 index) const
+	{
+		_IRR_DEBUG_BREAK_IF(index>=used) // bad index
 		return array[index];
 	}
 
@@ -857,7 +863,7 @@ private:
 
 
 //! Typedef for character strings
-typedef string<irr::c8> stringc;
+typedef string<c8> stringc;
 
 //! Typedef for wide character strings
 typedef string<wchar_t> stringw;

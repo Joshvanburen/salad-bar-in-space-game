@@ -25,9 +25,6 @@ namespace scene
 			#endif
 		}
 
-		//! destructor
-		~CMeshBuffer() {}; 
-
 		//! returns the material of this meshbuffer
 		virtual const video::SMaterial& getMaterial() const
 		{
@@ -108,10 +105,45 @@ namespace scene
 			return T().getType();
 		}
 
-		//! returns the byte size (stride, pitch) of the vertex
-		virtual u32 getVertexPitch() const
+	
+		//! append the vertices and indices to the current buffer
+		virtual void append(const void* const vertices, u32 numVertices, const u16* const indices, u32 numIndices)
 		{
-			return sizeof ( T );
+			const u32 vertexCount = getVertexCount();
+			u32 i;
+
+			Vertices.reallocate(vertexCount+numVertices);
+			for (i=0; i<numVertices; ++i)
+			{
+				Vertices.push_back(reinterpret_cast<const T*>(vertices)[i]);
+				BoundingBox.addInternalPoint(reinterpret_cast<const T*>(vertices)[i].Pos);
+			}
+
+			Indices.reallocate(getIndexCount()+numIndices);
+			for (i=0; i<numIndices; ++i)
+			{
+				Indices.push_back(indices[i]+vertexCount);
+			}
+		}
+
+		//! append the meshbuffer to the current buffer
+		virtual void append(const IMeshBuffer* const other)
+		{
+			const u32 vertexCount = getVertexCount();
+			u32 i;
+
+			Vertices.reallocate(vertexCount+other->getVertexCount());
+			for (i=0; i<other->getVertexCount(); ++i)
+			{
+				Vertices.push_back(reinterpret_cast<const T*>(other->getVertices())[i]);
+			}
+
+			Indices.reallocate(getIndexCount()+other->getIndexCount());
+			for (i=0; i<other->getIndexCount(); ++i)
+			{
+				Indices.push_back(other->getIndices()[i]+vertexCount);
+			}
+			BoundingBox.addInternalBox(other->getBoundingBox());
 		}
 
 		//! Material for this meshbuffer.

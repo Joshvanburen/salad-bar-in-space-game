@@ -18,14 +18,9 @@ namespace core
 	{
 	public:
 
-#ifdef IRRLICHT_FAST_MATH
-		vector3d() {};
-#else
-		vector3d() : X(0), Y(0), Z(0) {};
-#endif
-
-		vector3d(T nx, T ny, T nz) : X(nx), Y(ny), Z(nz) {};
-		vector3d(const vector3d<T>& other) : X(other.X), Y(other.Y), Z(other.Z) {};
+		vector3d() : X(0), Y(0), Z(0) {}
+		vector3d(T nx, T ny, T nz) : X(nx), Y(ny), Z(nz) {}
+		vector3d(const vector3d<T>& other) : X(other.X), Y(other.Y), Z(other.Z) {}
 
 		// operators
 
@@ -60,22 +55,18 @@ namespace core
 
 		bool operator==(const vector3d<T>& other) const
 		{
-			return core::equals(X, other.X) &&
-				core::equals(Y, other.Y) &&
-				core::equals(Z, other.Z);
+			return this->equals(other);
 		}
 
 		bool operator!=(const vector3d<T>& other) const
 		{
-			return !core::equals(X, other.X) ||
-				!core::equals(Y, other.Y) ||
-				!core::equals(Z, other.Z);
+			return !this->equals(other);
 		}
 
 		// functions
 
 		//! returns if this vector equals the other one, taking floating point rounding errors into account
-		bool equals(const vector3d<T>& other, const f32 tolerance = ROUNDING_ERROR_32 ) const
+		bool equals(const vector3d<T>& other, const T tolerance = (T)ROUNDING_ERROR_32 ) const
 		{
 			return core::equals(X, other.X, tolerance) &&
 				core::equals(Y, other.Y, tolerance) &&
@@ -86,7 +77,7 @@ namespace core
 		void set(const vector3d<T>& p) { X=p.X; Y=p.Y; Z=p.Z;}
 
 		//! Returns length of the vector.
-		T getLength() const { return (T) sqrt(X*X + Y*Y + Z*Z); }
+		T getLength() const { return (T) sqrt((f64)(X*X + Y*Y + Z*Z)); }
 
 		//! Returns squared length of the vector.
 		/** This is useful because it is much faster than
@@ -251,7 +242,7 @@ namespace core
 			if (angle.Y < 0.0f) angle.Y += 360.0f;
 			if (angle.Y >= 360.0f) angle.Y -= 360.0f;
 
-			f32 z1 = (f32)sqrt(X*X + Z*Z);
+			f32 z1 = sqrtf(X*X + Z*Z);
 
 			angle.X = (T)atan2(z1, Y);
 			angle.X *= (f32)RADTODEG64;

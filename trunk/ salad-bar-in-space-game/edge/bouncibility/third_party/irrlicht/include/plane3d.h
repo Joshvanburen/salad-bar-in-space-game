@@ -31,15 +31,15 @@ class plane3d
 
 		// Constructors
 
-		plane3d(): Normal(0,1,0) { recalculateD(vector3d<T>(0,0,0)); };
-		plane3d(const vector3d<T>& MPoint, const vector3d<T>& Normal) : Normal(Normal) { recalculateD(MPoint); };
-		plane3d(T px, T py, T pz, T nx, T ny, T nz) : Normal(nx, ny, nz) { recalculateD(vector3d<T>(px, py, pz)); };
-		plane3d(const vector3d<T>& point1, const vector3d<T>& point2, const vector3d<T>& point3) { setPlane(point1, point2, point3); };
+		plane3d(): Normal(0,1,0) { recalculateD(vector3d<T>(0,0,0)); }
+		plane3d(const vector3d<T>& MPoint, const vector3d<T>& Normal) : Normal(Normal) { recalculateD(MPoint); }
+		plane3d(T px, T py, T pz, T nx, T ny, T nz) : Normal(nx, ny, nz) { recalculateD(vector3d<T>(px, py, pz)); }
+		plane3d(const vector3d<T>& point1, const vector3d<T>& point2, const vector3d<T>& point3) { setPlane(point1, point2, point3); }
 
 		// operators
 
-		inline bool operator==(const plane3d<T>& other) const { return (D==other.D && Normal==other.Normal);};
-		inline bool operator!=(const plane3d<T>& other) const { return !(D==other.D && Normal==other.Normal);};
+		inline bool operator==(const plane3d<T>& other) const { return (D==other.D && Normal==other.Normal);}
+		inline bool operator!=(const plane3d<T>& other) const { return !(D==other.D && Normal==other.Normal);}
 
 		// functions
 
@@ -102,11 +102,13 @@ class plane3d
 		//! \param linePoint2: Point 2 of the line.
 		//! \param outIntersection: Place to store the intersection point, if there is one.
 		//! \return Returns true if there was an intersection, false if there was not.
-		bool getIntersectionWithLimitedLine(const vector3d<T>& linePoint1,
-					const vector3d<T>& linePoint2, vector3d<T>& outIntersection) const
+		bool getIntersectionWithLimitedLine(
+				const vector3d<T>& linePoint1,
+				const vector3d<T>& linePoint2,
+				vector3d<T>& outIntersection) const
 		{
-			return (	getIntersectionWithLine(linePoint1, linePoint2 - linePoint1, outIntersection) &&
-						outIntersection.isBetweenPoints(linePoint1, linePoint2));
+			return (getIntersectionWithLine(linePoint1, linePoint2 - linePoint1, outIntersection) &&
+					outIntersection.isBetweenPoints(linePoint1, linePoint2));
 		}
 
 		//! Classifies the relation of a point to this plane.

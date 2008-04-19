@@ -10,6 +10,7 @@
 #include "ITexture.h"
 #include "irrArray.h"
 #include "matrix4.h"
+#include "plane3d.h"
 #include "dimension2d.h"
 #include "position2d.h"
 #include "SMaterial.h"
@@ -72,7 +73,7 @@ namespace video
 	provides a lot of powerful classes and methods to make the programmers life
 	easier.
 	*/
-	class IVideoDriver : public virtual IUnknown
+	class IVideoDriver : public virtual IReferenceCounted
 	{
 	public:
 
@@ -105,7 +106,7 @@ namespace video
 		/** Returns true if a feature is available
 		\param feature: A feature to query.
 		\return Returns true if the feature is available, false if not. */
-		virtual bool queryFeature(E_VIDEO_DRIVER_FEATURE feature) = 0;
+		virtual bool queryFeature(E_VIDEO_DRIVER_FEATURE feature) const = 0;
 
 		//! Sets the view, world or projection transformation.
 		/* \param state: Transformation type to be set. Can be view, world or projection.
@@ -113,48 +114,33 @@ namespace video
 		virtual void setTransform(E_TRANSFORMATION_STATE state, const core::matrix4& mat) = 0;
 
 		//! Returns the transformation set by setTransform
-		virtual const core::matrix4& getTransform(E_TRANSFORMATION_STATE state) = 0;
+		virtual const core::matrix4& getTransform(E_TRANSFORMATION_STATE state) const = 0;
 
 		//! Sets a material.
-		/** All 3d drawing functions draw geometry now
-		using this material.
+		/** All 3d drawing functions will draw geometry using this material.
 		\param material: Material to be used from now on. */
 		virtual void setMaterial(const SMaterial& material) = 0;
 
 		//! Returns a pointer to a texture.
-		/** Loads the texture if it is not
-		already loaded, and generates mipmap levels if desired.
-		You can influence how the texture is loaded using the setTextureCreationFlag()
-		method.
+		/** Loads the texture from disk if it is not
+		already loaded and generates mipmap levels if desired.
+		Texture loading can be influenced using the setTextureCreationFlag() method.
 		The texture can be in BMP, JPG, TGA, PCX, PNG, and PSD format.
-		For loading BMP, TGA, PCX, and PSD files the engine uses its own methods.
-		PCX loading is based on some code by Dean P. Macri, PNG loading
-		is done using a loader by rt.
-		For loading JPG-Files the JPEG LIB 6b, written by
-		The Independent JPEG Group is used. For PNG loading,
-		libPNG is used. Thanx for such great libraries!
 		\param filename: Filename of the texture to be loaded.
-		\return Returns a pointer to the texture and 0 if the texture
+		\return Returns a pointer to the texture or 0 if the texture
 		could not be loaded.
-		This pointer should not be dropped. See IUnknown::drop() for more information.*/
+		This pointer should not be dropped. See IReferenceCounted::drop() for more information.*/
 		virtual ITexture* getTexture(const c8* filename) = 0;
 
 		//! Returns a pointer to a texture.
-		/** Loads the texture if it is not
-		already loaded, and generates mipmap levels if desired.
-		You can influence how the texture is loaded using the setTextureCreationFlag()
-		method.
+		/** Loads the texture from disk if it is not
+		already loaded and generates mipmap levels if desired.
+		Texture loading can be influenced using the setTextureCreationFlag() method.
 		The texture can be in BMP, JPG, TGA, PCX, PNG, and PSD format.
-		For loading BMP, TGA, PCX, and PSD files the engine uses its own methods.
-		PCX loading is based on some code by Dean P. Macri, PNG loading
-		is done using a loader by rt.
-		For loading JPG-Files the JPEG LIB 6b, written by
-		The Independent JPEG Group is used. For PNG loading,
-		libPNG is used. Thanx for such great libraries!
 		\param file: Pointer to an already opened file.
-		\return Returns a pointer to the texture and 0 if the texture
+		\return Returns a pointer to the texture or 0 if the texture
 		could not be loaded.
-		This pointer should not be dropped. See IUnknown::drop() for more information.*/
+		This pointer should not be dropped. See IReferenceCounted::drop() for more information.*/
 		virtual ITexture* getTexture(io::IReadFile* file) = 0;
 
 		//! Returns a texture by index
@@ -164,7 +150,7 @@ namespace video
 		virtual ITexture* getTextureByIndex(u32 index) = 0;
 
 		//! Returns amount of textures currently loaded
-		virtual s32 getTextureCount() = 0;
+		virtual u32 getTextureCount() const = 0;
 
 		//! Renames a texture
 		virtual void renameTexture(ITexture* texture, const c8* newName) = 0;
@@ -175,8 +161,8 @@ namespace video
 		will return this texture
 		\param format: Desired color format of the texture. Please note that
 		the driver may choose to create the texture in another color format.
-		\return Returns a pointer to the new created Texture.
-		This pointer should not be dropped. See IUnknown::drop() for more information. */
+		\return Returns a pointer to the newly created texture.
+		This pointer should not be dropped. See IReferenceCounted::drop() for more information. */
 		virtual ITexture* addTexture(const core::dimension2d<s32>& size,
 			const c8* name, ECOLOR_FORMAT format = ECF_A8R8G8B8) = 0;
 
@@ -185,7 +171,7 @@ namespace video
 		 will return this texture
 		\param image: Image the texture is created from.
 		\return Returns a pointer to the newly created Texture.
-		This pointer should not be dropped. See IUnknown::drop() for more information. */
+		This pointer should not be dropped. See IReferenceCounted::drop() for more information. */
 		virtual ITexture* addTexture(const c8* name, IImage* image) = 0;
 
 		//! Creates a render target texture.
@@ -195,56 +181,54 @@ namespace video
 		screen buffer.
 		\return Returns a pointer to the created texture or 0 if the texture could not
 		be created. If you no longer need the image, you should call ITexture::drop().
-		See IUnknown::drop() for more information. */
-		virtual ITexture* createRenderTargetTexture(const core::dimension2d<s32>& size) = 0;
+		See IReferenceCounted::drop() for more information. */
+		virtual ITexture* createRenderTargetTexture(const core::dimension2d<s32>& size, const c8* name = 0) = 0;
 
 		//! Removes a texture from the texture cache and deletes it, freeing lot of memory.
 		/** Please note that after calling this, the pointer to the ITexture
 		may not be longer valid, if it was not grabbed before by other parts of
 		the engine for storing it longer. So it would be a good idea to set all
-		materials which are using this texture to null or another texture first.
-		\param texture: Texture to delete from the engines cache. */
+		materials which are using this texture to 0 or another texture first.
+		\param texture: Texture to delete from the engine cache. */
 		virtual void removeTexture(ITexture* texture) = 0;
 
-		//! Removes all texture from the texture cache and deletes them, freeing lot of	memory.
+		//! Removes all textures from the texture cache and deletes them, freeing lot of memory.
 		/** Please note that after calling this, the pointer to all ITextures
 		may not be longer valid, if they were not grabbed before by other parts of
 		the engine for storing them longer. So it would be a good idea to set all
-		materials which are using textures to null first. */
+		materials which are using textures to 0 first. */
 		virtual void removeAllTextures() = 0;
 
-		//! Creates an 1bit alpha channel of the texture based of an color key.
+		//! Creates a 1bit alpha channel of the texture based of an color key.
 		/** This makes the texture transparent at the regions where this color
 		key can be found when using for example draw2DImage with useAlphachannel
 		= true.
-		\param texture: Texture of which its alpha channel is modified.
-		\param color: Color key color. Every pixel with this color will get transparent
-		like described above. Please note that the colors of a texture may get
+		\param texture: Texture whose alpha channel is modified.
+		\param color: Color key color. Every pixel with this color will become transparent
+		as described above. Please note that the colors of a texture may be
 		converted when loading it, so the color values may not be exactly the same
 		in the engine and for example in picture edit programs. To avoid this
 		problem, you could use the makeColorKeyTexture method, which takes the position
 		of a pixel instead a color value. */
-		virtual void makeColorKeyTexture(video::ITexture* texture, video::SColor color) = 0;
+		virtual void makeColorKeyTexture(video::ITexture* texture, video::SColor color) const = 0;
 
-		//! Creates an 1bit alpha channel of the texture based of an color key position.
+		//! Creates a 1bit alpha channel of the texture based of an color key position.
 		/** This makes the texture transparent at the regions where this color
-		key can be found when using for example draw2DImage with useAlphachannel
-		= true.
-		\param texture: Texture of which its alpha channel is modified.
+		key can be found when using for example draw2DImage with useAlphachannel=true.
+		\param texture: Texture whose alpha channel is modified.
 		\param colorKeyPixelPos: Position of a pixel with the color key color.
-		Every pixel with this color will get transparent
-		like described above. */
+		Every pixel with this color will become transparent as described above. */
 		virtual void makeColorKeyTexture(video::ITexture* texture,
-			core::position2d<s32> colorKeyPixelPos) = 0;
+			core::position2d<s32> colorKeyPixelPos) const = 0;
 
 		//! Creates a normal map from a height map texture.
 		/** If the target texture
 		has 32 bit, the height value is stored in the alpha component of the texture as
-		addition. This value will be used by the video::EMT_PARALLAX_MAP_SOLID
-		material and similar  materials.
-		\param texture: Texture of which its alpha channel is modified.
+		addition. This value is used by the video::EMT_PARALLAX_MAP_SOLID
+		material and similar materials.
+		\param texture: Texture whose alpha channel is modified.
 		\param amplitude: Constant value by which the height information is multiplied.*/
-		virtual void makeNormalMapTexture(video::ITexture* texture, f32 amplitude=1.0f) = 0;
+		virtual void makeNormalMapTexture(video::ITexture* texture, f32 amplitude=1.0f) const = 0;
 
 		//! Sets a new render target.
 		/** This will only work if the driver
@@ -286,7 +270,7 @@ namespace video
 		virtual void setViewPort(const core::rect<s32>& area) = 0;
 
 		//! Gets the area of the current viewport.
-		/** \return Returns rectangle of the current vieport. */
+		/** \return Returns rectangle of the current viewport. */
 		virtual const core::rect<s32>& getViewPort() const = 0;
 
 		//! draws a vertex primitive list
@@ -296,7 +280,7 @@ namespace video
 		results of this operation are not defined.
 		\param vertices: Pointer to array of vertices.
 		\param vertexCount: Amount of vertices in the array.
-		\param indexList: Pointer to array of indizes.
+		\param indexList: Pointer to array of indices.
 		\param triangleCount: amount of Triangles.
 		\param vType: Vertex type, e.g. EVT_STANDARD for S3DVertex.
 		\param pType: Primitive type, e.g. EPT_TRIANGLE_FAN for a triangle fan. */
@@ -309,8 +293,8 @@ namespace video
 		results of this operation are not defined.
 		\param vertices: Pointer to array of vertices.
 		\param vertexCount: Amount of vertices in the array.
-		\param indexList: Pointer to array of indizes.
-		\param triangleCount: amount of Triangles. Usually amount of indizes / 3. */
+		\param indexList: Pointer to array of indices.
+		\param triangleCount: amount of Triangles. Usually amount of indices / 3. */
 		virtual void drawIndexedTriangleList(const S3DVertex* vertices,
 			u32 vertexCount, const u16* indexList, u32 triangleCount) = 0;
 
@@ -321,8 +305,8 @@ namespace video
 		results of this operation are not defined.
 		\param vertices: Pointer to array of vertices.
 		\param vertexCount: Amount of vertices in the array.
-		\param indexList: Pointer to array of indizes.
-		\param triangleCount: amount of Triangles. Usually amount of indizes / 3.*/
+		\param indexList: Pointer to array of indices.
+		\param triangleCount: amount of Triangles. Usually amount of indices / 3.*/
 		virtual void drawIndexedTriangleList(const S3DVertex2TCoords* vertices,
 			u32 vertexCount, const u16* indexList, u32 triangleCount) = 0;
 
@@ -333,8 +317,8 @@ namespace video
 		results of this operation are not defined.
 		\param vertices: Pointer to array of vertices.
 		\param vertexCount: Amount of vertices in the array.
-		\param indexList: Pointer to array of indizes.
-		\param triangleCount: amount of Triangles. Usually amount of indizes / 3. */
+		\param indexList: Pointer to array of indices.
+		\param triangleCount: amount of Triangles. Usually amount of indices / 3. */
 		virtual void drawIndexedTriangleList(const S3DVertexTangents* vertices,
 			u32 vertexCount, const u16* indexList, u32 triangleCount) = 0;
 
@@ -347,8 +331,8 @@ namespace video
 		free code sent in by Mario Gruber, lots of thanks go to him!
 		\param vertices: Pointer to array of vertices.
 		\param vertexCount: Amount of vertices in the array.
-		\param indexList: Pointer to array of indizes.
-		\param triangleCount: amount of Triangles. Usually amount of indizes - 2. */
+		\param indexList: Pointer to array of indices.
+		\param triangleCount: amount of Triangles. Usually amount of indices - 2. */
 		virtual void drawIndexedTriangleFan(const S3DVertex* vertices,
 			u32 vertexCount, const u16* indexList, u32 triangleCount) = 0;
 
@@ -361,21 +345,22 @@ namespace video
 		free code sent in by Mario Gruber, lots of thanks go to him!
 		\param vertices: Pointer to array of vertices.
 		\param vertexCount: Amount of vertices in the array.
-		\param indexList: Pointer to array of indizes.
-		\param triangleCount: amount of Triangles. Usually amount of indizes - 2. */
+		\param indexList: Pointer to array of indices.
+		\param triangleCount: amount of Triangles. Usually amount of indices - 2. */
 		virtual void drawIndexedTriangleFan(const S3DVertex2TCoords* vertices,
 			u32 vertexCount, const u16* indexList, u32 triangleCount) = 0;
 
 		//! Draws a 3d line.
-		/** For some implementations, this method simply calls drawIndexedTriangles with some
-		triangles. Note that the line is drawn using the current transformation
-		matrix and material. So if you need to draw the 3D line independently of the
-		current transformation, use
+		/** For some implementations, this method simply calls
+		drawIndexedTriangles for some triangles.
+		Note that the line is drawn using the current transformation
+		matrix and material. So if you need to draw the 3D line
+		independently of the current transformation, use
 		\code
+		driver->setMaterial(unlitMaterial);
 		driver->setTransform(video::ETS_WORLD, core::matrix4());
 		\endcode
-		before drawing the line.
-		This method was created for making culling debugging easier.
+		for some properly set up material before drawing the line.
 		\param start: Start of the 3d line.
 		\param end: End of the 3d line.
 		\param color: Color of the line.  */
@@ -383,33 +368,44 @@ namespace video
 			const core::vector3df& end, SColor color = SColor(255,255,255,255)) = 0;
 
 		//! Draws a 3d triangle.
-		/** This method usually simply calls drawIndexedTriangles with some
-		triangles. Note that the line is drawn using the current transformation
-		matrix and material.
-		This method was created for making collision debugging easier. It works with
-		all drivers because it does simply a call to drawIndexedTriangleList and
-		hence is not very fast but it might be useful for further development.
+		/** This method calls drawIndexedTriangles for some triangles.
+		This method works with all drivers because it simply calls
+		drawIndexedTriangleList but is hence not very fast.
+		Note that the triangle is drawn using the current
+		transformation matrix and material. So if you need to draw it
+		independently of the current transformation, use
+		\code
+		driver->setMaterial(unlitMaterial);
+		driver->setTransform(video::ETS_WORLD, core::matrix4());
+		\endcode
+		for some properly set up material before drawing the triangle.
 		\param triangle: The triangle to draw.
 		\param color: Color of the line. */
 		virtual void draw3DTriangle(const core::triangle3df& triangle,
 			SColor color = SColor(255,255,255,255)) = 0;
 
 		//! Draws a 3d axis aligned box.
-		/** This method usually simply calls drawIndexedTriangles with some
-		triangles. Note that the line is drawn using the current transformation
-		matrix and material.
-		This method was created for making culling debugging easier. It works with
-		all drivers because it does simply a call to drawIndexedTriangleList and
-		hence is not very fast but it might be useful for further development.
+		/** This method simply calls drawIndexedTriangles for some
+		triangles. This method works with all drivers because it
+		simply calls drawIndexedTriangleList but is hence not very
+		fast.
+		Note that the box is drawn using the current transformation
+		matrix and material. So if you need to draw it independently of
+		the current transformation, use
+		\code
+		driver->setMaterial(unlitMaterial);
+		driver->setTransform(video::ETS_WORLD, core::matrix4());
+		\endcode
+		for some properly set up material before drawing the box.
 		\param box: The axis aligned box to draw
 		\param color: Color to use while drawing the box. */
 		virtual void draw3DBox(const core::aabbox3d<f32>& box,
 			SColor color = SColor(255,255,255,255)) = 0;
 
-		//! Simply draws a 2d image without any special effects
+		//! Draws a 2d image without any special effects
 		/** \param texture: Pointer to texture to use.
 		\param destPos: upper left 2d destination position where the image will be drawn. */
-		virtual void draw2DImage(video::ITexture* texture,
+		virtual void draw2DImage(const video::ITexture* texture,
 			const core::position2d<s32>& destPos) = 0;
 
 		//! Draws a 2d image using a color
@@ -425,7 +421,7 @@ namespace video
 		is used: If alpha is other than 255, the image will be transparent.
 		\param useAlphaChannelOfTexture: If true, the alpha channel of the texture is
 		used to draw the image.*/
-		virtual void draw2DImage(video::ITexture* texture, const core::position2d<s32>& destPos,
+		virtual void draw2DImage(const video::ITexture* texture, const core::position2d<s32>& destPos,
 			const core::rect<s32>& sourceRect, const core::rect<s32>* clipRect = 0,
 			SColor color=SColor(255,255,255,255), bool useAlphaChannelOfTexture=false) = 0;
 
@@ -446,7 +442,7 @@ namespace video
 		Note that the alpha component is used: If alpha is other than 255, the image will be transparent.
 		\param useAlphaChannelOfTexture: If true, the alpha channel of the texture is
 		used to draw the image. */
-		virtual void draw2DImage(video::ITexture* texture,
+		virtual void draw2DImage(const video::ITexture* texture,
 				const core::position2d<s32>& pos,
 				const core::array<core::rect<s32> >& sourceRects,
 				const core::array<s32>& indices,
@@ -463,7 +459,7 @@ namespace video
 		\param clipRect: clips the destination rectangle (may be 0)
 		\param colors: array of 4 colors denoting the color values of the corners of the destRect
 		\param useAlphaChannelOfTexture: true if alpha channel will be blended. */
-		virtual void draw2DImage(video::ITexture* texture, const core::rect<s32>& destRect,
+		virtual void draw2DImage(const video::ITexture* texture, const core::rect<s32>& destRect,
 			const core::rect<s32>& sourceRect, const core::rect<s32>* clipRect = 0,
 			video::SColor* colors=0, bool useAlphaChannelOfTexture=false) = 0;
 
@@ -566,54 +562,48 @@ namespace video
 
 		//! Returns the size of the screen or render window.
 		/** \return Size of screen or render window. */
-		virtual core::dimension2d<s32> getScreenSize() = 0;
+		virtual const core::dimension2d<s32>& getScreenSize() const = 0;
 
 		//! Returns the size of the current render target, or the screen size if the driver 
 		//! doesnt support render to texture
 		/** \return Size of render target or screen/window */
-		virtual core::dimension2d<s32> getCurrentRenderTargetSize() = 0;
+		virtual const core::dimension2d<s32>& getCurrentRenderTargetSize() const = 0;
 
 
 		//! Returns current frames per second value.
 		/** \return Returns amount of frames per second drawn. **/
-		virtual s32 getFPS() = 0;
+		virtual s32 getFPS() const = 0;
 
 		//! Returns amount of primitives (mostly triangles) which were drawn in the last frame.
 		/** Together with getFPS() very useful method for statistics.
 		\return Amount of primitives drawn in the last frame. */
-		virtual u32 getPrimitiveCountDrawn( u32 param = 0 ) = 0;
+		virtual u32 getPrimitiveCountDrawn( u32 param = 0 ) const = 0;
 
 		//! Deletes all dynamic lights which were previously added with addDynamicLight().
 		virtual void deleteAllDynamicLights() = 0;
 
 		//! Adds a dynamic light.
-		/** \param light: Data specifing the dynamic light. */
+		/** \param light: Data specifying the dynamic light. */
 		virtual void addDynamicLight(const SLight& light) = 0;
-
-		//! Sets the dynamic ambient light color.
-		/** The default color is
-		(0,0,0,0) which means it is dark.
-		\param color: New color of the ambient light. */
-		virtual void setAmbientLight(const SColorf& color) = 0;
 
 		//! Returns the maximal amount of dynamic lights the device can handle
 		/** \return Maximal amount of dynamic lights. */
-		virtual u32 getMaximalDynamicLightAmount() = 0;
+		virtual u32 getMaximalDynamicLightAmount() const = 0;
 
 		//! Returns current amount of dynamic lights set
 		/** \return Current amount of dynamic lights set */
-		virtual u32 getDynamicLightCount() = 0;
+		virtual u32 getDynamicLightCount() const = 0;
 
-		//! Returns light data which was previously set with IVideDriver::addDynamicLight().
-		/** \param idx: Zero based index of the light. Must be greater than 0 and smaller
+		//! Returns light data which was previously set by IVideoDriver::addDynamicLight().
+		/** \param idx: Zero based index of the light. Must be 0 or greater and smaller
 		than IVideoDriver()::getDynamicLightCount.
 		\return Light data. */
-		virtual const SLight& getDynamicLight(u32 idx) = 0;
+		virtual const SLight& getDynamicLight(u32 idx) const = 0;
 
 		//! Gets name of this video driver.
 		/** \return Returns the name of the video driver. Example: In case of the Direct3D8
 		driver, it would return "Direct3D 8.1". */
-		virtual const wchar_t* getName() = 0;
+		virtual const wchar_t* getName() const = 0;
 
 		//! Adds an external image loader to the engine.
 		/** This is useful if
@@ -637,7 +627,7 @@ namespace video
 		/** (mostly vertices) which
 		the device is able to render with one drawIndexedTriangleList
 		call. */
-		virtual u32 getMaximalPrimitiveCount() = 0;
+		virtual u32 getMaximalPrimitiveCount() const = 0;
 
 		//! Enables or disables a texture creation flag.
 		/** This flag defines how
@@ -654,7 +644,7 @@ namespace video
 		/** You can change this value using setTextureCreationMode().
 		\param flag: Texture creation flag.
 		\return Returns the current texture creation mode. */
-		virtual bool getTextureCreationFlag(E_TEXTURE_CREATION_FLAG flag) = 0;
+		virtual bool getTextureCreationFlag(E_TEXTURE_CREATION_FLAG flag) const = 0;
 
 		//! Creates a software image from a file.
 		/** No hardware texture will
@@ -663,7 +653,7 @@ namespace video
 		\param filename: Name of the file from which the image is created.
 		\return Returns the created image.
 		If you no longer need the image, you should call IImage::drop().
-		See IUnknown::drop() for more information. */
+		See IReferenceCounted::drop() for more information. */
 		virtual IImage* createImageFromFile(const c8* filename) = 0;
 
 		//! Creates a software image from a file.
@@ -673,7 +663,7 @@ namespace video
 		\param file: File from which the image is created.
 		\return Returns the created image.
 		If you no longer need the image, you should call IImage::drop().
-		See IUnknown::drop() for more information. */
+		See IReferenceCounted::drop() for more information. */
 		virtual IImage* createImageFromFile(io::IReadFile* file) = 0;
 
 		//! Writes the provided image to disk file
@@ -698,7 +688,7 @@ namespace video
 		\param deleteMemory: Whether the memory is deallocated upon destruction
 		\return Returns the created image.
 		If you no longer need the image, you should call IImage::drop().
-		See IUnknown::drop() for more information. */
+		See IReferenceCounted::drop() for more information. */
 		virtual IImage* createImageFromData(ECOLOR_FORMAT format,
 			const core::dimension2d<s32>& size, void *data,
 			bool ownForeignMemory=false,
@@ -736,7 +726,7 @@ namespace video
 		virtual IMaterialRenderer* getMaterialRenderer(u32 idx) = 0;
 
 		//! Returns amount of currently available material renderers.
-		virtual u32 getMaterialRendererCount() = 0;
+		virtual u32 getMaterialRendererCount() const = 0;
 
 		//! Returns name of the material renderer
 		/** This string can for example be used to test if a specific renderer already has
@@ -744,7 +734,7 @@ namespace video
 		returned name will be also used when serializing Materials.
 		\param idx: Id of the material renderer. Can be a value of the E_MATERIAL_TYPE enum or a
 		value which was returned by addMaterialRenderer(). */
-		virtual const c8* getMaterialRendererName(u32 idx) = 0;
+		virtual const c8* getMaterialRendererName(u32 idx) const = 0;
 
 		//! Sets the name of a material renderer.
 		/** Will have no effect on built-in material renderers.
@@ -770,7 +760,7 @@ namespace video
 		virtual const SExposedVideoData& getExposedVideoData() = 0;
 
 		//! Returns type of video driver
-		virtual E_DRIVER_TYPE getDriverType() = 0;
+		virtual E_DRIVER_TYPE getDriverType() const = 0;
 
 		//! Returns pointer to the IGPUProgrammingServices interface.
 		/** Returns 0 if the
@@ -788,6 +778,29 @@ namespace video
 
 		//! Returns an image created from the last rendered frame.
 		virtual IImage* createScreenShot() = 0;
+
+		//! looks if the image is already loaded
+		virtual video::ITexture* findTexture(const c8* filename) = 0;
+
+		//! Set/unset a clipping plane.
+		//! There are at least 6 clipping planes available for the user to set at will.
+		//! \param index: The plane index. Must be between 0 and MaxUserClipPlanes.
+		//! \param plane: The plane itself.
+		//! \param enable: If true, enable the clipping plane else disable it.
+		//! \return Returns true if the clipping plane is usable.
+		virtual bool setClipPlane(u32 index, const core::plane3df& plane, bool enable=false) = 0;
+
+		//! Enable/disable a clipping plane.
+		//! There are at least 6 clipping planes available for the user to set at will.
+		//! \param index: The plane index. Must be between 0 and MaxUserClipPlanes.
+		//! \param enable: If true, enable the clipping plane else disable it.
+		virtual void enableClipPlane(u32 index, bool enable) = 0;
+
+		//! Sets the driver's ambient light color.
+		/** This color is set in the scene manager, see ISceneManager.h.
+		\param color: New color of the ambient light. */
+		virtual void setAmbientLight(const SColorf& color) = 0;
+
 	};
 
 } // end namespace video
