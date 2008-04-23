@@ -53,6 +53,8 @@ class Level
 
 			irr::newton::IBody* m_Physics_Body;
 
+			irr::newton::IMaterial* m_Material;
+
 			friend std::ostream& operator << (std::ostream& os, const Level& level);
 		
 	//Public methods and variables

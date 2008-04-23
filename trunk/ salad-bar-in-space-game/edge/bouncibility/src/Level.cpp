@@ -27,6 +27,7 @@ Level::Level() : m_SceneNode(NULL), m_Mesh(NULL), m_Physics_Body(NULL){
 	m_MaxX = 0;
 	m_MaxY = 0;
 	m_Camera = NULL;
+	m_Material = NULL;
 }
 
 Level::~Level(){
@@ -71,7 +72,7 @@ bool Level::load(const std::string& LevelDefinition)
 	int entityY;
 	std::string entityStartState;
 	std::string handle = "";
-
+	std::string materialName = "";
 
 	m_XmlFile = LevelDefinition;
 
@@ -96,6 +97,7 @@ bool Level::load(const std::string& LevelDefinition)
 				m_LevelDimensions.Height = xml->getAttributeValueAsInt("height");
 				m_LevelDimensions.Width = xml->getAttributeValueAsInt("width");
 				PhysicsManager::getSingleton().setGravity(xml->getAttributeValueAsFloat("gravity"));
+				materialName = xml->getAttributeValue("material");
 
 			}
 			else if (!strcmp("camera", xml->getNodeName())){
@@ -122,7 +124,7 @@ bool Level::load(const std::string& LevelDefinition)
 				}
 				WorldEntity& entity = EntityManager::getSingleton().createEntity(entityName, handle);
 
-				entity.setLocation((float)entityX,(float)entityY, -15.0f);
+				entity.setLocation((float)entityX,500,(float)entityY);
 				entity.changeState(entityStartState);
 				m_WorldEntities.push_back(&entity);
 
@@ -143,20 +145,24 @@ bool Level::load(const std::string& LevelDefinition)
 	
 	irr::newton::SBodyFromNode mapData;
 
+	m_SceneNode->setMaterialFlag(video::EMF_BACK_FACE_CULLING,false);
 	mapData.Node = this->m_SceneNode;
-
-	mapData.Mesh = this->m_Mesh;
+	
+	mapData.TerrainLOD = 1;
 
 	mapData.Type = newton::EBT_TREE_TERRAIN;
 
 	m_Physics_Body = PhysicsManager::getSingleton().getPhysicsWorld()->createBody(mapData);
 
+	m_Material = PhysicsManager::getSingleton().getMaterial(materialName);
+	m_Physics_Body->setMaterial(m_Material);
+
 	m_Music->play(true);
 
-	m_MinY = -m_LevelDimensions.Height/2;
-	m_MaxY = m_LevelDimensions.Height/2;
-	m_MinX = -m_LevelDimensions.Width/2;
-	m_MaxX = m_LevelDimensions.Width/2;
+	m_MinY = 0;
+	m_MaxY = m_LevelDimensions.Height;
+	m_MinX = 0;
+	m_MaxX = m_LevelDimensions.Width;
 
 	delete xml;
 

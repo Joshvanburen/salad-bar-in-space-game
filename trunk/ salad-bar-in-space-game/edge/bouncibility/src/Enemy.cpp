@@ -12,7 +12,7 @@ void Enemy::update(){
 	//this->m_Physics_Body->setVelocity(this->velocity);
 
 	if (m_EnableMovement){
-		ai_script->callFunction(this);
+		//ai_script->callFunction(this);
 	}
 
 

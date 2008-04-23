@@ -104,7 +104,7 @@ WorldEntity& Entity::GravshipHelperFactory::loadEntity(const std::string& XMLFil
 
 				body->setUserData(entity);
 
-				body->addForceContinuous(irr::core::vector3df(0,0, PhysicsManager::getSingleton().getGravity()));
+				//body->addForceContinuous(irr::core::vector3df(0,PhysicsManager::getSingleton().getGravity(),0 ));
 
 				body->setMass(irr::f32(mass));
 
@@ -197,7 +197,7 @@ WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename)
 				material = PhysicsManager::getSingleton().getMaterial(materialName);
 
 				((Gravship*)entity)->m_Helper = (GravshipHelper*)&(EntityManager::getSingleton().createEntity(helper));
-				((Gravship*)entity)->m_Helper->setLocation(entity->getLocation());
+				((Gravship*)entity)->m_Helper->setLocation(entity->getLocation().X, entity->getLocation().Y + 100.0f, entity->getLocation().Z);
 				
 
 				irr::newton::SBodyFromNode physics_node;
@@ -213,11 +213,11 @@ WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename)
 
 				body->setUserData(entity);
 
-				body->addForceContinuous(irr::core::vector3df(0,0, PhysicsManager::getSingleton().getGravity()));
+				body->addForceContinuous(irr::core::vector3df(0,PhysicsManager::getSingleton().getGravity(),0 ));
 
 				body->setMass(irr::f32(mass));
 				entity->setPhysicsBody(body);
-				
+				material->setCollidable(PhysicsManager::getSingleton().getMaterial("level"), true);
 				
 
 			
@@ -324,7 +324,7 @@ WorldEntity& Entity::EnemyFactory::loadEntity(const std::string& XMLFilename){
 
 					body->setMass(mass);
 					if (gravity_enabled){
-						body->addForceContinuous(irr::core::vector3df(0,0, PhysicsManager::getSingleton().getGravity()));
+						body->addForceContinuous(irr::core::vector3df(0,PhysicsManager::getSingleton().getGravity(),0 ));
 					}
 
 					entity->setPhysicsBody(body);
@@ -471,7 +471,7 @@ WorldEntity& Entity::ObstacleFactory::loadEntity(const std::string& XMLFilename)
 					body->setUserData(entity);
 
 					//Adds gravity
-					body->addForceContinuous(irr::core::vector3df(0,0, PhysicsManager::getSingleton().getGravity()));
+					body->addForceContinuous(irr::core::vector3df(0,PhysicsManager::getSingleton().getGravity(),0 ));
 					
 					//Sets the mass
 					body->setMass(15000);
