@@ -35,17 +35,17 @@ void WorldEntity::update(){
 	if (position.X > m_LevelMgr->getCurrentLevel().getMaxX()){
 		position.X =  m_LevelMgr->getCurrentLevel().getMaxX();
 	}
-	else if (position.Y > m_LevelMgr->getCurrentLevel().getMaxY()){
-		position.Y = m_LevelMgr->getCurrentLevel().getMaxY();
+	else if (position.Z > m_LevelMgr->getCurrentLevel().getMaxY()){
+		position.Z = m_LevelMgr->getCurrentLevel().getMaxY();
 	}
 	else if (position.X < m_LevelMgr->getCurrentLevel().getMinX()){
 		position.X = m_LevelMgr->getCurrentLevel().getMinX();
 	}
-	else if (position.Y < m_LevelMgr->getCurrentLevel().getMinY()){
-		position.Y = m_LevelMgr->getCurrentLevel().getMinY();
+	else if (position.Z < m_LevelMgr->getCurrentLevel().getMinY()){
+		position.Z = m_LevelMgr->getCurrentLevel().getMinY();
 	}
 
-	this->m_Physics_Body->setPosition(irr::core::vector3df(position.X,position.Y, -15.0f));
+	this->m_Physics_Body->setPosition(irr::core::vector3df(position.X,position.Y, position.Z));
 }
 WorldEntity::~WorldEntity(){
 	if (m_SceneNode){

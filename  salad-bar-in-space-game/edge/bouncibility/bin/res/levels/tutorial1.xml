@@ -1,18 +1,18 @@
 <?xml version="1.0"?>
-<level name="tutorial1" music="tutorial1_music" time="50" startingx="100" startingy="100" width="700" height="400" map="res/levels/desert.irr" material="level" gravity="50.0">
-	<camera xloc="0" yloc="1500" zloc="-400" xlook="0" ylook="0" zlook="0"/>
+<level name="tutorial1" music="tutorial1_music" time="50" startingx="100" startingy="100" width="2500" height="2000" map="res/levels/desert.irr" material="level" gravity="-50.0">
+	<camera xloc="1300" yloc="600" zloc="-250" xlook="1300" ylook="0" zlook="600"/>
 	
 	<entities>
 
-		<entity name="gravship" startstate="normal" xloc="0" yloc="-50" handle="player" />
-		<entity name="enemy" startstate="normal" xloc="0" yloc="100" />
-		<entity name="enemy" startstate="normal" xloc="100" yloc="50" />
+		<entity name="gravship" startstate="normal" xloc="500" yloc="500" handle="player" />
+		<entity name="enemy" startstate="normal" xloc="500" yloc="700" />
+		<entity name="enemy" startstate="normal" xloc="300" yloc="800" />
 
-		<entity name="obstacle_one" startstate="normal" xloc="20" yloc="20" />
-		<entity name="enemy" startstate="normal" xloc="-200" yloc="100" />
-		<entity name="enemy" startstate="normal" xloc="-200" yloc="-50" />
-		<entity name="enemy" startstate="normal" xloc="200" yloc="100" />
-		<entity name="enemy" startstate="normal" xloc="200" yloc="-50" />
+		<entity name="obstacle_one" startstate="normal" xloc="200" yloc="200" />
+		<entity name="enemy" startstate="normal" xloc="1000" yloc="500" />
+		<entity name="enemy" startstate="normal" xloc="1200" yloc="700" />
+		<entity name="enemy" startstate="normal" xloc="1000" yloc="800" />
+		<entity name="enemy" startstate="normal" xloc="1200" yloc="900" />
 
 		
 	

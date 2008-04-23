@@ -145,10 +145,10 @@ void GameSystem::startGame(){
 	}
 
 	irr::core::dimension2di dimensions= LevelManager::getSingleton().getCurrentLevel().getDimensions();
-	m_MinY = -dimensions.Height/2;
-	m_MaxY = dimensions.Height/2;
-	m_MinX = -dimensions.Width/2;
-	m_MaxX = dimensions.Width/2;
+	m_MinY = 0;
+	m_MaxY = dimensions.Height;
+	m_MinX = 0;
+	m_MaxX = dimensions.Width;
 
 //	positionCamera();
 
@@ -201,7 +201,7 @@ void GameSystem::update() {
 
 	irr::core::vector3df cursor_position = s_Gravship->getHelper()->getLocation();
 	float newX = cursor_position.X+wiimote_change.X-mouse_change.X;
-	float newY = cursor_position.Y-wiimote_change.Y+mouse_change.Y;;
+	float newY = cursor_position.Z-wiimote_change.Y+mouse_change.Y;;
 
 	if (newX > m_MaxX){
 		newX = m_MaxX;
@@ -215,7 +215,7 @@ void GameSystem::update() {
 	else if (newY < m_MinY){
 		newY = m_MinY;
 	}
-	s_Gravship->getHelper()->setLocation(irr::core::vector3df(newX, newY, -15.0f));
+	s_Gravship->getHelper()->setLocation(irr::core::vector3df(newX, s_Gravship->getHelper()->getLocation().Y, newY));
 	//s_Gravship->getHelper()->setLocation(irr::core::vector3df(cursor_position.X-wiimote_change.X, cursor_position.Y + wiimote_change.Y, 0.0f));
 	irr::core::vector3df direction(0.0f, 1.0f, 0.0f);
 
@@ -228,10 +228,10 @@ void GameSystem::update() {
 
 	s_Gravship->getPhysicsBody()->setVelocity(direction);
 	if (up_momentum->isPressed()){
-		s_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(s_Gravship->getPhysicsBody()->getVelocity().X, 3.0f, 0.0f));
+		s_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(s_Gravship->getPhysicsBody()->getVelocity().X, 0.0f, 3.0f));
 	}
 	if(down_momentum->isPressed()){
-		s_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(s_Gravship->getPhysicsBody()->getVelocity().X, -3.0f, 0.0f));
+		s_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(s_Gravship->getPhysicsBody()->getVelocity().X, 0.0f, -3.0f));
 	}
 	if(right_momentum->isPressed()){
 		s_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(3.0f, s_Gravship->getPhysicsBody()->getVelocity().Y, 0.0f));
