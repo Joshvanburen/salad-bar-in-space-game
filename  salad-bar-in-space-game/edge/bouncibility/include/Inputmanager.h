@@ -226,7 +226,7 @@ namespace Input{
 
 		float getBatteryLevel();
 
-		bool hasAttachement();
+		bool hasAttachment();
 
 		int* whichLEDs();
 

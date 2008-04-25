@@ -5,15 +5,85 @@
 
 // Include headers
 #include "Common.h"
-#include "InputManager.h"
-#include "EntityManager.h"
-#include "LevelManager.h"
-#include "irrnewt.hpp"
-#include "Gravship.h"
-#include "Level.h"
-#include "GravshipHelper.h"
+#include "GameIncludes.h"
 #include "GameSystem.h"
+#include "MastEventReceiver.cpp"
+#include "console.h"
+#include "ExecScriptCommand.h"
+#include "LoadScriptCommand.h"
 
+using namespace irr::core;
+using namespace irr::scene;
+using namespace irr::video;
+using namespace irr::gui;
+
+EntityManager* GameSystem::entityManager = EntityManager::getSingletonPtr();
+LevelManager* GameSystem::levelManager = LevelManager::getSingletonPtr();
+ScriptManager* GameSystem::scriptManager = ScriptManager::getSingletonPtr();
+SoundManager* GameSystem::soundManager = SoundManager::getSingletonPtr();
+PhysicsManager* GameSystem::physicsManager = PhysicsManager::getSingletonPtr();
+InputManager* GameSystem::inputManager = InputManager::getSingletonPtr();
+WorldEntityAIManager* GameSystem::aiManager = WorldEntityAIManager::getSingletonPtr();
+GameSystem* GameSystem::gameSystem = GameSystem::getSingletonPtr();
+void grab(int v)
+{
+	GameSystem::getSingleton().getConsole().appendMessage(WideString(v));
+}
+
+void grab(asUINT v)
+{
+	GameSystem::getSingleton().getConsole().appendMessage(WideString(v));
+}
+
+void grab(bool v)
+{
+	if (v){
+		GameSystem::getSingleton().getConsole().appendMessage("true");
+	}
+	else{
+		GameSystem::getSingleton().getConsole().appendMessage("false");
+
+	}
+}
+
+void grab(float v)
+{
+	
+	char* str = new char[30];
+	sprintf(str, "%.4g", v);
+	GameSystem::getSingleton().getConsole().appendMessage(WideString(IC_StrConv::toWideString(String(str))));
+	delete[] str;
+}
+
+void grab(double v)
+{
+	char* str = new char[30];
+	sprintf(str, "%.4g", v);
+	GameSystem::getSingleton().getConsole().appendMessage(WideString(IC_StrConv::toWideString(String(str))));
+	delete[] str;
+}
+
+void grab(const std::string &v)
+{
+	
+	GameSystem::getSingleton().getConsole().appendMessage(WideString(IC_StrConv::toWideString(v.c_str())));
+}
+
+void grab()
+{
+	// There is no value
+}
+
+
+IC_Console& GameSystem::getConsole(){
+	return m_Console;
+}
+
+void PrintString(std::string& str){
+
+	std::cout << str << std::endl;
+
+}
 
 // Class definition
 
@@ -39,10 +109,23 @@ GameSystem::GameSystem(){
 	m_CursorX = 0;
 	m_CursorY = 0;
 
+	 m_DeltaMillis = 0;
+
+	 m_GUI = NULL;
+
 	m_MaxX = 0;
 	m_MaxY = 0;
 	m_MinX = 0;
 	m_MinY = 0;
+
+	m_LevelMgr = NULL;
+	m_PhysicsMgr = NULL;
+
+	m_SceneMgr = NULL;
+	m_Driver = NULL;
+	m_Device = NULL;
+
+	quit = NULL;
 }
 
 
@@ -52,6 +135,7 @@ GameSystem::~GameSystem(){
 
 
 void GameSystem::shutdown(){
+
 	m_Input_Mgr->deleteAction("up_momentum");
 	m_Input_Mgr->deleteAction("right_momentum");
 	m_Input_Mgr->deleteAction("left_momentum");
@@ -71,55 +155,90 @@ void GameSystem::shutdown(){
 	m_Input_Mgr->deleteAction("hover");
 	m_Input_Mgr->deleteAction("pause");
 	
+	m_Input_Mgr->deleteAction("quit");
+
 	reverseGravity, gravityOn, up_momentum, right_momentum, left_momentum, up_momentum, melee, cycle_melee, shoot, cycle_weapon, cycle_morph, morph, hover, pause = NULL;
+
+	quit = NULL;
+	resync = NULL;
+
+	m_Input_Mgr->shutdown();
+	m_LevelMgr->shutdown();
+	SoundManager::getSingleton().shutdown();
+	m_PhysicsMgr->shutdown();
+	ScriptManager::getSingleton().shutdown();
+	WorldEntityAIManager::getSingleton().shutdown();
+	m_Device->drop();
 
 
 }
 void GameSystem::init(){
-	//will add ability to change controls with XML file.
-	up_momentum = m_Input_Mgr->createAction("up_momentum", *m_Keyboard, Input::Keyboard::KEY_W, Input::Action::BEHAVIOR_DETECT_PRESS);
-	right_momentum = m_Input_Mgr->createAction("right_momentum", *m_Keyboard, Input::Keyboard::KEY_D, Input::Action::BEHAVIOR_DETECT_PRESS);
-	left_momentum = m_Input_Mgr->createAction("left_momentum", *m_Keyboard, Input::Keyboard::KEY_A, Input::Action::BEHAVIOR_DETECT_PRESS);
-	down_momentum = m_Input_Mgr->createAction("down_momentum", *m_Keyboard, Input::Keyboard::KEY_S, Input::Action::BEHAVIOR_DETECT_PRESS);
-	gravityOn = m_Input_Mgr->createAction("gravity_on", *m_Keyboard, Input::Keyboard::KEY_SPACE, Input::Action::BEHAVIOR_DETECT_PRESS);
 
-	reverseGravity = m_Input_Mgr->createAction("reverse_gravity", *m_Keyboard, Input::Keyboard::KEY_R, Input::Action::BEHAVIOR_DETECT_PRESS);
-	
-	reverseGravity->addCode(Input::Wiimote::WII_B_BUTTON, *m_Wiimote);
 
-	gravityOn->addCode(Input::Wiimote::WII_A_BUTTON, *m_Wiimote);
+	ScriptManager::getSingleton().init();
+
+	SoundManager::getSingleton().init();
+
+	ScriptManager::getSingleton().registerAsGlobal("void PrintString(string &in)", ::asFUNCTION(PrintString));
+	InputManager::getSingleton().init();
+
+	m_Input_Mgr = InputManager::getSingletonPtr();
+	m_LevelMgr = LevelManager::getSingletonPtr();
+	m_PhysicsMgr = PhysicsManager::getSingletonPtr();
+
+	dimension2d<s32> screenDim(1280,1024);
+
+	m_Device = irr::createDevice( irr::video::EDT_DIRECT3D9, screenDim, 24,
+		false, true, true, InputManager::getSingleton().getEventReceiver());
+
+	m_SceneMgr = m_Device->getSceneManager();
+
+	WorldEntityAIManager::getSingleton().init();
+	//PhysicsManager must be initialized before LevelManager because Entity initialization requires physics.
+	PhysicsManager::getSingleton().init(m_Device);
+
+	this->setupInput();
+
+	LevelManager::getSingleton().init(m_Device, "./res/scenarios/tutorial.xml");
+
 	
-	resync = m_Input_Mgr->createAction("resync", *m_Wiimote, Input::Wiimote::WII_2_BUTTON, Input::Action::BEHAVIOR_DETECT_PRESS);
-	up_momentum->addCode(Input::Wiimote::WII_UP_BUTTON, *m_Wiimote);
-	down_momentum->addCode(Input::Wiimote::WII_DOWN_BUTTON, *m_Wiimote);
-	right_momentum->addCode(Input::Wiimote::WII_RIGHT_BUTTON, *m_Wiimote);
-	left_momentum->addCode(Input::Wiimote::WII_LEFT_BUTTON, *m_Wiimote);
-/*
-	melee = m_Input_Mgr->createAction("melee", *m_Keyboard, Input::Keyboard::KEY_E, Input::Action::BEHAVIOR_DETECT_TAP);
-	cycle_melee = m_Input_Mgr->createAction("cycle_melee", *m_Keyboard, Input::Keyboard::KEY_I, Input::Action::BEHAVIOR_DETECT_TAP);
-	shoot = m_Input_Mgr->createAction("shoot", *m_Keyboard, Input::Keyboard::KEY_S, Input::Action::BEHAVIOR_DETECT_TAP);
-	cycle_weapon = m_Input_Mgr->createAction("cycle_weapon", *m_Keyboard, Input::Keyboard::KEY_O, Input::Action::BEHAVIOR_DETECT_TAP);
-	cycle_morph = m_Input_Mgr->createAction("cycle_morph", *m_Keyboard, Input::Keyboard::KEY_P, Input::Action::BEHAVIOR_DETECT_TAP);
-	morph = m_Input_Mgr->createAction("morph", *m_Keyboard, Input::Keyboard::KEY_M, Input::Action::BEHAVIOR_DETECT_PRESS);
-	hover = m_Input_Mgr->createAction("hover", *m_Keyboard, Input::Keyboard::KEY_C, Input::Action::BEHAVIOR_DETECT_PRESS);
-	pause = m_Input_Mgr->createAction("pause", *m_Keyboard, Input::Keyboard::KEY_LSHIFT, Input::Action::BEHAVIOR_DETECT_TAP);
-*/
-	/*	grow->addCode(Input::Wiimote::WII_MOVE_HANDS_OUTWARD, *m_Wiimote);
-	shrink->addCode(Input::Wiimote::WII_MOVE_HANDS_INWARD, *m_Wiimote);
-	jump->addCode(Input::Wiimote::WII_RIGHT_HAND_UP, *m_Wiimote);
-	right_momentum->addCode(Input::Wiimote::WII_RIGHT_HAND_RIGHT, *m_Wiimote);
-	left_momentum->addCode(Input::Wiimote::WII_RIGHT_HAND_LEFT, *m_Wiimote);
-	large_jump->addCode(Input::Wiimote::WII_BOTH_HANDS_DOWN, *m_Wiimote);
-	melee->addCode(Input::Wiimote::WII_B_BUTTON, *m_Wiimote);
-	cycle_melee->addCode(Input::Wiimote::WII_2_BUTTON, *m_Wiimote);
-	shoot->addCode(Input::Wiimote::WII_A_BUTTON, *m_Wiimote);
-	cycle_weapon->addCode(Input::Wiimote::WII_RIGHT_HAND_POINT_UP, *m_Wiimote);
-	cycle_morph->addCode(Input::Wiimote::WII_C_BUTTON, *m_Wiimote);
-	morph->addCode(Input::Wiimote::WII_Z_BUTTON, *m_Wiimote);
-	hover->addCode(Input::Wiimote::WII_DRUM, *m_Wiimote);
-	pause->addCode(Input::Wiimote::WII_HOME_BUTTON, *m_Wiimote);
-*/	
+	LevelManager::getSingleton().startGame();
+
+
+	m_Driver = m_Device->getVideoDriver();
+
+	m_Device->getCursorControl()->setVisible(false);
+
+	m_Console.getConfig().dimensionRatios.Y = 0.8f;
+
+	m_Console.initializeConsole(m_Device->getGUIEnvironment(), screenDim);
+	
+	//register common commands
+	m_Console.loadDefaultCommands(m_Device);
+
+
+		// Register special function with overloads to catch any type.
+	// This is used by the exec command to output the resulting value from the statement.
+	ScriptManager::getSingleton().registerAsGlobal("void _grab(bool)", asFUNCTIONPR(grab, (bool), void));
+	ScriptManager::getSingleton().registerAsGlobal("void _grab(int)", asFUNCTIONPR(grab, (int), void));
+	ScriptManager::getSingleton().registerAsGlobal("void _grab(uint)", asFUNCTIONPR(grab, (asUINT), void));
+	ScriptManager::getSingleton().registerAsGlobal("void _grab(float)", asFUNCTIONPR(grab, (float), void));
+	ScriptManager::getSingleton().registerAsGlobal("void _grab(double)", asFUNCTIONPR(grab, (double), void));
+	ScriptManager::getSingleton().registerAsGlobal("void _grab()", asFUNCTIONPR(grab, (), void));
+	ScriptManager::getSingleton().registerAsGlobal("void _grab(const string& in)", asFUNCTIONPR(grab, (const std::string&), void));
+
+
+	m_GUI = m_Device->getGUIEnvironment();
 	//Initialize GUI
+
+	ScriptManager::getSingleton().registerScriptFunction("main", new Scripting::MainFunction());
+
+
+	IC_Command* cmd = new EXECUTESCRIPT();
+	m_Console.registerCommand(cmd);
+
+	cmd = new LOADSCRIPT();
+	m_Console.registerCommand(cmd);
 
 
 	//Create mouse cursor
@@ -174,59 +293,76 @@ void GameSystem::positionCamera(){
 	camera_location.rotateYZBy(-20, camera_look);
 	
 	m_Camera->setPosition(camera_location);
-	//std::cout << "Level Dimensions are: " << LevelManager::getSingleton().getCurrentLevel().getDimensions().Width << " x " << LevelManager::getSingleton().getCurrentLevel().getDimensions().Height << "\n";
-	
 
-	//const irr::scene::SViewFrustum* frustum = m_Camera->getViewFrustum();
-
-	//std::cout << frustum->planes[irr::scene::SViewFrustum::VF_LEFT_PLANE].classifyPointRelation(irr::core::vector3df(1.0f, 0.0f, 0.0f));
-
-	//while(frustum->planes[irr::scene::SViewFrustum::VF_RIGHT_PLANE].classifyPointRelation(irr::core::vector3df(LevelManager::getSingleton().getCurrentLevel().getDimensions().Width, 0.0f, 0.0f)) == irr::core::ISREL3D_FRONT){
-	//	camera_location.Z -= 1;
-	//	m_Camera->setPosition(camera_location);
-	//	frustum = m_Camera->getViewFrustum();
-
-		//std::cout << "moving z, new location is " << camera_location.Z << "\n";
-	//}
-	/*while(frustum->planes[irr::scene::SViewFrustum::VF_BOTTOM_PLANE].classifyPointRelation(irr::core::vector3df(0.0f, LevelManager::getSingleton().getCurrentLevel().getDimensions().Height, 0.0f)) == irr::core::ISREL3D_BACK){
-		camera_location.Y += 1;
-		m_Camera->setPosition(camera_location);
-		//std::cout << "momving y, new location is " << camera_location.Y << "\n";
-	}*/
 }
-void GameSystem::update() {
-	irr::core::position2di mouse_change = m_Input_Mgr->getMouse().getRelativePosition();
 
-	irr::core::position2df wiimote_change = m_Wiimote->getRelativePosition();
+void GameSystem::run(){
+	while(m_Device->run())
+	{
+		/*
+		Anything can be drawn between a beginScene() and an endScene()
+		call. The beginScene clears the screen with a color and also the
+		depth buffer if wanted. Then we let the Scene Manager and the
+		GUI Environment draw their content. With the endScene() call
+		everything is presented on the screen.
+		*/
+		m_FPS = m_Driver->getFPS();
+		if(m_FPS > 0)
+		{
+			m_DeltaMillis  = (irr::u32) (1000.0f / (irr::f32)m_FPS);
+		}
+		m_Input_Mgr->stopPolling();
+		m_PhysicsMgr->update();
+		m_LevelMgr->update();
 
-	irr::core::vector3df cursor_position = s_Gravship->getHelper()->getLocation();
-	float newX = cursor_position.X+wiimote_change.X-mouse_change.X;
-	float newY = cursor_position.Z-wiimote_change.Y+mouse_change.Y;;
+		update();
 
-	if (newX > m_MaxX){
-		newX = m_MaxX;
+		m_Input_Mgr->getInput();
+		m_Driver->beginScene(true, true, SColor(255,100,101,140));
+			m_SceneMgr->drawAll();
+			m_GUI->drawAll();
+			m_Console.renderConsole(m_GUI,m_Driver,m_DeltaMillis);
+		m_Driver->endScene();
+
+		if(quit->isPressed()){
+			break;
+		}
+		m_Input_Mgr->resumePolling();
 	}
-	else if (newY > m_MaxY){
-		newY = m_MaxY;
-	}
-	else if (newX < m_MinX){
-		newX = m_MinX;
-	}
-	else if (newY < m_MinY){
-		newY = m_MinY;
-	}
-	s_Gravship->getHelper()->setLocation(irr::core::vector3df(newX, s_Gravship->getHelper()->getLocation().Y, newY));
-	//s_Gravship->getHelper()->setLocation(irr::core::vector3df(cursor_position.X-wiimote_change.X, cursor_position.Y + wiimote_change.Y, 0.0f));
-	irr::core::vector3df direction(0.0f, 1.0f, 0.0f);
+
+}
+
+void GameSystem::setupInput(){
+	//will add ability to change controls with XML file.
+	up_momentum = m_Input_Mgr->createAction("up_momentum", *m_Keyboard, Input::Keyboard::KEY_W, Input::Action::BEHAVIOR_DETECT_PRESS);
+	right_momentum = m_Input_Mgr->createAction("right_momentum", *m_Keyboard, Input::Keyboard::KEY_D, Input::Action::BEHAVIOR_DETECT_PRESS);
+	left_momentum = m_Input_Mgr->createAction("left_momentum", *m_Keyboard, Input::Keyboard::KEY_A, Input::Action::BEHAVIOR_DETECT_PRESS);
+	down_momentum = m_Input_Mgr->createAction("down_momentum", *m_Keyboard, Input::Keyboard::KEY_S, Input::Action::BEHAVIOR_DETECT_PRESS);
+	gravityOn = m_Input_Mgr->createAction("gravity_on", *m_Keyboard, Input::Keyboard::KEY_SPACE, Input::Action::BEHAVIOR_DETECT_PRESS);
+
+	reverseGravity = m_Input_Mgr->createAction("reverse_gravity", *m_Keyboard, Input::Keyboard::KEY_R, Input::Action::BEHAVIOR_DETECT_PRESS);
+	
+	reverseGravity->addCode(Input::Wiimote::WII_B_BUTTON, *m_Wiimote);
+
+	gravityOn->addCode(Input::Wiimote::WII_A_BUTTON, *m_Wiimote);
+	
+	resync = m_Input_Mgr->createAction("resync", *m_Wiimote, Input::Wiimote::WII_2_BUTTON, Input::Action::BEHAVIOR_DETECT_PRESS);
+	up_momentum->addCode(Input::Wiimote::WII_UP_BUTTON, *m_Wiimote);
+	down_momentum->addCode(Input::Wiimote::WII_DOWN_BUTTON, *m_Wiimote);
+	right_momentum->addCode(Input::Wiimote::WII_RIGHT_BUTTON, *m_Wiimote);
+	left_momentum->addCode(Input::Wiimote::WII_LEFT_BUTTON, *m_Wiimote);
 
 	
-	direction.rotateXYBy(-m_Wiimote->joystickAngle(),irr::core::vector3df(0.0f, 0.0f, 0.0f ));
-	direction = direction * 5 * m_Wiimote->joystickMagnitude();
-	irr::core::vector3df rotation(direction.getHorizontalAngle());
-	s_Gravship->setRotation(irr::core::vector3df(s_Gravship->getSceneNode()->getRotation().X, s_Gravship->getSceneNode()->getRotation().Y, rotation.Y - rotation.X));
-	std::cout << "xrotation = " << rotation.X << ", yrotation = " << rotation.Y << "\n";
+	
+	quit = InputManager::getSingleton().createAction("quit", InputManager::getSingleton().getKeyboard(), Input::Keyboard::KEY_ESC, Input::Action::BEHAVIOR_DETECT_TAP);
+	quit->addCode(Input::Wiimote::WII_HOME_BUTTON, InputManager::getSingleton().getWiimote());
 
-	s_Gravship->getPhysicsBody()->setVelocity(direction);
+	
+
+
+
+}
+void GameSystem::handleInput(){
 	if (up_momentum->isPressed()){
 		s_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(s_Gravship->getPhysicsBody()->getVelocity().X, 0.0f, 3.0f));
 	}
@@ -259,8 +395,47 @@ void GameSystem::update() {
 	}
 
 }
+void GameSystem::update() {
+
+	handleInput();
+
+	irr::core::position2di mouse_change = m_Input_Mgr->getMouse().getRelativePosition();
+
+	irr::core::position2df wiimote_change = m_Wiimote->getRelativePosition();
+
+	irr::core::vector3df cursor_position = s_Gravship->getHelper()->getLocation();
+	float newX = cursor_position.X+wiimote_change.X-mouse_change.X;
+	float newY = cursor_position.Z-wiimote_change.Y+mouse_change.Y;;
+
+	if (newX > m_MaxX){
+		newX = m_MaxX;
+	}
+	else if (newY > m_MaxY){
+		newY = m_MaxY;
+	}
+	else if (newX < m_MinX){
+		newX = m_MinX;
+	}
+	else if (newY < m_MinY){
+		newY = m_MinY;
+	}
+	s_Gravship->getHelper()->setLocation(irr::core::vector3df(newX, s_Gravship->getHelper()->getLocation().Y, newY));
+	//s_Gravship->getHelper()->setLocation(irr::core::vector3df(cursor_position.X-wiimote_change.X, cursor_position.Y + wiimote_change.Y, 0.0f));
+	irr::core::vector3df direction(0.0f, 1.0f, 0.0f);
+
+	
+	direction.rotateXYBy(-m_Wiimote->joystickAngle(),irr::core::vector3df(0.0f, 0.0f, 0.0f ));
+	direction = direction * 5 * m_Wiimote->joystickMagnitude();
+	irr::core::vector3df rotation(direction.getHorizontalAngle());
+	s_Gravship->setRotation(irr::core::vector3df(s_Gravship->getSceneNode()->getRotation().X, s_Gravship->getSceneNode()->getRotation().Y, rotation.Y - rotation.X));
+
+	s_Gravship->getPhysicsBody()->setVelocity(direction);
+
+
+}
 
 // Draws the User Interface
 void GameSystem::draw() {
 	//Draw GUI
 }
+

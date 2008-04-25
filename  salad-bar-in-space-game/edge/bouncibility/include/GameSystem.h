@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Common.h"
-
+#include "console.h"
 /*
 Notes for the game system class
 Reads in controls from inputmapping.xml
@@ -45,7 +45,16 @@ namespace Input{
 };
 
 class InputManager;
+class EntityManager;
+class LevelManager;
+class ScriptManager;
+class PhysicsManager;
+class WorldEntityAIManager;
+class SoundManager;
+class IC_Console;
+
 class Gravship;
+
 
 class GameSystem : public CSingleton<GameSystem>
 {
@@ -60,6 +69,10 @@ class GameSystem : public CSingleton<GameSystem>
 
 		//!Find the position the camera should be to enclose the set width and height of the current level.
 		void positionCamera();
+
+		void handleInput();
+
+		void setupInput();
 
 		InputManager* m_Input_Mgr;
 		// Score variable
@@ -93,7 +106,8 @@ class GameSystem : public CSingleton<GameSystem>
 		Input::Action* morph;
 		Input::Action* hover;
 		Input::Action* pause;
-		Input::Action* resync;		
+		Input::Action* resync;	
+		Input::Action* quit;
 
 		int m_CursorX;
 		int m_CursorY;
@@ -103,17 +117,45 @@ class GameSystem : public CSingleton<GameSystem>
 		float m_MaxX;
 		float m_MaxY;
 
-		irr::scene::ICameraSceneNode* m_Camera; 
+
+		irr::s32 m_FPS;
+		irr::u32 m_DeltaMillis;
+
+		irr::gui::IGUIEnvironment* m_GUI;
+		irr::scene::ICameraSceneNode* m_Camera;
+		irr::scene::ISceneManager* m_SceneMgr;
+		irr::IrrlichtDevice* m_Device;
+		irr::video::IVideoDriver* m_Driver;
+
+		LevelManager* m_LevelMgr;
+		PhysicsManager* m_PhysicsMgr;
+		IC_Console m_Console;
+
+
+
 			
 	// Public methods and variables
 	public:
+
+		IC_Console& getConsole();
 		void init();
 		void update();
 		void startGame();
 		void recoverAfterLevelChange();
 		static Gravship* getGravship();
 		void draw();
+		void run();
 		void shutdown();
+
+		static EntityManager* entityManager;
+		static LevelManager* levelManager;
+		static ScriptManager* scriptManager;
+		static SoundManager* soundManager;
+		static PhysicsManager* physicsManager;
+		static InputManager* inputManager;
+		static WorldEntityAIManager* aiManager;
+		static GameSystem* gameSystem;
+
 
 
 };

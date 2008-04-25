@@ -122,7 +122,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="..\include;..\third_party\irrxml\include;&quot;..\third_party\wiiuse-v0.10\src&quot;;..\third_party\irrnewt\include;..\third_party\newton\sdk;..\third_party\irrlicht\include;..\third_party\irrklang\include;..\third_party\angelscript\include;..\third_party\boost\"
-				PreprocessorDefinitions=""
+				PreprocessorDefinitions="DEBUG"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"
@@ -186,11 +186,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\include\console.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\defaultCmds.h"
+				>
+			</File>
+			<File
 				RelativePath="..\include\Enemy.h"
 				>
 			</File>
 			<File
 				RelativePath="..\include\EntityManager.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ExecScriptCommand.h"
 				>
 			</File>
 			<File
@@ -210,6 +222,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\include\includes.h"
+				>
+			</File>
+			<File
 				RelativePath="..\include\Inputmanager.h"
 				>
 			</File>
@@ -219,6 +235,10 @@
 			</File>
 			<File
 				RelativePath="..\include\LevelManager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\LoadScriptCommand.h"
 				>
 			</File>
 			<File
@@ -239,6 +259,10 @@
 			</File>
 			<File
 				RelativePath="..\include\SoundManager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\utils.h"
 				>
 			</File>
 			<File
@@ -398,11 +422,23 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\src\console.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\defaultCmds.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\src\Enemy.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\src\EntityManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ExecScriptCommand.cpp"
 				>
 			</File>
 			<File
@@ -451,6 +487,10 @@
 			</File>
 			<File
 				RelativePath="..\src\SoundManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\utils.cpp"
 				>
 			</File>
 			<File

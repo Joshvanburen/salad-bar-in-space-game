@@ -62,6 +62,13 @@ namespace Scripting{
 		WorldEntityAIFunction();
 	};
 
+	class MainFunction : public ScriptFunction {
+	public:
+		virtual void callFunction();
+
+		MainFunction();
+	};
+
 	typedef std::map<std::string, ScriptFunction*> StrFunctionMap;
 
 	//! Class encapsulating a script.  A Script can have any number of functions.  A Script object must be loaded before it can be used.
@@ -153,6 +160,8 @@ public:
 	Scripting::Script& getScript(const std::string& name); //!< Retrieve a handle to the script with the given name
 	void unloadScript(const std::string& name); //!< Tells the ScriptManager that this Script is no longer needed, so it can be unloaded.
 
+	void addScript(const std::string& name, const std::string& filename);
+
 	void unloadAll(); //!< Unloads all scripts in the system.  Useful between levels.
 
 	void removeScript(const std::string& name);
@@ -167,7 +176,7 @@ public:
 
 	void removeAllScriptFunctions(); //!< Remomve all script functions.
 
-
+	void registerObject(const std::string& declaration, int size = 0, asDWORD flags = 0);
 	void registerReferenceObject(const std::string&); //!< Registers a class name for the scripting system to access.  
 
 	void registerObjectMethod(std::string obj, std::string declaration, ::asUPtr fnPtr);  //!< Registers a method with an already registered class name.

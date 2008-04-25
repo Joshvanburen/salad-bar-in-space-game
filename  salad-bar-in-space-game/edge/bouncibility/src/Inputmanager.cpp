@@ -311,7 +311,7 @@ void Input::Wiimote::handle_event(struct wiimote_t* wm){
 	 */
 	if (WIIUSE_USING_IR(wm)) {
 		int i = 0;
-
+		
 		if (wm->ir.x != 0 && wm->ir.y != 0){
 			this->ir_dx += wm->ir.x - ir_x; 
 			this->ir_dy += wm->ir.y - ir_y;
@@ -345,7 +345,7 @@ void Input::Wiimote::resync(){
 	wiiuse_resync(wiimotes[0]);
 
 }
-bool Input::Wiimote::hasAttachement(){
+bool Input::Wiimote::hasAttachment(){
 	if (!found){
 		return false;
 	}

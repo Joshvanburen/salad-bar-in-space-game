@@ -3,6 +3,10 @@
 #include "scriptstring.h"
 #include "GameIncludes.h"
 
+
+
+#define asMETHODRP(c,r,m,p) asSMethodPtr<sizeof(void (c::*)())>::Convert((r (c::*)(p))(&c::m))
+
 void MessageCallback(const asSMessageInfo *msg, void *param)
 {
 	const char *type = "ERR ";
@@ -53,7 +57,18 @@ void Scripting::WorldEntityAIFunction::callFunction(Enemy* enemy) {
 
 }
 
+Scripting::MainFunction::MainFunction(){
+	this->m_Signature = "void main()";
 
+}
+
+void Scripting::MainFunction::callFunction(){
+	int r = m_pContext->Prepare(m_ID);
+	if (r < 0){
+		std::cout << "Failed to prepare the context. Unable to execute script function: " << m_Signature << std::endl;
+	}
+	ScriptFunction::execute();
+}
 Scripting::ScriptFunction::ScriptFunction() : m_ID(-1), m_pContext(NULL){
 	 m_Signature = "void main()";
 }
@@ -63,8 +78,7 @@ Scripting::ScriptFunction::~ScriptFunction(){
 }
 
 void Scripting::ScriptFunction::callFunction(){
-
-	execute();
+	this->execute();
 }
 void Scripting::ScriptFunction::execute(){
 	int r = m_pContext->Execute();
@@ -171,7 +185,7 @@ void Scripting::Script::unload(){
 		Scripting::StrFunctionMap::iterator functionItrEnd = m_FunctionMap.end();
 
 		for (m_FunctionItr = m_FunctionMap.begin(); m_FunctionItr != functionItrEnd; ++m_FunctionItr){
-			delete m_FunctionItr->second;
+			//delete m_FunctionItr->second;
 		}
 
 		m_FunctionMap.clear();
@@ -211,7 +225,7 @@ void Scripting::Script::removeFunction(const std::string& name){
 		throw Scripting::FunctionDoesntExist();
 	}
 
-	delete m_FunctionItr->second;
+	//delete m_FunctionItr->second;
 
 	m_FunctionMap.erase(m_FunctionItr);
 }
@@ -241,6 +255,8 @@ bool ScriptManager::init(){
 	// The script compiler will write any compiler messages to the callback.
 	s_Engine->SetMessageCallback(asFUNCTION(MessageCallback), 0, ::asCALL_CDECL);
 
+	//Export API to scripts
+
 	RegisterScriptString(s_Engine);
 
 	registerReferenceObject("WorldEntity");
@@ -251,11 +267,132 @@ bool ScriptManager::init(){
 	registerReferenceObject("Enemy");
 	registerObjectMethod("Enemy", "void moveToPlayer()", ::asMETHOD(Enemy, moveToPlayer));
 
+
 	this->registerAsGlobal("Enemy& EntityToEnemy(WorldEntity&)", ::asFUNCTION(Enemy::EntityToEnemy));
+	
+	//Register global handles to singletons
+	registerReferenceObject("EntityManager");
+	registerReferenceObject("InputManager");
+	registerReferenceObject("SoundManager");
+	registerReferenceObject("PhysicsManager");
+	registerReferenceObject("GameSystem");
+	registerReferenceObject("LevelManager");
+	registerReferenceObject("WorldEntityAIManager");
+	registerReferenceObject("ScriptManager");
+/*
+	registerAsGlobal("EntityManager entityManager", GameSystem::entityManager);
+	registerAsGlobal("InputManager inputManager", GameSystem::inputManager);
+	registerAsGlobal("SoundManager soundManager", GameSystem::soundManager);
+	registerAsGlobal("PhysicsManager physicsManager", GameSystem::physicsManager);
+	registerAsGlobal("GameSystem gameSystem", GameSystem::gameSystem);
+	registerAsGlobal("LevelManager levelManager", GameSystem::levelManager);
+	registerAsGlobal("WorldEntityAIManager aiManager", GameSystem::aiManager);
+	registerAsGlobal("ScriptManager scriptManager", GameSystem::scriptManager);
+	
+	registerReferenceObject("Level");
+
+
+	registerObjectMethod("Level", "ICameraSceneNode* getCamera()", ::asMETHOD(Level, getCamera));
+	registerObjectMethod("Level", "const string& getName()", ::asMETHOD(Level, getName));
+	registerObjectMethod("Level", "const string& getMusicName()", ::asMETHOD(Level, getMusicName));
+	registerObjectMethod("Level", "int getCurrentTime()", ::asMETHOD(Level, getCurrentTime));
+	registerObjectMethod("Level", "int status()", ::asMETHOD(Level, status));
+	registerObjectMethod("Level", "void setStatus(int newStatus)", ::asMETHOD(Level, setStatus));
+	registerObjectMethod("Level", "float getMinX()", ::asMETHOD(Level, getMinX));
+	registerObjectMethod("Level", "float getMinY()", ::asMETHOD(Level, getMinY));
+	registerObjectMethod("Level", "float getMaxX()", ::asMETHOD(Level, getMaxX));
+	registerObjectMethod("Level", "float getMaxY()", ::asMETHOD(Level, getMaxY));
+
+	
+	registerReferenceObject("Gravship");
+	registerReferenceObject("GravshipHelper");
+	registerReferenceObject("Obstacle");
+
+	registerReferenceObject("Wiimote");
+
+	registerObjectMethod("Wiimote", "void resync()", ::asMETHOD(Input::Wiimote, resync));
+	registerObjectMethod("Wiimote", "void toggleRumble()", ::asMETHOD(Input::Wiimote, toggleRumble));
+	registerObjectMethod("Wiimote", "float getBatteryLevel()", ::asMETHOD(Input::Wiimote, getBatteryLevel));
+	registerObjectMethod("Wiimote", "bool hasAttachment()", ::asMETHOD(Input::Wiimote, hasAttachment));
+	registerObjectMethod("Wiimote", "float joystickAngle()", ::asMETHOD(Input::Wiimote, joystickAngle));
+	registerObjectMethod("Wiimote", "float joystickMagnitude()", ::asMETHOD(Input::Wiimote, joystickMagnitude));
 
 
 
-//	this->s_Engine->RegisterObjectProperty("WorldEntity", "float fx", offsetof(WorldEntity, fx));
+	registerReferenceObject("Keyboard");
+
+	registerReferenceObject("Mouse");
+
+	registerReferenceObject("Audio");
+
+	registerObjectMethod("Audio", "void setVolume(float newVolume)", ::asMETHOD(Sound::Audio, setVolume));
+	registerObjectMethod("Audio", "void getVolume()", ::asMETHOD(Sound::Audio, getVolume));
+	registerObjectMethod("Audio", "void setPaused(bool)", ::asMETHOD(Sound::Audio, setPaused));
+	registerObjectMethod("Audio", "void setMaxDistance(float distance)", ::asMETHOD(Sound::Audio, setMaxDistance));
+	registerObjectMethod("Audio", "void setMinDistance(float distance)", ::asMETHOD(Sound::Audio, setMinDistance));
+	registerObjectMethod("Audio", "const string& getName()", ::asMETHOD(Sound::Audio, getName));
+	registerObjectMethod("Audio", "void play(bool)", ::asMETHOD(Sound::Audio, play));
+	registerObjectMethod("Audio", "void stop()", ::asMETHOD(Sound::Audio, stop));
+
+
+	registerReferenceObject("Action");
+
+	registerObjectMethod("Action", "int getAmount()", ::asMETHOD(Input::Action, getAmount));
+	registerObjectMethod("Action", "bool isPressed()", ::asMETHOD(Input::Action, isPressed));
+	registerObjectMethod("Action", "void release()", ::asMETHOD(Input::Action, release));
+	registerObjectMethod("Action", "void press()", ::asMETHODPR(Input::Action, press, (), void));
+	registerObjectMethod("Action", "void press(const int)", ::asMETHODPR(Input::Action, press, (const int), void));
+	registerObjectMethod("Action", "void tap()", ::asMETHOD(Input::Action, tap));
+	registerObjectMethod("Action", "const string& getName() const", ::asMETHOD(Input::Action, getName));
+
+
+	registerObjectMethod("EntityManager", "bool addNewDefinitions(const string&)", ::asMETHOD(EntityManager, addNewDefinitions));
+	registerObjectMethod("EntityManager", "WorldEntity& createEntity(const string&, const string& handle)", ::asMETHOD(EntityManager, createEntity));
+	registerObjectMethod("EntityManager", "WorldEntity& cloneEntity(const int)",::asMETHODPR(EntityManager,cloneEntity, (const int),  WorldEntity&));
+	registerObjectMethod("EntityManager", "WorldEntity& cloneEntity(WorldEntity&)", asMETHODPR(EntityManager, cloneEntity, (WorldEntity&),  WorldEntity&));
+	registerObjectMethod("EntityManager", "bool remove(const int)", ::asMETHOD(EntityManager, remove));	
+	registerObjectMethod("EntityManager", "void removeAll()", ::asMETHOD(EntityManager, removeAll));
+	registerObjectMethod("EntityManager", "WorldEntity& getEntity(const int)", ::asMETHOD(EntityManager, getEntity));
+	registerObjectMethod("EntityManager", "int getEntityID(const string&)", ::asMETHOD(EntityManager, getEntityID));	
+
+	registerObjectMethod("LevelManager", "void reset()", ::asMETHODPR(LevelManager, reset, (), void));
+	registerObjectMethod("LevelManager", "void reset(const string&)", ::asMETHODPR(LevelManager, reset, (const std::string&), void));
+	registerObjectMethod("LevelManager", "Level& getCurrentLevel()", ::asMETHOD(LevelManager, getCurrentLevel));
+	registerObjectMethod("LevelManager", "bool goToNext()", ::asMETHOD(LevelManager, goToNext));
+	registerObjectMethod("LevelManager", "void repeat()", ::asMETHOD(LevelManager, repeat));
+	
+
+	registerObjectMethod("InputManager", "void resetAllActions()", ::asMETHOD(InputManager, resetAllActions));
+	registerObjectMethod("InputManager", "Keyboard& getKeyboard()", ::asMETHOD(InputManager, getKeyboard));
+	registerObjectMethod("InputManager", "Wiimote& getWiimote()", ::asMETHOD(InputManager, getWiimote));
+	registerObjectMethod("InputManager", "Mouse& getMouse()", ::asMETHOD(InputManager, getMouse));
+	registerObjectMethod("InputManager", "deleteAction(const string&)", ::asMETHOD(InputManager, deleteAction));
+	registerObjectMethod("InputManager", "Action* getAction(const string&)", ::asMETHOD(InputManager, getAction));
+	
+	registerObjectMethod("SoundManager", "void addNewSounds(const string&)", ::asMETHOD(SoundManager, addNewSounds));
+	registerObjectMethod("SoundManager", "void reset()", ::asMETHOD(SoundManager, reset));
+	registerObjectMethod("SoundManager", "void removeAll()", ::asMETHOD(SoundManager, removeAll));
+	registerObjectMethod("SoundManager", "void removeSound(Sound::Audio* sound)", ::asMETHODPR(SoundManager, removeSound, (Sound::Audio* sound), void));
+	registerObjectMethod("SoundManager", "Audio* addSound(const string&, const string&, bool is3D)", ::asMETHOD(SoundManager, addSound));
+	registerObjectMethod("SoundManager", "Audio* getSound(const string&)", ::asMETHOD(SoundManager, getSound));
+	registerObjectMethod("SoundManager", "void removeSound(const string&)", ::asMETHODPR(SoundManager, removeSound, (const std::string&), void));
+
+
+	registerObjectMethod("PhysicsManager", "bool addNewDefinitions(const string&)", ::asMETHOD(PhysicsManager, addNewDefinitions));
+	registerObjectMethod("PhysicsManager", "bool addCollisionSound(Audio*, const string&, const string&)", ::asMETHOD(PhysicsManager, addCollisionSound));
+	registerObjectMethod("PhysicsManager", "float getGravity() const", ::asMETHOD(PhysicsManager, getGravity));
+	registerObjectMethod("PhysicsManager", "void setGravity(float newGravity)", ::asMETHOD(PhysicsManager, setGravity));
+	registerObjectMethod("PhysicsManager", "IMaterial* getMaterial(const string&)", ::asMETHOD(PhysicsManager, getMaterial));
+	registerObjectMethod("PhysicsManager", "void clear()", ::asMETHOD(PhysicsManager, clear));
+
+
+
+	registerAsGlobal("Gravship& getGravship()", ::asFUNCTION(GameSystem::getGravship));
+
+*/
+
+
+//this->s_Engine->RegisterObjectProperty("WorldEntity", "float fx", offsetof(WorldEntity, fx));
 
 
 	m_ScriptDefinition = "./res/scripting/global.xml";
@@ -317,6 +454,22 @@ bool ScriptManager::readInXML(const std::string& XMLScriptDefinition){
 	return true;
 }
 
+void ScriptManager::addScript(const std::string& name, const std::string& filename){
+
+	Scripting::Script* script = new Scripting::Script(name, filename);
+		
+		m_ScriptItr = m_ScriptMap.find(name);
+
+		//If the script is already in the map, print out and continue;
+		if (m_ScriptItr != m_ScriptMap.end()){
+			std::cout << "Script with name: " << name << "already exists. Continuing...\n";
+			delete script;
+		}
+		else{
+			m_ScriptMap.insert(std::make_pair(name, script));
+		}
+
+}
 ScriptManager::ScriptManager(){
 
 }
@@ -449,9 +602,10 @@ Scripting::ScriptFunction* ScriptManager::createScriptFunction(const std::string
 	if (m_FunctionItr == m_FunctionMap.end()){
 		throw Scripting::FunctionDoesntExist();
 	}
-	Scripting::ScriptFunction* function = new Scripting::ScriptFunction(*(m_FunctionItr->second));
+	
 
-	return function;
+
+	return m_FunctionItr->second;
 }
 
 
@@ -460,6 +614,21 @@ void ScriptManager::update(){
 }
 
 void DummyFunc() {}
+
+void ScriptManager::registerObject(const std::string& declaration, int size, asDWORD flags){
+	int r = s_Engine->RegisterObjectType(declaration.c_str(),size,flags);
+
+	r < 0 ? throw Scripting::ScriptRegistrationException(): ++r;
+
+	r = s_Engine->RegisterObjectBehaviour(declaration.c_str(), asBEHAVE_ADDREF, "void AddRef()", asMETHOD(WorldEntity, AddRef), asCALL_THISCALL);
+
+	r < 0 ? throw Scripting::ScriptRegistrationException() : ++r;
+
+	r = s_Engine->RegisterObjectBehaviour(declaration.c_str(), asBEHAVE_RELEASE, "void Release()", asMETHOD(WorldEntity, Release), asCALL_THISCALL);
+
+	r < 0 ? throw Scripting::ScriptRegistrationException() : ++r;
+}
+
 void ScriptManager::registerReferenceObject(const std::string& declaration){
 	int r = s_Engine->RegisterObjectType(declaration.c_str(), 0, ::asOBJ_REF);
 
