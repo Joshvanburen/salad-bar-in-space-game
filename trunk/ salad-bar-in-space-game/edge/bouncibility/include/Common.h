@@ -18,7 +18,7 @@
 #include <list>
 #include <vector>
 #include <boost/thread/thread.hpp>
-
+#include "singleton.h"
 
 
 

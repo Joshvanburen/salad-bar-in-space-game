@@ -21,7 +21,8 @@
 
 // Change this to the path where your Irrlicht Header Files are.
 #include "irrlicht.h"
-
+#include "console.h"
+#include "GameSystem.h"
 /// ==============================
 /// MastEventReceiver
 /// ==============================
@@ -59,6 +60,9 @@ class MastEventReceiver : public irr::IEventReceiver
       //////////////////////////////
       // Keyboard Input Event
       //////////////////////////////
+
+
+
 	  if (event.EventType == irr::EET_KEY_INPUT_EVENT)
       {
          if (processState == STARTED)
@@ -66,6 +70,26 @@ class MastEventReceiver : public irr::IEventReceiver
             // if key is Pressed Down
             if (event.KeyInput.PressedDown == true)
             {
+				if(event.KeyInput.Key == IC_Console::IC_KEY_TILDE)
+				{
+					if(!GameSystem::getSingleton().getConsole().isVisible())
+					{
+						GameSystem::getSingleton().getConsole().setVisible(true);
+						eventprocessed = true;
+					}
+					else if(!event.KeyInput.Control)
+					{
+						GameSystem::getSingleton().getConsole().setVisible(false);
+						eventprocessed = true;
+					}
+				
+				}
+				if(GameSystem::getSingleton().getConsole().isVisible())
+				{
+					GameSystem::getSingleton().getConsole().handleKeyPress(event.KeyInput.Char, event.KeyInput.Key,event.KeyInput.Shift, event.KeyInput.Control);
+					eventprocessed = true;
+				}
+
                // If key was not down before
                if (keyState[event.KeyInput.Key] != DOWN)
                {
@@ -92,6 +116,15 @@ class MastEventReceiver : public irr::IEventReceiver
          eventprocessed = true;
       }
 
+	else if(event.EventType == irr::EET_LOG_TEXT_EVENT)
+	{
+		GameSystem::getSingleton().getConsole().logMessage_ANSI(event.LogEvent.Level,event.LogEvent.Text);
+		eventprocessed = true;
+	}
+	else if(event.EventType == irr::EET_MOUSE_INPUT_EVENT)
+	{
+		eventprocessed =  GameSystem::getSingleton().getConsole().isVisible();
+	}
       //////////////////////////////
       // Mouse Input Event
       //////////////////////////////
