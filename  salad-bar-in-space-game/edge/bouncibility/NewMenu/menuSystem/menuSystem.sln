@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "menuSystem", "menuSystem\menuSystem.vcproj", "{88C4FC06-B161-42A4-9899-224A8F826451}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{88C4FC06-B161-42A4-9899-224A8F826451}.Debug|Win32.ActiveCfg = Debug|Win32
+		{88C4FC06-B161-42A4-9899-224A8F826451}.Debug|Win32.Build.0 = Debug|Win32
+		{88C4FC06-B161-42A4-9899-224A8F826451}.Release|Win32.ActiveCfg = Release|Win32
+		{88C4FC06-B161-42A4-9899-224A8F826451}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
