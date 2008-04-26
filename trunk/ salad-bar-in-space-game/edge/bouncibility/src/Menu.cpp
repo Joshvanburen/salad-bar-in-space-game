@@ -57,6 +57,8 @@ void Menu::init()
 //Quit
 void Menu::quit()
 {
+	//Exits the program
+	exit(0);
 }
 
 //New game
@@ -66,5 +68,10 @@ void Menu::newGame()
 
 //Pause
 void Menu::pause()
+{
+}
+
+//UnPause
+void Menu::unPause()
 {
 }
