@@ -147,6 +147,14 @@ class GameSystem : public CSingleton<GameSystem>
 		void run();
 		void shutdown();
 
+		irr::u32 getDeltaMillis(){
+			return m_DeltaMillis;
+		}
+
+		irr::s32 getFPS(){
+			return m_FPS;
+		}
+
 		static EntityManager* entityManager;
 		static LevelManager* levelManager;
 		static ScriptManager* scriptManager;

@@ -68,8 +68,8 @@ bool Level::load(const std::string& LevelDefinition)
 
 	// strings for storing the data we want to get out of the file
 	std::string entityName;
-	int entityX;
-	int entityY;
+	int entityX = 0;
+	int entityY = 0;
 	std::string entityStartState;
 	std::string handle = "";
 	std::string materialName = "";
@@ -115,7 +115,8 @@ bool Level::load(const std::string& LevelDefinition)
 			
 			}
 			else if (!strcmp("entity", xml->getNodeName())){
-				entityName = xml->getAttributeValue("name");
+				std::string entityName(xml->getAttributeValue("name"));
+				std::cout << entityX << "\n";
 				entityStartState = xml->getAttributeValue("startstate");
 				entityX = xml->getAttributeValueAsInt("xloc");
 				entityY = xml->getAttributeValueAsInt("yloc");

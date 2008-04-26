@@ -18,6 +18,7 @@
 #include <list>
 #include <vector>
 #include <boost/thread/thread.hpp>
+#include <boost/random.hpp>
 #include "singleton.h"
 
 

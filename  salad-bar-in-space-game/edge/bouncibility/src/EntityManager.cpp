@@ -6,7 +6,66 @@ using namespace io;
 
 int EntityManager::Next_Available_ID = 1;
 
+WorldEntity& Entity::SpawnerFactory::loadEntity(const std::string &XMLFilename){
+	std::string name;
+	int frequency = 0;
+	int simul_spawn = 1;
+	std::string entityName;
+	float probability = 1.0;
+	WorldEntity* entity;
+	irr::io::IrrXMLReader* xml = irr::io::createIrrXMLReader(XMLFilename.c_str());
 
+	while(xml && xml->read())
+	{
+		switch(xml->getNodeType())
+		{
+		case EXN_TEXT:
+			//No text nodes
+			break;
+
+		case EXN_ELEMENT:
+			if (!strcmp("spawner", xml->getNodeName())){
+				name = xml->getAttributeValue("name");
+				frequency = xml->getAttributeValueAsInt("frequency");
+				simul_spawn = xml->getAttributeValueAsInt("simultaneous_spawn");
+
+
+				irr::scene::ISceneNode* node = LevelManager::getSceneManager()->addEmptySceneNode();
+		
+				
+
+				if (node){
+					node->setScale(irr::core::vector3df(1.0f, 1.0f, 1.0f));
+					node->setMaterialFlag(irr::video::EMF_LIGHTING, false );
+					node->setVisible(false);	
+				}
+				
+				
+			
+				entity = new Spawner();
+				
+				((Spawner*)entity)->setFrequency(frequency);
+				((Spawner*)entity)->setSimulSpawn(simul_spawn);
+				
+				entity->setSceneNode(node);
+		
+
+			//entity->changeState(startState)
+							
+			}
+			else if(!strcmp("entity", xml->getNodeName())){
+				entityName = xml->getAttributeValue("name");
+				probability = xml->getAttributeValueAsFloat("probability");
+				((Spawner*)entity)->addEntity(entityName, probability);
+			}
+			break;
+		}
+	}
+
+	entity->load();
+	return *entity;
+
+}
 WorldEntity& Entity::GravshipHelperFactory::loadEntity(const std::string& XMLFilename){
 
 	irr::io::IrrXMLReader* xml = irr::io::createIrrXMLReader(XMLFilename.c_str());
@@ -641,6 +700,7 @@ bool EntityManager::init(const std::string& XMLEntityDefinition){
 	this->m_Loader.registerFactory("gravship", new Entity::GravshipFactory());
 	this->m_Loader.registerFactory("gravship_helper", new Entity::GravshipHelperFactory());
 	this->m_Loader.registerFactory("obstacle", new Entity::ObstacleFactory());
+	this->m_Loader.registerFactory("spawner", new Entity::SpawnerFactory());
 
 	irr::io::IrrXMLReader* xml = irr::io::createIrrXMLReader(XMLEntityDefinition.c_str());
 
@@ -730,6 +790,18 @@ WorldEntity& EntityManager::createEntity(const std::string& name, const std::str
 	return(*entity);
 }
 
+
+
+WorldEntity* EntityManager::claim(const int entityID){
+	//Find the Entity in the ID map for this entityID.
+	m_EntityItr = m_IdEntityMap.find(entityID);
+	//If the Entity wasn't found, return null
+	if(m_EntityItr == m_IdEntityMap.end())
+		return NULL;
+	WorldEntity* entity = (m_EntityItr)->second;
+	m_IdEntityMap.erase(m_EntityItr);
+	return entity;
+}
 bool EntityManager::remove(const int entityID){
 	//Find the Entity in the ID map for this entityID.
 	m_EntityItr = m_IdEntityMap.find(entityID);
@@ -752,13 +824,13 @@ void EntityManager::removeAll(){
 	this->m_EntityHandleIDMap.clear();
 }
 
-WorldEntity& EntityManager::getEntity(const int entityID){
+WorldEntity* EntityManager::getEntity(const int entityID){
 	//Find the entity in the ID map for this entityID
 	m_EntityItr = m_IdEntityMap.find(entityID);
 	//If the Entity wasn't found, return NULL
 	if (m_EntityItr == m_IdEntityMap.end())
 		throw Entity::EntityDoesntExist();
-	return *(m_EntityItr->second);
+	return (m_EntityItr->second);
 }
 
 int EntityManager::getEntityID(const std::string& handle){
@@ -772,7 +844,7 @@ int EntityManager::getEntityID(const std::string& handle){
 
 WorldEntity& EntityManager::cloneEntity(const int entityID){
 	
-	WorldEntity* newEntity = this->getEntity(entityID).clone();
+	WorldEntity* newEntity = this->getEntity(entityID)->clone();
 
 	this->m_IdEntityMap.insert(std::make_pair(Next_Available_ID, newEntity));
 	newEntity->id = Next_Available_ID;

@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <utility>	//For using pair
 #include "Common.h"
 #include "WorldEntity.h"
 #include "ScriptManager.h"

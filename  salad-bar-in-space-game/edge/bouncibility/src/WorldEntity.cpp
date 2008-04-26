@@ -28,7 +28,7 @@ void WorldEntity::update(){
 	if (m_EnableRotation){
 		this->m_Physics_Body->setRotation(m_Rotation);
 	}
-	irr::core::vector3df position  = this->m_Physics_Body->getPosition();
+	irr::core::vector3df position  = this->getSceneNode()->getPosition();
 
 
 
@@ -45,7 +45,7 @@ void WorldEntity::update(){
 		position.Z = m_LevelMgr->getCurrentLevel().getMinY();
 	}
 
-	this->m_Physics_Body->setPosition(irr::core::vector3df(position.X,position.Y, position.Z));
+	this->getSceneNode()->setPosition(irr::core::vector3df(position.X,position.Y, position.Z));
 }
 WorldEntity::~WorldEntity(){
 	if (m_SceneNode){

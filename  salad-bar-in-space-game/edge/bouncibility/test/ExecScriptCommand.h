@@ -1,5 +1,5 @@
 #include "console.h"
-
+#pragma once
 
 
 class EXECUTESCRIPT : public IC_Command

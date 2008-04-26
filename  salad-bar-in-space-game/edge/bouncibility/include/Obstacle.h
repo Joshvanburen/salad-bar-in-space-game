@@ -5,6 +5,7 @@ obstacle.h
 - JV
 */
 
+#pragma once
 #include <utility>
 
 //Includes header files

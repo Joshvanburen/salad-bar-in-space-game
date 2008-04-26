@@ -1,0 +1,4 @@
+<spawnerdefinition>
+<spawner name="one_second_spawner" frequency="1000" simultaneous_spawn="2"/>
+<entity name="enemy" probability="1.0" />
+</spawnerdefinition>

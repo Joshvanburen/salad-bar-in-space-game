@@ -4,4 +4,5 @@
 	<script name="gravship_helper" filename="./res/entities/scripts/gravship_helper.as" />
 	<script name="stupid_ai" filename="./res/ai/stupid.as" />
 	<script name="obstacle" filename="./res/ai/obstacle.as" />
+	<script name="spawner" filename="./res/entities/scripts/spawner.as" />
 </scripts>

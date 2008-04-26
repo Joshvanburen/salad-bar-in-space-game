@@ -25,6 +25,10 @@ namespace Entity{
 		virtual ~EntityFactory();
 	};
 
+	class SpawnerFactory : public EntityFactory
+	{
+		WorldEntity& loadEntity(const std::string& XMLFilename);
+	};
 
 	class MarkerFactory : public EntityFactory
 	{
@@ -150,6 +154,9 @@ public:
 
 	void shutdown();  //!< shutdown any resources used by the EntityManager.
 
+	//! Removes this entity from the entity manager's control.  Must be deleted by whomever claimed it.
+	WorldEntity* claim(const int entityID);
+
 	Entity::IdEntityMap getEntities(){
 		return m_IdEntityMap;
 	}
@@ -169,7 +176,7 @@ public:
 	void removeAll();
 
 	//!Returns a reference to an already instantiated WorldEntity object given it's ID, NULL if WorldEntity with ID does not exist.
-	WorldEntity& getEntity(const int entityID);
+	WorldEntity* getEntity(const int entityID);
 
 	int getEntityID(const std::string& handle);
 };

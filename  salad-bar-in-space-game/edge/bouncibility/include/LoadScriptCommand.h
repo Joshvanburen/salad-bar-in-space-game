@@ -1,5 +1,6 @@
 #include "console.h"
 
+#pragma once
 class LOADSCRIPT : public IC_Command
 {
 public:

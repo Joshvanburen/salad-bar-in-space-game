@@ -45,7 +45,7 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				WarningLevel="3"
-				DebugInformationFormat="3"
+				DebugInformationFormat="4"
 				CompileAs="0"
 			/>
 			<Tool
@@ -146,7 +146,7 @@
 				AdditionalLibraryDirectories="..\lib;&quot;..\third_party\wiiuse-v0.10\lib&quot;;..\third_party\irrxml\lib;..\third_party\newton\sdk\dll;..\third_party\irrnewt\lib;..\third_party\irrklang\lib;..\third_party\irrlicht\lib;..\third_party\angelscript\lib;..\third_party\boost\lib\;..\third_party\angelscript\lib"
 				GenerateManifest="true"
 				GenerateDebugInformation="true"
-				OptimizeReferences="2"
+				OptimizeReferences="1"
 				EnableCOMDATFolding="2"
 				TargetMachine="1"
 			/>
@@ -222,6 +222,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\include\hat.h"
+				>
+			</File>
+			<File
 				RelativePath="..\include\includes.h"
 				>
 			</File>
@@ -259,6 +263,10 @@
 			</File>
 			<File
 				RelativePath="..\include\SoundManager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\Spawner.h"
 				>
 			</File>
 			<File
@@ -487,6 +495,10 @@
 			</File>
 			<File
 				RelativePath="..\src\SoundManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\Spawner.cpp"
 				>
 			</File>
 			<File

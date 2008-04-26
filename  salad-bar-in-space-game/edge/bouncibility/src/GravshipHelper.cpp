@@ -98,8 +98,12 @@ void GravshipHelper::updateOrbitingEntities(){
 		entities.erase((*m_OrbitingEntitiesItr)->getID());
 	}
 	entities.erase(GameSystem::getGravship()->getID());
+	
 	for (m_EntityItr = entities.begin(); m_EntityItr != entities.end(); m_EntityItr++){
 
+		if (!m_EntityItr->second->getSceneNode()->isVisible()){
+			continue;
+		}
 		//Check if current entity is colliding with the gravity field radius.
 		        /*********************************************************************************************************/
        //Collision detection code based on "Pool Hall Lessons" by Joe van den Heuvel and Miles Jackson [18.1.02]
