@@ -301,6 +301,7 @@ void GameSystem::positionCamera(){
 }
 
 void GameSystem::run(){
+	::Sleep(5000);
 	while(m_Device->run())
 	{
 		/*
@@ -328,7 +329,7 @@ void GameSystem::run(){
 			m_Console.renderConsole(m_GUI,m_Driver,m_DeltaMillis);
 		m_Driver->endScene();
 
-		if(quit->isPressed()){
+ 		if(quit->isPressed()){
 			break;
 		}
 		m_Input_Mgr->resumePolling();
