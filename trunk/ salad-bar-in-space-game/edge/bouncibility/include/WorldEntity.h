@@ -47,6 +47,11 @@ public:
 	void AddRef(){
 
 	}
+
+	void setVisible(bool visibility){
+		m_SceneNode->setVisible(visibility);
+	}
+
 	void move();
 	void Release(){
 

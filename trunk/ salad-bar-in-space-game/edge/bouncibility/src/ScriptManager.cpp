@@ -279,7 +279,7 @@ bool ScriptManager::init(){
 	registerReferenceObject("LevelManager");
 	registerReferenceObject("WorldEntityAIManager");
 	registerReferenceObject("ScriptManager");
-/*
+
 	registerAsGlobal("EntityManager entityManager", GameSystem::entityManager);
 	registerAsGlobal("InputManager inputManager", GameSystem::inputManager);
 	registerAsGlobal("SoundManager soundManager", GameSystem::soundManager);
@@ -292,7 +292,7 @@ bool ScriptManager::init(){
 	registerReferenceObject("Level");
 
 
-	registerObjectMethod("Level", "ICameraSceneNode* getCamera()", ::asMETHOD(Level, getCamera));
+//	registerObjectMethod("Level", "ICameraSceneNode* getCamera()", ::asMETHOD(Level, getCamera));
 	registerObjectMethod("Level", "const string& getName()", ::asMETHOD(Level, getName));
 	registerObjectMethod("Level", "const string& getMusicName()", ::asMETHOD(Level, getMusicName));
 	registerObjectMethod("Level", "int getCurrentTime()", ::asMETHOD(Level, getCurrentTime));
@@ -362,34 +362,33 @@ bool ScriptManager::init(){
 	registerObjectMethod("LevelManager", "void repeat()", ::asMETHOD(LevelManager, repeat));
 	
 
-	registerObjectMethod("InputManager", "void resetAllActions()", ::asMETHOD(InputManager, resetAllActions));
-	registerObjectMethod("InputManager", "Keyboard& getKeyboard()", ::asMETHOD(InputManager, getKeyboard));
-	registerObjectMethod("InputManager", "Wiimote& getWiimote()", ::asMETHOD(InputManager, getWiimote));
-	registerObjectMethod("InputManager", "Mouse& getMouse()", ::asMETHOD(InputManager, getMouse));
-	registerObjectMethod("InputManager", "deleteAction(const string&)", ::asMETHOD(InputManager, deleteAction));
-	registerObjectMethod("InputManager", "Action* getAction(const string&)", ::asMETHOD(InputManager, getAction));
+//	registerObjectMethod("InputManager", "void resetAllActions()", ::asMETHOD(InputManager, resetAllActions));
+//	registerObjectMethod("InputManager", "Keyboard& getKeyboard()", ::asMETHOD(InputManager, getKeyboard));
+//	registerObjectMethod("InputManager", "Wiimote& getWiimote()", ::asMETHOD(InputManager, getWiimote));
+//	registerObjectMethod("InputManager", "Mouse& getMouse()", ::asMETHOD(InputManager, getMouse));
+//	registerObjectMethod("InputManager", "void deleteAction(const string&)", ::asMETHOD(InputManager, deleteAction));
+//	registerObjectMethod("InputManager", "Action* getAction(const string&)", ::asMETHOD(InputManager, getAction));
 	
-	registerObjectMethod("SoundManager", "void addNewSounds(const string&)", ::asMETHOD(SoundManager, addNewSounds));
-	registerObjectMethod("SoundManager", "void reset()", ::asMETHOD(SoundManager, reset));
-	registerObjectMethod("SoundManager", "void removeAll()", ::asMETHOD(SoundManager, removeAll));
-	registerObjectMethod("SoundManager", "void removeSound(Sound::Audio* sound)", ::asMETHODPR(SoundManager, removeSound, (Sound::Audio* sound), void));
-	registerObjectMethod("SoundManager", "Audio* addSound(const string&, const string&, bool is3D)", ::asMETHOD(SoundManager, addSound));
-	registerObjectMethod("SoundManager", "Audio* getSound(const string&)", ::asMETHOD(SoundManager, getSound));
-	registerObjectMethod("SoundManager", "void removeSound(const string&)", ::asMETHODPR(SoundManager, removeSound, (const std::string&), void));
+//	registerObjectMethod("SoundManager", "void addNewSounds(const string&)", ::asMETHOD(SoundManager, addNewSounds));
+//	registerObjectMethod("SoundManager", "void reset()", ::asMETHOD(SoundManager, reset));
+//	registerObjectMethod("SoundManager", "void removeAll()", ::asMETHOD(SoundManager, removeAll));
+//	registerObjectMethod("SoundManager", "void removeSound(Sound::Audio* sound)", ::asMETHODPR(SoundManager, removeSound, (Sound::Audio* sound), void));
+//	registerObjectMethod("SoundManager", "Audio* addSound(const string&, const string&, bool is3D)", ::asMETHOD(SoundManager, addSound));
+//	registerObjectMethod("SoundManager", "Audio* getSound(const string&)", ::asMETHOD(SoundManager, getSound));
+//	registerObjectMethod("SoundManager", "void removeSound(const string&)", ::asMETHODPR(SoundManager, removeSound, (const std::string&), void));
 
 
-	registerObjectMethod("PhysicsManager", "bool addNewDefinitions(const string&)", ::asMETHOD(PhysicsManager, addNewDefinitions));
-	registerObjectMethod("PhysicsManager", "bool addCollisionSound(Audio*, const string&, const string&)", ::asMETHOD(PhysicsManager, addCollisionSound));
-	registerObjectMethod("PhysicsManager", "float getGravity() const", ::asMETHOD(PhysicsManager, getGravity));
-	registerObjectMethod("PhysicsManager", "void setGravity(float newGravity)", ::asMETHOD(PhysicsManager, setGravity));
-	registerObjectMethod("PhysicsManager", "IMaterial* getMaterial(const string&)", ::asMETHOD(PhysicsManager, getMaterial));
-	registerObjectMethod("PhysicsManager", "void clear()", ::asMETHOD(PhysicsManager, clear));
+	//registerObjectMethod("PhysicsManager", "bool addNewDefinitions(const string&)", ::asMETHOD(PhysicsManager, addNewDefinitions));
+	//registerObjectMethod("PhysicsManager", "bool addCollisionSound(Audio*, const string&, const string&)", ::asMETHOD(PhysicsManager, addCollisionSound));
+	//registerObjectMethod("PhysicsManager", "float getGravity() const", ::asMETHOD(PhysicsManager, getGravity));
+	//registerObjectMethod("PhysicsManager", "void setGravity(float newGravity)", ::asMETHOD(PhysicsManager, setGravity));
+//	registerObjectMethod("PhysicsManager", "IMaterial* getMaterial(const string&)", ::asMETHOD(PhysicsManager, getMaterial));
+	//registerObjectMethod("PhysicsManager", "void clear()", ::asMETHOD(PhysicsManager, clear));
 
 
 
 	registerAsGlobal("Gravship& getGravship()", ::asFUNCTION(GameSystem::getGravship));
 
-*/
 
 
 //this->s_Engine->RegisterObjectProperty("WorldEntity", "float fx", offsetof(WorldEntity, fx));

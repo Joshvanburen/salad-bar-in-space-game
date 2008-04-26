@@ -35,6 +35,9 @@ void grab(asUINT v)
 	GameSystem::getSingleton().getConsole().appendMessage(WideString(v));
 }
 
+void grab(WorldEntity* v){
+	GameSystem::getSingleton().getConsole().appendMessage(WideString(IC_StrConv::toWideString("WorldEntity*"))); 
+}
 void grab(bool v)
 {
 	if (v){
@@ -226,7 +229,8 @@ void GameSystem::init(){
 	ScriptManager::getSingleton().registerAsGlobal("void _grab(double)", asFUNCTIONPR(grab, (double), void));
 	ScriptManager::getSingleton().registerAsGlobal("void _grab()", asFUNCTIONPR(grab, (), void));
 	ScriptManager::getSingleton().registerAsGlobal("void _grab(const string& in)", asFUNCTIONPR(grab, (const std::string&), void));
-
+	ScriptManager::getSingleton().registerAsGlobal("void _grab(WorldEntity& in)", asFUNCTIONPR(grab, (WorldEntity*), void));
+	
 
 	m_GUI = m_Device->getGUIEnvironment();
 	//Initialize GUI
@@ -257,7 +261,7 @@ void GameSystem::startGame(){
 		return;
 	}
 	else{
-		this->s_Gravship = dynamic_cast<Gravship*>(&(EntityManager::getSingleton().getEntity(entity_ID)));
+		this->s_Gravship = dynamic_cast<Gravship*>((EntityManager::getSingleton().getEntity(entity_ID)));
 		//irr::scene::ISceneNode* node = LevelManager::getSingleton().getSceneManager()->addCubeSceneNode(5.0, s_Gravship->getSceneNode());
 		//node->setMaterialTexture(0, LevelManager::getSingleton().getDriver()->getTexture("./res/textures/neon_green.png"));
 		//node->setPosition(irr::core::vector3df(0.0f, 0.0f, -15.0f));
@@ -283,7 +287,7 @@ void GameSystem::recoverAfterLevelChange(){
 		return;
 	}
 	else{
-		this->s_Gravship = dynamic_cast<Gravship*>(&(EntityManager::getSingleton().getEntity(entity_ID)));
+		this->s_Gravship = dynamic_cast<Gravship*>((EntityManager::getSingleton().getEntity(entity_ID)));
 	}
 }
 

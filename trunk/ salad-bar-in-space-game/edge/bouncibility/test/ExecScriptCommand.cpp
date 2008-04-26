@@ -59,10 +59,10 @@ bool EXECUTESCRIPT::invoke(const array<WideString>& args, IC_Dispatcher *pDispat
 	}
 	else
 	{
-		String script = "_grab(";
+		String script = "";
 		String code =  IC_StrConv::toString(args[0]);
 		script.append(code);
-		script.append(")");
+		script.append("");
 		//execute code
 		int r = ScriptManager::getEngine()->ExecuteString(0, script.c_str());
 		

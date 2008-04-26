@@ -20,6 +20,7 @@ void Enemy::update(){
 
 WorldEntity* Enemy::clone(){
 	Enemy* entity = new Enemy();
+	std::cout << entity->getID() << "\n";;
 	entity->location = this->location;
 	entity->id = -1;
 	entity->currentState = this->currentState;
@@ -28,14 +29,25 @@ WorldEntity* Enemy::clone(){
 	}
 	entity->m_Mesh = this->m_Mesh;
 	entity->m_Radius = this->m_Radius;
-	entity->m_SceneNode = this->m_SceneNode->clone();
+	//Clone isn't working for the animated scene node.  Should just make from scratch.
+	irr::scene::IAnimatedMesh* mesh = entity->m_Mesh;
+	irr::scene::IAnimatedMeshSceneNode* node = LevelManager::getSceneManager()->addAnimatedMeshSceneNode(mesh);
+
+	if (node){
+		node->setScale(irr::core::vector3df(this->m_SceneNode->getScale()));
+		node->setMaterialFlag(irr::video::EMF_LIGHTING, true);
+		
+	}
+	entity->m_SceneNode = node;
 
 	irr::newton::SBodyFromNode physics_node;
+	physics_node.Mesh = m_Mesh->getMesh(2);
 	physics_node.Node = entity->m_SceneNode;
-	physics_node.Type = irr::newton::EBT_PRIMITIVE_ELLIPSOID;
+	physics_node.Type = irr::newton::EBT_PRIMITIVE_BOX;
 
-	irr::newton::ICharacterController* body = m_Physics_Body->getWorld()->createCharacterController(m_Physics_Body->getWorld()->createBody(physics_node));
-	body->setRotationUpdate(true);
+	//irr::newton::IBody* body = this->m_Physics_Body;
+	//PhysicsManager::getSingleton().getPhysicsWorld()->createBody(physics_node);
+	irr::newton::ICharacterController* body = PhysicsManager::getSingleton().getPhysicsWorld()->createCharacterController(PhysicsManager::getSingleton().getPhysicsWorld()->createBody(physics_node));
 	body->setContinuousCollisionMode(true);
 
 	body->setMaterial(m_Physics_Body->getMaterial());
