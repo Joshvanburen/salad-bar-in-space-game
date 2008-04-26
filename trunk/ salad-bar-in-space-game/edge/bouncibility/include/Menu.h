@@ -62,5 +62,7 @@ class Menu :
 			~Menu();
 			//Pause
 			void pause();
+			//Unpause
+			void unPause();
 	};
 	
