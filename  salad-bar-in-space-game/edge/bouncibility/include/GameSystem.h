@@ -2,6 +2,7 @@
 
 #include "Common.h"
 #include "console.h"
+
 /*
 Notes for the game system class
 Reads in controls from inputmapping.xml
@@ -107,6 +108,7 @@ class GameSystem : public CSingleton<GameSystem>
 		Input::Action* morph;
 		Input::Action* hover;
 		Input::Action* pause;
+		Input::Action* unpause;
 		Input::Action* resync;	
 		Input::Action* quit;
 
@@ -132,8 +134,7 @@ class GameSystem : public CSingleton<GameSystem>
 		PhysicsManager* m_PhysicsMgr;
 		IC_Console m_Console;
 
-
-
+		//CTimer* g_pTimer;
 			
 	// Public methods and variables
 	public:
