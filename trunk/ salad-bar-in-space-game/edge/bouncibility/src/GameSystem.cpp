@@ -25,7 +25,7 @@ PhysicsManager* GameSystem::physicsManager = PhysicsManager::getSingletonPtr();
 InputManager* GameSystem::inputManager = InputManager::getSingletonPtr();
 WorldEntityAIManager* GameSystem::aiManager = WorldEntityAIManager::getSingletonPtr();
 GameSystem* GameSystem::gameSystem = GameSystem::getSingletonPtr();
-Menu* GameSystem::menu = Menu::getSingletonPtr();
+//Menu* GameSystem::menu = Menu::getSingletonPtr();
 void grab(int v)
 {
 	GameSystem::getSingleton().getConsole().appendMessage(WideString(v));
@@ -130,6 +130,7 @@ GameSystem::GameSystem(){
 	m_Device = NULL;
 
 	quit = NULL;
+	pause = NULL;
 }
 
 
@@ -164,6 +165,7 @@ void GameSystem::shutdown(){
 	reverseGravity, gravityOn, up_momentum, right_momentum, left_momentum, up_momentum, melee, cycle_melee, shoot, cycle_weapon, cycle_morph, morph, hover, pause = NULL;
 
 	quit = NULL;
+	pause = NULL;
 	resync = NULL;
 
 	m_Input_Mgr->shutdown();
@@ -203,7 +205,7 @@ void GameSystem::init(){
 
 	this->setupInput();
 
-	Menu::getSingleton().init(m_Device);
+	//Menu::getSingleton().init(m_Device);
 
 	LevelManager::getSingleton().init(m_Device, "./res/scenarios/tutorial.xml");
 
@@ -305,38 +307,45 @@ void GameSystem::positionCamera(){
 
 void GameSystem::run(){
 	::Sleep(5000);
+
 	while(m_Device->run())
 	{
-		/*
-		Anything can be drawn between a beginScene() and an endScene()
-		call. The beginScene clears the screen with a color and also the
-		depth buffer if wanted. Then we let the Scene Manager and the
-		GUI Environment draw their content. With the endScene() call
-		everything is presented on the screen.
-		*/
-		m_FPS = m_Driver->getFPS();
-		if(m_FPS > 0)
-		{
-			m_DeltaMillis  = (irr::u32) (1000.0f / (irr::f32)m_FPS);
-		}
-		m_Input_Mgr->stopPolling();
-		m_PhysicsMgr->update();
-		m_LevelMgr->update();
+		
+			/*
+			Anything can be drawn between a beginScene() and an endScene()
+			call. The beginScene clears the screen with a color and also the
+			depth buffer if wanted. Then we let the Scene Manager and the
+			GUI Environment draw their content. With the endScene() call
+			everything is presented on the screen.
+			*/
+			m_FPS = m_Driver->getFPS();
+			if(m_FPS > 0)
+			{
+				m_DeltaMillis  = (irr::u32) (1000.0f / (irr::f32)m_FPS);
+			}
+			m_Input_Mgr->stopPolling();
+			m_Input_Mgr->getInput();
 
-		update();
+			if( !pause->isPressed() ){
+				m_PhysicsMgr->update();
+				m_LevelMgr->update();
 
-		m_Input_Mgr->getInput();
-		m_Driver->beginScene(true, true, SColor(255,100,101,140));
-			m_SceneMgr->drawAll();
-			m_GUI->drawAll();
-			m_Console.renderConsole(m_GUI,m_Driver,m_DeltaMillis);
-		m_Driver->endScene();
+				update();
 
- 		if(quit->isPressed()){
-			break;
-		}
-		m_Input_Mgr->resumePolling();
+				m_Driver->beginScene(true, true, SColor(255,100,101,140));
+					m_SceneMgr->drawAll();
+					m_GUI->drawAll();
+					m_Console.renderConsole(m_GUI,m_Driver,m_DeltaMillis);
+				m_Driver->endScene();
+
+ 				if(quit->isPressed()){
+					break;
+				}
+
+			}
+			m_Input_Mgr->resumePolling();
 	}
+	
 
 }
 
@@ -360,16 +369,14 @@ void GameSystem::setupInput(){
 	right_momentum->addCode(Input::Wiimote::WII_RIGHT_BUTTON, *m_Wiimote);
 	left_momentum->addCode(Input::Wiimote::WII_LEFT_BUTTON, *m_Wiimote);
 
-	
-	
 	quit = InputManager::getSingleton().createAction("quit", InputManager::getSingleton().getKeyboard(), Input::Keyboard::KEY_ESC, Input::Action::BEHAVIOR_DETECT_TAP);
 	quit->addCode(Input::Wiimote::WII_HOME_BUTTON, InputManager::getSingleton().getWiimote());
 
-	
-
-
+	pause = InputManager::getSingleton().createAction("pause", InputManager::getSingleton().getKeyboard(), Input::Keyboard::KEY_P, Input::Action::BEHAVIOR_DETECT_TAP);
+	pause->addCode(Input::Wiimote::WII_PLUS_BUTTON, InputManager::getSingleton().getWiimote());
 
 }
+
 void GameSystem::handleInput(){
 	if (up_momentum->isPressed()){
 		s_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(s_Gravship->getPhysicsBody()->getVelocity().X, 0.0f, 3.0f));
