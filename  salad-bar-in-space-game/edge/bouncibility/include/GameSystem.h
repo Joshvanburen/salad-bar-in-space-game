@@ -59,6 +59,7 @@ class Gravship;
 class GameSystem : public CSingleton<GameSystem>
 {
 	friend CSingleton;
+	friend class Menu;
 	private:
 
 		GameSystem();
