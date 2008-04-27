@@ -11,6 +11,7 @@
 #include "console.h"
 #include "ExecScriptCommand.h"
 #include "LoadScriptCommand.h"
+#include "Pause.h"
 
 using namespace irr::core;
 using namespace irr::scene;
@@ -131,6 +132,7 @@ GameSystem::GameSystem(){
 
 	quit = NULL;
 	pause = NULL;
+	unpause = NULL;
 }
 
 
@@ -166,6 +168,7 @@ void GameSystem::shutdown(){
 
 	quit = NULL;
 	pause = NULL;
+	unpause = NULL;
 	resync = NULL;
 
 	m_Input_Mgr->shutdown();
@@ -307,7 +310,7 @@ void GameSystem::positionCamera(){
 
 void GameSystem::run(){
 	::Sleep(5000);
-
+	Pause p;
 	while(m_Device->run())
 	{
 		
@@ -326,7 +329,10 @@ void GameSystem::run(){
 			m_Input_Mgr->stopPolling();
 			m_Input_Mgr->getInput();
 
-			if( !pause->isPressed() ){
+			if(pause->isPressed())
+				p.pause();
+			
+			if( !p.isPaused() ){
 				m_PhysicsMgr->update();
 				m_LevelMgr->update();
 
@@ -337,16 +343,18 @@ void GameSystem::run(){
 					m_GUI->drawAll();
 					m_Console.renderConsole(m_GUI,m_Driver,m_DeltaMillis);
 				m_Driver->endScene();
+			}
 
- 				if(quit->isPressed()){
-					break;
-				}
+			if(unpause->isPressed()){
+				pause->reset();
+				p.unPause();
+			}
 
+			if(quit->isPressed()){
+				break;
 			}
 			m_Input_Mgr->resumePolling();
 	}
-	
-
 }
 
 void GameSystem::setupInput(){
@@ -375,6 +383,8 @@ void GameSystem::setupInput(){
 	pause = InputManager::getSingleton().createAction("pause", InputManager::getSingleton().getKeyboard(), Input::Keyboard::KEY_P, Input::Action::BEHAVIOR_DETECT_TAP);
 	pause->addCode(Input::Wiimote::WII_PLUS_BUTTON, InputManager::getSingleton().getWiimote());
 
+	unpause = InputManager::getSingleton().createAction("unpause", InputManager::getSingleton().getKeyboard(), Input::Keyboard::KEY_U, Input::Action::BEHAVIOR_DETECT_TAP);
+	unpause->addCode(Input::Wiimote::WII_MINUS_BUTTON, InputManager::getSingleton().getWiimote());
 }
 
 void GameSystem::handleInput(){
