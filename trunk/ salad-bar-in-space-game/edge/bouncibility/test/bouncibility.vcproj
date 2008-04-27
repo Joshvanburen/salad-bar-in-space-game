@@ -250,6 +250,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\include\Menu.h"
+				>
+			</File>
+			<File
 				RelativePath="..\include\Obstacle.h"
 				>
 			</File>
@@ -475,6 +479,10 @@
 			</File>
 			<File
 				RelativePath=".\main.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\Menu.cpp"
 				>
 			</File>
 			<File

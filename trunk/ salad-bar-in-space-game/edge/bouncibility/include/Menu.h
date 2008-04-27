@@ -36,6 +36,9 @@ class Menu :
 	//Menu is a Singleton object so only one can be created
 	public CSingleton <Menu>
 	{
+		//CSingleton as friend
+		friend CSingleton;
+
 		//Private functions and members
 		private:
 			//Initialization
