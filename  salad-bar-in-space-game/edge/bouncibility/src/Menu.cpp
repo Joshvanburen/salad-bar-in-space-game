@@ -21,15 +21,8 @@ using namespace gui;
 #endif
 
 //Constructor 
-Menu::Menu(irr::IrrlichtDevice* device)
+Menu::Menu()
 {
-	//Istantiates the device scene manager and video driver
-	s_Device = device;
-	s_Smgr = device->getSceneManager();
-	s_Driver = device->getVideoDriver();
-
-	//Calls the initialization function
-	init();
 }
 
 //Destructor
@@ -38,8 +31,14 @@ Menu::~Menu()
 }
 
 //Initialization
-void Menu::init()
+void Menu::init(irr::IrrlichtDevice* device)
 {
+
+	//Istantiates the device scene manager and video driver
+	s_Device = device;
+	s_Smgr = device->getSceneManager();
+	s_Driver = device->getVideoDriver();
+
 	//Initializes the scene node and sets its material
 	scene::IBillboardSceneNode * b_newGame = s_Smgr->addBillboardSceneNode();
 	b_newGame->setMaterialFlag(video::EMF_LIGHTING, false);

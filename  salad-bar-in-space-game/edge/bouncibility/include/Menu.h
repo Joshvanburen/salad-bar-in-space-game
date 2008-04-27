@@ -38,11 +38,12 @@ class Menu :
 	{
 		//CSingleton as friend
 		friend CSingleton;
+		friend class GameSystem;
 
 		//Private functions and members
 		private:
 			//Initialization
-			void init();
+			void init(irr::IrrlichtDevice* device);
 			//Quit
 			void quit();
 			//New game
@@ -52,15 +53,15 @@ class Menu :
 			//Quit
 			irr::scene::IBillboardSceneNode * b_quit;
 			//Video driver
-			static irr::video::IVideoDriver* s_Driver;
+			irr::video::IVideoDriver* s_Driver;
 			//Scene manager
-			static irr::scene::ISceneManager* s_Smgr;
+			irr::scene::ISceneManager* s_Smgr;
 			//Device
-			static irr::IrrlichtDevice* s_Device;
+			irr::IrrlichtDevice* s_Device;
 		//Public functions and members
 		public:
 			//Constructor
-			Menu(irr::IrrlichtDevice* device);
+			Menu();
 			//Destructor
 			~Menu();
 			//Pause
