@@ -164,6 +164,7 @@ class GameSystem : public CSingleton<GameSystem>
 		static InputManager* inputManager;
 		static WorldEntityAIManager* aiManager;
 		static GameSystem* gameSystem;
+		static Menu* menu;
 
 
 

@@ -25,6 +25,7 @@ PhysicsManager* GameSystem::physicsManager = PhysicsManager::getSingletonPtr();
 InputManager* GameSystem::inputManager = InputManager::getSingletonPtr();
 WorldEntityAIManager* GameSystem::aiManager = WorldEntityAIManager::getSingletonPtr();
 GameSystem* GameSystem::gameSystem = GameSystem::getSingletonPtr();
+Menu* GameSystem::menu = Menu::getSingletonPtr();
 void grab(int v)
 {
 	GameSystem::getSingleton().getConsole().appendMessage(WideString(v));
@@ -201,6 +202,8 @@ void GameSystem::init(){
 	PhysicsManager::getSingleton().init(m_Device);
 
 	this->setupInput();
+
+	Menu::getSingleton().init(m_Device);
 
 	LevelManager::getSingleton().init(m_Device, "./res/scenarios/tutorial.xml");
 
