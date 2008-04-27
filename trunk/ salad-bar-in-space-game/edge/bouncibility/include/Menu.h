@@ -1,6 +1,6 @@
 /*
 Header file for the menu system
-*/
+
 
 #pragma once
 
@@ -69,4 +69,6 @@ class Menu :
 			//Unpause
 			void unPause();
 	};
+
+	*/
 	
