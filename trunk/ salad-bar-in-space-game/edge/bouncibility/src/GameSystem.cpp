@@ -329,9 +329,15 @@ void GameSystem::run(){
 			m_Input_Mgr->stopPolling();
 			m_Input_Mgr->getInput();
 
-			if(pause->isPressed())
-				p.pause();
-			
+
+			if( pause->isPressed()){
+				if( p.isPaused()){
+					p.unPause();
+				}else{
+					p.pause();
+				}
+			}
+
 			if( !p.isPaused() ){
 				m_PhysicsMgr->update();
 				m_LevelMgr->update();
@@ -343,11 +349,6 @@ void GameSystem::run(){
 					m_GUI->drawAll();
 					m_Console.renderConsole(m_GUI,m_Driver,m_DeltaMillis);
 				m_Driver->endScene();
-			}
-
-			if(unpause->isPressed()){
-				pause->reset();
-				p.unPause();
 			}
 
 			if(quit->isPressed()){
@@ -380,7 +381,7 @@ void GameSystem::setupInput(){
 	quit = InputManager::getSingleton().createAction("quit", InputManager::getSingleton().getKeyboard(), Input::Keyboard::KEY_ESC, Input::Action::BEHAVIOR_DETECT_TAP);
 	quit->addCode(Input::Wiimote::WII_HOME_BUTTON, InputManager::getSingleton().getWiimote());
 
-	pause = InputManager::getSingleton().createAction("pause", InputManager::getSingleton().getKeyboard(), Input::Keyboard::KEY_P, Input::Action::BEHAVIOR_DETECT_TAP);
+	pause = InputManager::getSingleton().createAction("pause", InputManager::getSingleton().getKeyboard(), Input::Keyboard::KEY_P, Input::Action::BEHAVIOR_DETECT_RELEASE );
 	pause->addCode(Input::Wiimote::WII_PLUS_BUTTON, InputManager::getSingleton().getWiimote());
 
 	unpause = InputManager::getSingleton().createAction("unpause", InputManager::getSingleton().getKeyboard(), Input::Keyboard::KEY_U, Input::Action::BEHAVIOR_DETECT_TAP);
