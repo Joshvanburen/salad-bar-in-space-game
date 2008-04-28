@@ -2,7 +2,7 @@
 
 Menu class file
 
-*/
+
 
 #include <irrlicht.h>
 #include "Menu.h"
@@ -81,4 +81,4 @@ void Menu::pause()
 //UnPause
 void Menu::unPause()
 {
-}
+}*/
