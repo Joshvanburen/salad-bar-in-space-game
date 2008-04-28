@@ -10,12 +10,6 @@ Pause::Pause( bool p ){
 }
 
 bool Pause::pause(){
-	/*
-	if(b_pause == true){
-		unPause();
-		return false;
-	}
-*/
 	b_pause = true;
 	return b_pause;
 }
