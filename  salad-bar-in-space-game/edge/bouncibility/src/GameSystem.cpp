@@ -329,7 +329,6 @@ void GameSystem::run(){
 			m_Input_Mgr->stopPolling();
 			m_Input_Mgr->getInput();
 
-
 			if( pause->isPressed()){
 				if( p.isPaused()){
 					p.unPause();
@@ -383,9 +382,6 @@ void GameSystem::setupInput(){
 
 	pause = InputManager::getSingleton().createAction("pause", InputManager::getSingleton().getKeyboard(), Input::Keyboard::KEY_P, Input::Action::BEHAVIOR_DETECT_RELEASE );
 	pause->addCode(Input::Wiimote::WII_PLUS_BUTTON, InputManager::getSingleton().getWiimote());
-
-	unpause = InputManager::getSingleton().createAction("unpause", InputManager::getSingleton().getKeyboard(), Input::Keyboard::KEY_U, Input::Action::BEHAVIOR_DETECT_TAP);
-	unpause->addCode(Input::Wiimote::WII_MINUS_BUTTON, InputManager::getSingleton().getWiimote());
 }
 
 void GameSystem::handleInput(){
