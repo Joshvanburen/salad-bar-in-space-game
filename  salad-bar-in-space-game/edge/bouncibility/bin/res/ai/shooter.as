@@ -8,11 +8,11 @@ int update(Enemy &enemy)
 
 	Enemy@ enemy1 = enemy;
 
-	if (!enemy1.moveToDest()) {
-		enemy1.genRandomLoc();
-	}
+	//if (!enemy1.moveToDest()) {
+		//enemy1.genRandomLoc();
+	//}
 
-	enemy1.shootPlayer();
+	//enemy1.shootPlayer();
 
 	return 1;
 }

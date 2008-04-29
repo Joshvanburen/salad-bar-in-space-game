@@ -9,12 +9,12 @@ int update(Enemy &enemy)
 	Enemy@ enemy1 = enemy;
 
 
-	if (!enemy1.moveAwayFromPlayer(400)) {
-		enemy1.moveToDest();
-	}
-	else {
-		enemy1.genRandomLoc();
-	}
+	//if (!enemy1.moveAwayFromPlayer(400)) {
+		//enemy1.moveToDest();
+	//}
+	//else {
+		//enemy1.genRandomLoc();
+	//}
 
 
 	return 1;
