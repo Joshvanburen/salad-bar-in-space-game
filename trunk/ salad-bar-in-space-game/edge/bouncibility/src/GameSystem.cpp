@@ -26,8 +26,10 @@ PhysicsManager* GameSystem::physicsManager = PhysicsManager::getSingletonPtr();
 InputManager* GameSystem::inputManager = InputManager::getSingletonPtr();
 WorldEntityAIManager* GameSystem::aiManager = WorldEntityAIManager::getSingletonPtr();
 GameSystem* GameSystem::gameSystem = GameSystem::getSingletonPtr();
+
 Bullet* GameSystem::bulletSrc = NULL;
 //Menu* GameSystem::menu = Menu::getSingletonPtr();
+
 void grab(int v)
 {
 	GameSystem::getSingleton().getConsole().appendMessage(WideString(v));
@@ -178,7 +180,8 @@ void GameSystem::shutdown(){
 	m_PhysicsMgr->shutdown();
 	ScriptManager::getSingleton().shutdown();
 	WorldEntityAIManager::getSingleton().shutdown();
-	m_Device->drop();
+	if (m_Device->getReferenceCount() > 0)
+		m_Device->drop();
 
 
 }
@@ -199,7 +202,7 @@ void GameSystem::init(){
 	dimension2d<s32> screenDim(1280,1024);
 
 	m_Device = irr::createDevice( irr::video::EDT_DIRECT3D9, screenDim, 24,
-		false, true, true, InputManager::getSingleton().getEventReceiver());
+		false, false, false, InputManager::getSingleton().getEventReceiver());
 
 	m_SceneMgr = m_Device->getSceneManager();
 
@@ -312,52 +315,51 @@ void GameSystem::positionCamera(){
 }
 
 void GameSystem::run(){
-	::Sleep(5000);
+
 	Pause p;
 	while(m_Device->run())
 	{
+		/*
+		Anything can be drawn between a beginScene() and an endScene()
+		call. The beginScene clears the screen with a color and also the
+		depth buffer if wanted. Then we let the Scene Manager and the
+		GUI Environment draw their content. With the endScene() call
+		everything is presented on the screen.
+		*/
+		m_FPS = m_Driver->getFPS();
+
+		irr::core::stringw tmp(L"FPS: ");
+		tmp += m_FPS;
+		m_Device->setWindowCaption(tmp.c_str());
 		
-			/*
-			Anything can be drawn between a beginScene() and an endScene()
-			call. The beginScene clears the screen with a color and also the
-			depth buffer if wanted. Then we let the Scene Manager and the
-			GUI Environment draw their content. With the endScene() call
-			everything is presented on the screen.
-			*/
-			m_FPS = m_Driver->getFPS();
-			if(m_FPS > 0)
-			{
-				m_DeltaMillis  = (irr::u32) (1000.0f / (irr::f32)m_FPS);
-			}
+
+
+
+		if(m_FPS > 0)
+		{
+			m_DeltaMillis  = (irr::u32) (1000.0f / (irr::f32)m_FPS);
+		}
+		if (m_FPS > 5){
 			m_Input_Mgr->stopPolling();
+			m_PhysicsMgr->update();
+			m_LevelMgr->update();
+
+			update();
+
 			m_Input_Mgr->getInput();
+		}
+		m_Driver->beginScene(true, true, SColor(255,100,101,140));
+			m_SceneMgr->drawAll();
+			m_GUI->drawAll();
+			m_Console.renderConsole(m_GUI,m_Driver,m_DeltaMillis);
+		m_Driver->endScene();
 
-			if( pause->isPressed()){
-				if( p.isPaused()){
-					p.unPause();
-				}else{
-					p.pause();
-				}
-			}
-
-			if( !p.isPaused() ){
-				m_PhysicsMgr->update();
-				m_LevelMgr->update();
-
-				update();
-
-				m_Driver->beginScene(true, true, SColor(255,100,101,140));
-					m_SceneMgr->drawAll();
-					m_GUI->drawAll();
-					m_Console.renderConsole(m_GUI,m_Driver,m_DeltaMillis);
-				m_Driver->endScene();
-			}
-
-			if(quit->isPressed()){
-				break;
-			}
-			m_Input_Mgr->resumePolling();
+ 		if(quit->isPressed()){
+			break;
+		}
+		m_Input_Mgr->resumePolling();
 	}
+
 }
 
 void GameSystem::setupInput(){
@@ -380,13 +382,16 @@ void GameSystem::setupInput(){
 	right_momentum->addCode(Input::Wiimote::WII_RIGHT_BUTTON, *m_Wiimote);
 	left_momentum->addCode(Input::Wiimote::WII_LEFT_BUTTON, *m_Wiimote);
 
+	
+	
 	quit = InputManager::getSingleton().createAction("quit", InputManager::getSingleton().getKeyboard(), Input::Keyboard::KEY_ESC, Input::Action::BEHAVIOR_DETECT_TAP);
 	quit->addCode(Input::Wiimote::WII_HOME_BUTTON, InputManager::getSingleton().getWiimote());
 
 	pause = InputManager::getSingleton().createAction("pause", InputManager::getSingleton().getKeyboard(), Input::Keyboard::KEY_P, Input::Action::BEHAVIOR_DETECT_RELEASE );
 	pause->addCode(Input::Wiimote::WII_PLUS_BUTTON, InputManager::getSingleton().getWiimote());
-}
 
+
+}
 void GameSystem::handleInput(){
 	if (up_momentum->isPressed()){
 		s_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(s_Gravship->getPhysicsBody()->getVelocity().X, 0.0f, 3.0f));
@@ -414,6 +419,8 @@ void GameSystem::handleInput(){
 
 	if(reverseGravity->isPressed()){
 		s_Gravship->getHelper()->reverseGravityField(true);
+		std::cout << EntityManager::getSingleton().getEntityID("spawner") << "\n";
+		((Spawner*)EntityManager::getSingleton().getEntity(11))->pause(true);
 	}
 	else{
 		s_Gravship->getHelper()->reverseGravityField(false);
@@ -454,7 +461,7 @@ void GameSystem::update() {
 	irr::core::vector3df rotation(direction.getHorizontalAngle());
 	s_Gravship->setRotation(irr::core::vector3df(s_Gravship->getSceneNode()->getRotation().X, s_Gravship->getSceneNode()->getRotation().Y, rotation.Y - rotation.X));
 
-	s_Gravship->getPhysicsBody()->setVelocity(direction);
+	//s_Gravship->getPhysicsBody()->setVelocity(direction);
 
 
 }

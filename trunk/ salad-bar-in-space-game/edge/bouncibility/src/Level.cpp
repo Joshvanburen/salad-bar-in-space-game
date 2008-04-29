@@ -125,7 +125,7 @@ bool Level::load(const std::string& LevelDefinition)
 				}
 				WorldEntity& entity = EntityManager::getSingleton().createEntity(entityName, handle);
 
-				entity.setLocation((float)entityX,500,(float)entityY);
+				entity.setLocation((float)entityX,100,(float)entityY);
 				entity.changeState(entityStartState);
 				m_WorldEntities.push_back(&entity);
 
@@ -146,14 +146,28 @@ bool Level::load(const std::string& LevelDefinition)
 	
 	irr::newton::SBodyFromNode mapData;
 
-	m_SceneNode->setMaterialFlag(video::EMF_BACK_FACE_CULLING,false);
 	mapData.Node = this->m_SceneNode;
-	
-	mapData.TerrainLOD = 1;
+
+	mapData.Mesh = m_SceneNode->getMesh();
 
 	mapData.Type = newton::EBT_TREE_TERRAIN;
 
+	mapData.TerrainLOD = 4;
 	m_Physics_Body = PhysicsManager::getSingleton().getPhysicsWorld()->createBody(mapData);
+
+
+   //m_SceneNode->setMaterialFlag(video::EMF_BACK_FACE_CULLING,true);
+   this->m_SceneNode->setMaterialFlag(irr::video::EMF_TRILINEAR_FILTER, true);
+   this->m_SceneNode->setMaterialFlag(irr::video::EMF_LIGHTING, true);
+   this->m_SceneNode->setMaterialFlag(irr::video::EMF_GOURAUD_SHADING, true);
+  
+
+   ((irr::scene::ITerrainSceneNode*)m_SceneNode)->overrideLODDistance(3, 5000.0f);
+
+
+
+   ((irr::scene::ITerrainSceneNode*)m_SceneNode)->overrideLODDistance(4, 50000.0f);
+    ((irr::scene::ITerrainSceneNode*)m_SceneNode)->overrideLODDistance(5, 50000.0f);
 
 	m_Material = PhysicsManager::getSingleton().getMaterial(materialName);
 	m_Physics_Body->setMaterial(m_Material);

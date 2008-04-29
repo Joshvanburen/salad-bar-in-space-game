@@ -21,6 +21,7 @@ void pollWiimote()
 	}
 }
 
+
 #ifdef DEBUG
 int main()
 {
