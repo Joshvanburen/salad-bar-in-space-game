@@ -16,5 +16,8 @@
 #include "GravshipHelper.h"
 #include "WorldEntity.h"
 #include "WorldEntityAIManager.h"
+#include "Bullet.h"
+
+
 #include "Spawner.h"
 #include "Menu.h"

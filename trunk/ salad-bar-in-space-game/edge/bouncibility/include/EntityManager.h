@@ -40,6 +40,11 @@ namespace Entity{
 		WorldEntity& loadEntity(const std::string& XMLFilename);
 	};
 
+	class BulletFactory : public EntityFactory
+	{
+		WorldEntity& loadEntity(const std::string& XMLFilename);
+	};
+
 
 	class GravshipFactory : public EntityFactory
 	{

@@ -55,6 +55,7 @@ class SoundManager;
 class IC_Console;
 
 class Gravship;
+class Bullet;
 
 
 class GameSystem : public CSingleton<GameSystem>
@@ -167,6 +168,7 @@ class GameSystem : public CSingleton<GameSystem>
 		static GameSystem* gameSystem;
 		static Menu* menu;
 
-
-
+		irr::u32 getMillis() { return m_DeltaMillis;};
+		static Bullet* bulletSrc;
+		Bullet* getBulletSrc() {return bulletSrc;};
 };
