@@ -1,4 +1,8 @@
 <?xml version="1.0" ?>
 <ai>
     <ai_function type="stupid" script="stupid_ai" />
+    <ai_function type="smart" script="smart_ai" />
+    <ai_function type="random" script="random_ai" />
+    <ai_function type="coward" script="coward_ai" />
+    <ai_function type="shooter" script="shooter_ai" />
 </ai>
