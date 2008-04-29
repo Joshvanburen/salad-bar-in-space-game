@@ -16,8 +16,10 @@ namespace Scripting{
 	class ScriptFunction;
 	class WorldEntityAIFunction;
 }
+ 
 
 class GameSystem;
+class Bullet;
 
 class Enemy : public WorldEntity {
 
@@ -67,15 +69,30 @@ public:
 
 	void setAi(Scripting::WorldEntityAIFunction*);
 
+	void setSpeed(float spd) {speed = spd;};
+
+	void setDest(irr::core::vector3df newDest) {dest = newDest;}
+	void setTarget(irr::core::vector3df newTarget) {target = newTarget;}
+
 	void moveToPlayer();
+
+	int moveToDest();
+
+	int moveAwayFromPlayer(float distance);
+
+	void shootPlayer();
+
+	void shootTarget();
+
+	//irr::core::vector3df genRandomLoc();
+	void genRandomLoc();
+
+	//static Bullet* bulletSrc;
 
 private: 
  	
 	WorldEntity* clone();
 
-	//We are trying to use as few as possible parameters
-	//These two parameter can describe many states
-	//They always change together, unless in Helium state
 	float radius;
 	float weight; 
 
@@ -97,6 +114,11 @@ private:
 	Scripting::WorldEntityAIFunction* ai_script;
 
 	int timer;
+
+	float speed;
+
+	irr::core::vector3df dest;
+	irr::core::vector3df target;
 
 };
 
