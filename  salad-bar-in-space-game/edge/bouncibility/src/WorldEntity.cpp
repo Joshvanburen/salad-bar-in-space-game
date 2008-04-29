@@ -49,7 +49,7 @@ void WorldEntity::update(){
 }
 WorldEntity::~WorldEntity(){
 	if (m_SceneNode){
-		this->m_SceneNode->drop();
+		bool result = this->m_SceneNode->drop();
 		m_SceneNode = NULL;
 	}
 	if (m_Mesh){
@@ -57,7 +57,7 @@ WorldEntity::~WorldEntity(){
 		m_Mesh = NULL;
 	}
 	if (m_Physics_Body){
-		m_Physics_Body->remove();
+		m_Physics_Body->removeBody();
 		m_Physics_Body = NULL;
 	}
 }

@@ -74,8 +74,7 @@ private:
 
 	void applyGravityToOrbitingEntities();
 
-	//This is the Gravship's gravity helper object
-	WorldEntity* m_Helper;
+	irr::scene::ILightSceneNode* m_Light;
 
 	irr::newton::IMaterial* m_EmptyMaterial;
 

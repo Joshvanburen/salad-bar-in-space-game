@@ -129,7 +129,9 @@ bool PhysicsManager::init(irr::IrrlichtDevice* device){
 	m_World = irr::newton::createPhysicsWorld(device);
 
 	
-
+	m_World->setFrictionModel(irr::newton::EOM_FAST);
+	m_World->setSolverModel(irr::newton::EOM_FAST);
+	m_World->setPlatformArchitecture(irr::newton::EUHM_MINIMUM);
 	Scripting::MaterialCollisionFunction* script_function = new Scripting::MaterialCollisionFunction();
 
 	ScriptManager::getSingleton().registerScriptFunction("material_collision", script_function);

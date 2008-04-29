@@ -4,6 +4,18 @@
 
 void GravshipHelper::load(){
 	m_EmptyMaterial = PhysicsManager::getSingleton().getMaterial("empty");
+
+	m_Light = LevelManager::getSceneManager()->addLightSceneNode(NULL, irr::core::vector3d<float>(this->m_SceneNode->getPosition().X, this->m_SceneNode->getPosition().Y -50.0f, this->m_SceneNode->getPosition().Z));
+
+	irr::video::SLight lightParams;
+
+	lightParams.Radius = 300.0f;
+
+	this->m_SceneNode->setMaterialFlag(irr::video::EMF_LIGHTING, false);
+
+	lightParams.Attenuation = irr::core::vector3df(1.0f,0.001f,0.0f);
+
+	m_Light->setLightData(lightParams);
 }
 
 void GravshipHelper::update(){
@@ -22,6 +34,7 @@ void GravshipHelper::update(){
 	else{
 		this->m_Physics_Body->setMaterial(m_EmptyMaterial);
 	}
+	m_Light->setPosition(irr::core::vector3df(this->m_SceneNode->getPosition().X, this->m_SceneNode->getPosition().Y-50.0f, this->m_SceneNode->getPosition().Z));
 }
 
 void GravshipHelper::applyGravityToOrbitingEntities(){
@@ -291,11 +304,12 @@ GravshipHelper* GravshipHelper::EntityToGravshipHelper(WorldEntity* entity){
 	return dynamic_cast<GravshipHelper*>(entity);
 }
 
-GravshipHelper::GravshipHelper() : m_GravityOn(true), m_Helper(NULL){
+GravshipHelper::GravshipHelper() : m_GravityOn(true){
 	m_MaxOrbiterSpeed = 1;
 	m_MaxOrbiterSpeedSQ = 1;
 	m_MaxForce = 1;
 	m_MaxForceSQ = 1;
+	m_Light = NULL;
 }
 
 GravshipHelper::~GravshipHelper(){

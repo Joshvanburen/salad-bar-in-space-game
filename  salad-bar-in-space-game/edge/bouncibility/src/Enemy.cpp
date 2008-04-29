@@ -24,7 +24,6 @@ void Enemy::update(){
 
 WorldEntity* Enemy::clone(){
 	Enemy* entity = new Enemy();
-	std::cout << entity->getID() << "\n";;
 	entity->location = this->location;
 	entity->id = -1;
 	entity->currentState = this->currentState;

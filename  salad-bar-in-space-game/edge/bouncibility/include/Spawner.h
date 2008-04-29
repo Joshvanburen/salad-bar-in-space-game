@@ -27,10 +27,10 @@ public:
 
 	void load();
 
-
-	void setFrequency(int frequency){
-		m_Frequency = frequency;
+	void pause(bool enabled){
+		m_Paused = enabled;
 	}
+	void setFrequency(int frequency);
 
 	int getFrequency(){
 		return m_Frequency;
@@ -58,6 +58,7 @@ public:
 
 
 private: 
+	void spawnEntity();
  	
 	WorldEntity* clone(); 
 
@@ -65,11 +66,25 @@ private:
 
 	int m_SimulSpawn;
 
+	int m_EntitiesLeft;
+
 	irr::u32 m_AccumulatedTime;
 
 	std::string currentState;
 
+	typedef std::list<int> TimeList;
 
+	typedef boost::mt19937 RNGEngine;
 
-	hat<WorldEntity* > entities;
+	typedef boost::uniform_int<> UniformDistribution;
+	
+	TimeList m_SpawnTimes;
+
+	RNGEngine m_RandomEngine;
+
+	boost::variate_generator<RNGEngine&, UniformDistribution>* m_RNG;
+
+	hat<WorldEntity* > m_Entities;
+
+	bool m_Paused;
 };

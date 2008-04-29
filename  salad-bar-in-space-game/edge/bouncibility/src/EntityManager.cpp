@@ -140,8 +140,9 @@ WorldEntity& Entity::GravshipHelperFactory::loadEntity(const std::string& XMLFil
 				entity->setSceneNode(node);
 				node->setMaterialTexture(0,LevelManager::getSingleton().getDriver()->getTexture(textureFile.c_str()));
 
-				materialName = xml->getAttributeValue("material");
 
+				materialName = xml->getAttributeValue("material");
+			
 				
 				material = PhysicsManager::getSingleton().getMaterial(materialName);
 				
@@ -231,12 +232,25 @@ WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename)
 				irr::scene::IAnimatedMesh* mesh = LevelManager::getSceneManager()->getMesh(meshFile.c_str());
 				irr::scene::IAnimatedMeshSceneNode* node = LevelManager::getSceneManager()->addAnimatedMeshSceneNode(mesh);
 
+				
 			
 
 				if (node){
+
 					node->setScale(irr::core::vector3df(scale, scale, scale));
-					node->setMaterialFlag(irr::video::EMF_LIGHTING, true);
+					node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 					
+					irr::scene::ILightSceneNode* light = LevelManager::getSceneManager()->addLightSceneNode(node, irr::core::vector3d<float>(0.0f, 50.0f, 0.0f));
+					irr::video::SLight lightParams;
+
+					lightParams.Radius = 600.0f;
+					lightParams.Direction = irr::core::vector3df(0.0, -10.0f, 0.0f);
+					lightParams.Type = irr::video::ELT_SPOT;
+					lightParams.InnerCone = 100.0f;
+					lightParams.OuterCone = 180.0f;
+					light->setLightData(lightParams);
+					//lightParams.Falloff = 0.5f;
+			
 				}
 				
 				node->setAnimationSpeed(5);
@@ -266,11 +280,12 @@ WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename)
 
 				irr::newton::IBody* body = PhysicsManager::getSingleton().getPhysicsWorld()->createBody(physics_node);
 				
-				body->setContinuousCollisionMode(true);
+				body->setContinuousCollisionMode(false);
 
 				body->setMaterial(material);
 
 				body->setUserData(entity);
+				
 
 				body->addForceContinuous(irr::core::vector3df(0,PhysicsManager::getSingleton().getGravity(),0 ));
 
@@ -353,6 +368,7 @@ WorldEntity& Entity::EnemyFactory::loadEntity(const std::string& XMLFilename){
 				
 				entity = new Enemy();
 				
+				node->getMaterial(0).EmissiveColor.set(0,0,0,0);
 				entity->setRotation(irr::core::vector3df(rotX, rotY, rotZ));
 				entity->setMesh(mesh);
 				
@@ -375,8 +391,10 @@ WorldEntity& Entity::EnemyFactory::loadEntity(const std::string& XMLFilename){
 
 					irr::newton::ICharacterController* body = PhysicsManager::getSingleton().getPhysicsWorld()->createCharacterController(PhysicsManager::getSingleton().getPhysicsWorld()->createBody(physics_node));
 					body->setRotationUpdate(false);
-					body->setContinuousCollisionMode(true);
+					body->setContinuousCollisionMode(false);
 
+					body->setAutoFreeze(true);
+					body->setFreezeTreshold(1.0, 1.0, 10);
 					body->setMaterial(material);
 
 					body->setUserData(entity);
@@ -846,8 +864,9 @@ bool EntityManager::init(const std::string& XMLEntityDefinition){
 					Entity::EntityInfo* entityInfo = new Entity::EntityInfo(xml->getAttributeValue("name"), xml->getAttributeValue("file"), factory);
 					if ((m_EntityMap.insert(make_pair(std::string(xml->getAttributeValue("name")), entityInfo))).second){
 						if (xml->getAttributeValue("script")){
-							std::cout << "loading script.\n";
 							script = xml->getAttributeValue("script");
+							std::cout << "loading script: " << script << "\n";
+							
 						}
 						
 						}
