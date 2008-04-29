@@ -26,6 +26,7 @@ PhysicsManager* GameSystem::physicsManager = PhysicsManager::getSingletonPtr();
 InputManager* GameSystem::inputManager = InputManager::getSingletonPtr();
 WorldEntityAIManager* GameSystem::aiManager = WorldEntityAIManager::getSingletonPtr();
 GameSystem* GameSystem::gameSystem = GameSystem::getSingletonPtr();
+Bullet* GameSystem::bulletSrc = NULL;
 //Menu* GameSystem::menu = Menu::getSingletonPtr();
 void grab(int v)
 {
@@ -281,6 +282,8 @@ void GameSystem::startGame(){
 	m_MinX = 0;
 	m_MaxX = dimensions.Width;
 
+	bulletSrc = new Bullet;
+	//this->getbulletSrc = &bulletSrc;
 //	positionCamera();
 
 }
