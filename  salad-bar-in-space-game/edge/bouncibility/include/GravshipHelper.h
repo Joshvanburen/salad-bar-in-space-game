@@ -33,15 +33,12 @@ public:
 
 	void draw();
 
-	void enableGravityField(bool enabled){
-		m_GravityOn=enabled;
-	}
-
+	void enableGravityField(bool enabled);
 	void reverseGravityField(bool enabled){
-		if (enabled){
+		if (enabled && m_GravitationalPull > 0){
 			this->m_GravitationalPull *= -1;
 		}
-		else{
+		else if (!enabled){
 			this->m_GravitationalPull = abs(this->m_GravitationalPull);
 		}
 	}
@@ -66,6 +63,10 @@ public:
 	std::set<WorldEntity*> getOrbitingEntities(){
 		return m_OrbitingEntities;
 	}
+
+	irr::scene::ILightSceneNode* getLight(){
+		return m_Light;
+	}
 private: 
  	
 	WorldEntity* clone();
@@ -74,7 +75,10 @@ private:
 
 	void applyGravityToOrbitingEntities();
 
+	
+	irr::video::SLight m_LightData;
 	irr::scene::ILightSceneNode* m_Light;
+
 
 	irr::newton::IMaterial* m_EmptyMaterial;
 

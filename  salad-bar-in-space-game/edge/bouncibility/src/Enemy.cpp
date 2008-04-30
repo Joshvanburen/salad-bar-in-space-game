@@ -14,7 +14,7 @@ void Enemy::update(){
 	if (m_EnableMovement){
 		timer += GameSystem::getSingleton().getMillis();
 		if (timer > 1000) {
-			ai_script->callFunction(this);
+			//ai_script->callFunction(this);
 			timer =  0;
 		}
 	}

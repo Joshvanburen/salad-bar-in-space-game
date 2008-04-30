@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<level name="tutorial1" music="tutorial1_music" time="50" startingx="100" startingy="100" width="2500" height="2000" map="res/levels/desert.irr" material="level" gravity="-50.0">
-	<camera xloc="1300" yloc="2000" zloc="-300" xlook="1300" ylook="0" zlook="800"/>
+<level name="tutorial1" music="tutorial1_music" time="50" startingx="100" startingy="100" width="2500" height="2000" map="res/levels/space.irr" material="level" gravity="-50.0">
+	<camera xloc="400" yloc="2000" zloc="800" xlook="400" ylook="1800" zlook="-300"/>
 	
 	<entities>
 

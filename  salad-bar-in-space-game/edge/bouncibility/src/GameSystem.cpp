@@ -247,6 +247,9 @@ void GameSystem::init(){
 	m_GUI = m_Device->getGUIEnvironment();
 	//Initialize GUI
 
+	//this->m_PointsDisplay = m_GUI->addStaticText(L"0", irr::core::rect<s32>(1100,10,1250,30), true, false);
+
+	//m_PointsDisplay->setOverrideColor(irr::video::SColor(0, 255, 255, 255));
 	ScriptManager::getSingleton().registerScriptFunction("main", new Scripting::MainFunction());
 
 

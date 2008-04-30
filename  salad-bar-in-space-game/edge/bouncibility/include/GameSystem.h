@@ -77,11 +77,16 @@ class GameSystem : public CSingleton<GameSystem>
 
 		void setupInput();
 
+		irr::gui::IGUIStaticText* m_PointsDisplay;
+
 		InputManager* m_Input_Mgr;
 		// Score variable
 		int m_Score;
 		// Life variable
 		int m_Lives;
+
+		int m_Points;
+
 
 		static Gravship* s_Gravship;
 		// Current powers (for display in UI)

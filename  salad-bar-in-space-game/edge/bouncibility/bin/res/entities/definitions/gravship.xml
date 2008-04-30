@@ -1,2 +1,2 @@
 <gravship name="gravship" mesh="./res/meshes/zombie/zombie.b3d" texture="res/textures/blue_ball_texture.png" material="gravship" radius="8.5" mass="100" helper="gravship_helper" scale="3.5" rotX="270" rotY="0" rotZ="0" />
-<gravship_helper name="gravship_helper" mesh="res/sydney.md2" texture="res/textures/blue_ball_texture.png" material="gravship_helper" orbit_radius="25" field_radius="450" radius="6.5" gravity_pull="8000000" mass="100" max_orbit_speed="12" max_gravity_force="500"/>
+<gravship_helper name="gravship_helper" mesh="res/sydney.md2" texture="res/textures/blue_ball_texture.png" material="gravship_helper" orbit_radius="25" field_radius="450" radius="6.5" gravity_pull="5000000" mass="100" max_orbit_speed="12" max_gravity_force="500"/>
