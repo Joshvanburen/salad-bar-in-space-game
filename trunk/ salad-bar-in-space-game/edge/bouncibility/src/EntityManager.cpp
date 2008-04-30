@@ -465,7 +465,7 @@ WorldEntity& Entity::BulletFactory::loadEntity(const std::string& XMLFilename){
 				name = xml->getAttributeValue("name");
 				//meshFile = xml->getAttributeValue("mesh");
 				textureFile = xml->getAttributeValue("texture");
-				//startState = xml->getAttributeValue("start_state");
+				materialName = xml->getAttributeValue("material");
 				//physics_enabled = xml->getAttributeValueAsInt("enable_physics");
 				//radius = xml->getAttributeValueAsFloat("radius");
 				//color = xml->getAttributeValue("color");
@@ -476,6 +476,7 @@ WorldEntity& Entity::BulletFactory::loadEntity(const std::string& XMLFilename){
 				//rotY = xml->getAttributeValueAsFloat("rotY");
 				//rotZ = xml->getAttributeValueAsFloat("rotZ");
 				//maxSpeed = xml->getAttributeValueAsFloat("max_speed");
+
 				irr::scene::ISceneNode* node = LevelManager::getSceneManager()->addSphereSceneNode(18);
 				//irr::scene::IAnimatedMeshSceneNode* node = LevelManager::getSceneManager()->addAnimatedMeshSceneNode(mesh);
 
@@ -497,7 +498,7 @@ WorldEntity& Entity::BulletFactory::loadEntity(const std::string& XMLFilename){
 				node->setMaterialTexture(0,LevelManager::getSingleton().getDriver()->getTexture(textureFile.c_str()));
 				//if (physics_enabled){
 					//gravity_enabled = xml->getAttributeValueAsInt("enable_gravity");
-					materialName = "enemy";
+					
 
 
 					material = PhysicsManager::getSingleton().getMaterial(materialName);
@@ -506,11 +507,11 @@ WorldEntity& Entity::BulletFactory::loadEntity(const std::string& XMLFilename){
 					irr::newton::SBodyFromNode physics_node;
 					//physics_node.Mesh = mesh->getMesh(2);
 					physics_node.Node = node;
-					physics_node.Type = irr::newton::EBT_PRIMITIVE_BOX;
+					physics_node.Type = irr::newton::EBT_PRIMITIVE_ELLIPSOID;
 
 					irr::newton::ICharacterController* body = PhysicsManager::getSingleton().getPhysicsWorld()->createCharacterController(PhysicsManager::getSingleton().getPhysicsWorld()->createBody(physics_node));
 					body->setRotationUpdate(false);
-					body->setContinuousCollisionMode(false);
+					body->setContinuousCollisionMode(true);
 
 					body->setMaterial(material);
 
@@ -523,6 +524,7 @@ WorldEntity& Entity::BulletFactory::loadEntity(const std::string& XMLFilename){
 
 					entity->setPhysicsBody(body);
 
+					
 			
 				//}
 

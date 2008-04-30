@@ -3,7 +3,6 @@
 
 
 void Bullet::load(){
-
 }
 
 void Bullet::update(){
@@ -11,6 +10,11 @@ void Bullet::update(){
 
 	//this->m_Physics_Body->setVelocity(this->velocity);
 
+	ttl -= GameSystem::getSingleton().getDeltaMillis();
+	if (ttl < 0){
+		EntityManager::getSingleton().remove(this->id);
+		return;
+	}
 	if (m_EnableMovement){
 		//ai_script->callFunction(this);
 	}
@@ -50,8 +54,6 @@ WorldEntity* Bullet::clone(){
 	//entity->bouncibility = this->bouncibility;
 	//entity->radius = this->radius;
 	entity->velocity = this->velocity;
-
-		moveToPlayer();
 
 
 	return entity;
@@ -120,6 +122,7 @@ void Bullet::moveTo(irr::core::vector3df loc) {
 //
 Bullet::Bullet() : WorldEntity(){
 
+	ttl = 10000;
 }
 
 Bullet::~Bullet(){

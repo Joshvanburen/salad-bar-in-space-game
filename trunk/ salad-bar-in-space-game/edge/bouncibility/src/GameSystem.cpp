@@ -247,8 +247,16 @@ void GameSystem::init(){
 	m_GUI = m_Device->getGUIEnvironment();
 	//Initialize GUI
 
+	
+	irr::video::ITexture* hudImage = m_Driver->getTexture("./res/textures/HeadsUp.png");
+
+	std::cout << hudImage->getName() << "\n";
+	irr::gui::IGUIImage* image = m_GUI->addImage(hudImage, irr::core::position2d<irr::s32>(0, 0), true);
+	image->setMinSize(irr::core::dimension2di(1280, 1024));
+	image->setMaxSize(irr::core::dimension2di(1280, 1024));
 	//this->m_PointsDisplay = m_GUI->addStaticText(L"0", irr::core::rect<s32>(1100,10,1250,30), true, false);
 
+	m_GUI->addEditBox(L"Editable Text", rect<s32>(350, 80, 550, 100));
 	//m_PointsDisplay->setOverrideColor(irr::video::SColor(0, 255, 255, 255));
 	ScriptManager::getSingleton().registerScriptFunction("main", new Scripting::MainFunction());
 
@@ -346,20 +354,21 @@ void GameSystem::run(){
 			m_DeltaMillis  = (irr::u32) (1000.0f / (irr::f32)m_FPS);
 		}
 
+
+
+		m_Driver->beginScene(true, true, SColor(255,100,101,140));
 		if (m_FPS > 5){
 			if(!p.isPaused()){
 				m_Input_Mgr->stopPolling();
 				m_PhysicsMgr->update();
 				m_LevelMgr->update();
-
+				m_SceneMgr->drawAll();
 				update();
 			}
 
 			m_Input_Mgr->getInput();
 		}
-
-		m_Driver->beginScene(true, true, SColor(255,100,101,140));
-		m_SceneMgr->drawAll();
+		
 		m_GUI->drawAll();
 		m_Console.renderConsole(m_GUI,m_Driver,m_DeltaMillis);
 		m_Driver->endScene();
@@ -379,6 +388,8 @@ void GameSystem::setupInput(){
 	left_momentum = m_Input_Mgr->createAction("left_momentum", *m_Keyboard, Input::Keyboard::KEY_A, Input::Action::BEHAVIOR_DETECT_PRESS);
 	down_momentum = m_Input_Mgr->createAction("down_momentum", *m_Keyboard, Input::Keyboard::KEY_S, Input::Action::BEHAVIOR_DETECT_PRESS);
 	gravityOn = m_Input_Mgr->createAction("gravity_on", *m_Keyboard, Input::Keyboard::KEY_SPACE, Input::Action::BEHAVIOR_DETECT_PRESS);
+
+	shoot = m_Input_Mgr->createAction("shoot", *m_Keyboard, Input::Keyboard::KEY_Z, Input::Action::BEHAVIOR_DETECT_PRESS);
 
 	reverseGravity = m_Input_Mgr->createAction("reverse_gravity", *m_Keyboard, Input::Keyboard::KEY_R, Input::Action::BEHAVIOR_DETECT_PRESS);
 	
@@ -416,6 +427,9 @@ void GameSystem::handleInput(){
 		s_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(-3.0f, s_Gravship->getPhysicsBody()->getVelocity().Y, 0.0f));
 	}
 
+	if(shoot->isPressed()){
+		s_Gravship->shoot();
+	}
 	if (resync->isPressed()){
 		m_Wiimote->resync();
 
