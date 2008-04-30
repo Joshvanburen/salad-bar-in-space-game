@@ -332,34 +332,41 @@ void GameSystem::run(){
 		tmp += m_FPS;
 		m_Device->setWindowCaption(tmp.c_str());
 		
+		if( pause->isPressed() ){
+			if(p.isPaused() )
+				p.unPause();
+			else
+				p.pause();
+		}
 
-
-
-		if(m_FPS > 0)
-		{
+		if(m_FPS > 0){
 			m_DeltaMillis  = (irr::u32) (1000.0f / (irr::f32)m_FPS);
 		}
-		if (m_FPS > 5){
-			m_Input_Mgr->stopPolling();
-			m_PhysicsMgr->update();
-			m_LevelMgr->update();
 
-			update();
+		if (m_FPS > 5){
+			if(!p.isPaused()){
+				m_Input_Mgr->stopPolling();
+				m_PhysicsMgr->update();
+				m_LevelMgr->update();
+
+				update();
+			}
 
 			m_Input_Mgr->getInput();
 		}
+
 		m_Driver->beginScene(true, true, SColor(255,100,101,140));
-			m_SceneMgr->drawAll();
-			m_GUI->drawAll();
-			m_Console.renderConsole(m_GUI,m_Driver,m_DeltaMillis);
+		m_SceneMgr->drawAll();
+		m_GUI->drawAll();
+		m_Console.renderConsole(m_GUI,m_Driver,m_DeltaMillis);
 		m_Driver->endScene();
 
- 		if(quit->isPressed()){
+		if(quit->isPressed()){
 			break;
 		}
+		
 		m_Input_Mgr->resumePolling();
 	}
-
 }
 
 void GameSystem::setupInput(){
