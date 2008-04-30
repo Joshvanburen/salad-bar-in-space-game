@@ -5,17 +5,17 @@
 void GravshipHelper::load(){
 	m_EmptyMaterial = PhysicsManager::getSingleton().getMaterial("empty");
 
-	m_Light = LevelManager::getSceneManager()->addLightSceneNode(NULL, irr::core::vector3d<float>(this->m_SceneNode->getPosition().X, this->m_SceneNode->getPosition().Y -50.0f, this->m_SceneNode->getPosition().Z));
+	//m_Light = LevelManager::getSceneManager()->addLightSceneNode(NULL, irr::core::vector3d<float>(this->m_SceneNode->getPosition().X, this->m_SceneNode->getPosition().Y -10.0f, this->m_SceneNode->getPosition().Z));
 
-	irr::video::SLight lightParams;
+	
+	//m_LightData.Radius = 400.0f;
 
-	lightParams.Radius = 300.0f;
+	//this->m_SceneNode->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 
-	this->m_SceneNode->setMaterialFlag(irr::video::EMF_LIGHTING, false);
+	//m_LightData.Attenuation = irr::core::vector3df(1.0f,0.001f,0.0f);
 
-	lightParams.Attenuation = irr::core::vector3df(1.0f,0.001f,0.0f);
-
-	m_Light->setLightData(lightParams);
+	
+	//m_Light->setLightData(m_LightData);
 }
 
 void GravshipHelper::update(){
@@ -27,14 +27,17 @@ void GravshipHelper::update(){
 	updateOrbitingEntities();
 	//If gravity field is on, Apply force to any entities in our orbiting range
 	if (this->m_GravityOn){
-		this->m_Physics_Body->setMaterial(m_Material);
+
+//		this->m_Physics_Body->setMaterial(m_Material);
 
 		applyGravityToOrbitingEntities();
 	}
 	else{
+
 		this->m_Physics_Body->setMaterial(m_EmptyMaterial);
 	}
-	m_Light->setPosition(irr::core::vector3df(this->m_SceneNode->getPosition().X, this->m_SceneNode->getPosition().Y-50.0f, this->m_SceneNode->getPosition().Z));
+	//m_Light->setPosition(irr::core::vector3df(this->m_SceneNode->getPosition().X, this->m_SceneNode->getPosition().Y-10.0f, this->m_SceneNode->getPosition().Z));
+
 }
 
 void GravshipHelper::applyGravityToOrbitingEntities(){
@@ -304,7 +307,7 @@ GravshipHelper* GravshipHelper::EntityToGravshipHelper(WorldEntity* entity){
 	return dynamic_cast<GravshipHelper*>(entity);
 }
 
-GravshipHelper::GravshipHelper() : m_GravityOn(true){
+GravshipHelper::GravshipHelper() : m_GravityOn(false){
 	m_MaxOrbiterSpeed = 1;
 	m_MaxOrbiterSpeedSQ = 1;
 	m_MaxForce = 1;
@@ -313,4 +316,9 @@ GravshipHelper::GravshipHelper() : m_GravityOn(true){
 }
 
 GravshipHelper::~GravshipHelper(){
+}
+
+void GravshipHelper::enableGravityField(bool enabled){
+	m_GravityOn=enabled;
+
 }

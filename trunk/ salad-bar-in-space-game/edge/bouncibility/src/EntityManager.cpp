@@ -250,7 +250,7 @@ WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename)
 					lightParams.OuterCone = 180.0f;
 					light->setLightData(lightParams);
 					//lightParams.Falloff = 0.5f;
-			
+					
 				}
 				
 				node->setAnimationSpeed(5);
