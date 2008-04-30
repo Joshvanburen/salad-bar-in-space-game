@@ -57,7 +57,7 @@ WorldEntity* Enemy::clone(){
 
 	body->setUserData(entity);
 
-	body->addForceContinuous(irr::core::vector3df(0,PhysicsManager::getSingleton().getGravity(),0));
+	body->addForceContinuous(irr::core::vector3df(0,0,PhysicsManager::getSingleton().getGravity()));
 	entity->m_Physics_Body = body;
 	entity->color = this->color;
 	entity->weight = this->weight;

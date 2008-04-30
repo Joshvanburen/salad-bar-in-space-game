@@ -287,7 +287,7 @@ WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename)
 				body->setUserData(entity);
 				
 
-				body->addForceContinuous(irr::core::vector3df(0,PhysicsManager::getSingleton().getGravity(),0 ));
+				body->addForceContinuous(irr::core::vector3df(0,0,PhysicsManager::getSingleton().getGravity() ));
 
 				body->setMass(irr::f32(mass));
 				entity->setPhysicsBody(body);
@@ -368,7 +368,7 @@ WorldEntity& Entity::EnemyFactory::loadEntity(const std::string& XMLFilename){
 				
 				entity = new Enemy();
 				
-				node->getMaterial(0).EmissiveColor.set(0,0,0,0);
+	
 				entity->setRotation(irr::core::vector3df(rotX, rotY, rotZ));
 				entity->setMesh(mesh);
 				
@@ -401,7 +401,7 @@ WorldEntity& Entity::EnemyFactory::loadEntity(const std::string& XMLFilename){
 
 					body->setMass(mass);
 					if (gravity_enabled){
-						body->addForceContinuous(irr::core::vector3df(0,PhysicsManager::getSingleton().getGravity(),0 ));
+						body->addForceContinuous(irr::core::vector3df(PhysicsManager::getSingleton().getGravity() ,0,0));
 					}
 
 					entity->setPhysicsBody(body);
@@ -666,7 +666,7 @@ WorldEntity& Entity::ObstacleFactory::loadEntity(const std::string& XMLFilename)
 					body->setUserData(entity);
 
 					//Adds gravity
-					body->addForceContinuous(irr::core::vector3df(0,PhysicsManager::getSingleton().getGravity(),0 ));
+					body->addForceContinuous(irr::core::vector3df(0,0,PhysicsManager::getSingleton().getGravity()));
 					
 					//Sets the mass
 					body->setMass(15000);

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<level name="tutorial1" music="tutorial1_music" time="50" startingx="100" startingy="100" width="2500" height="2000" map="res/levels/space.irr" material="level" gravity="-50.0">
-	<camera xloc="400" yloc="2000" zloc="800" xlook="400" ylook="1800" zlook="-300"/>
+<level name="tutorial1" music="tutorial1_music" time="50" startingx="100" startingy="100" width="2500" height="2000" map="res/levels/space.irr" material="level" gravity="10.0">
+	<camera xloc="400" yloc="2000" zloc="800" xlook="400" ylook="2000" zlook="-300"/>
 	
 	<entities>
 
@@ -14,7 +14,7 @@
 		<entity name="enemy" startstate="normal" xloc="1000" yloc="800" />
 		<entity name="enemy" startstate="normal" xloc="1200" yloc="900" />
 
-		<entity name="one_second_spawner" startstate="normal" xloc="1500" yloc="1000" handle="spawner"/>
+		<entity name="one_second_spawner" startstate="normal" xloc="400" yloc="2000" handle="spawner"/>
 		
 	
 	</entities>

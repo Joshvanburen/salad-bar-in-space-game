@@ -125,7 +125,7 @@ bool Level::load(const std::string& LevelDefinition)
 				}
 				WorldEntity& entity = EntityManager::getSingleton().createEntity(entityName, handle);
 
-				entity.setLocation((float)entityX,100,(float)entityY);
+				entity.setLocation((float)entityX,(float)entityY,-2000);
 				entity.changeState(entityStartState);
 				m_WorldEntities.push_back(&entity);
 

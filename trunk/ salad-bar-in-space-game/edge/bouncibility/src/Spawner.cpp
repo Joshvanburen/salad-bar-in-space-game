@@ -53,7 +53,7 @@ void Spawner::spawnEntity(){
 	WorldEntity* entity;
 	WorldEntity* cloneableEntity = m_Entities.get();
 	entity = &EntityManager::getSingleton().cloneEntity(*cloneableEntity);
-	entity->setLocation(xloc, 500, yloc);
+	entity->setLocation(this->getLocation().X, this->getLocation().Y, this->getLocation().Z);
 	entity->setVisible(true);
 	entity->getPhysicsBody()->setFreeze(false);
 	entity->getSceneNode()->getMaterial(0).EmissiveColor.set(0,0,0,0);
