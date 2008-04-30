@@ -25,7 +25,6 @@ void Enemy::update(){
 WorldEntity* Enemy::clone(){
 	Enemy* entity = new Enemy();
 	entity->location = this->location;
-	entity->id = -1;
 	entity->currentState = this->currentState;
 	if (m_Mesh){
 		this->m_Mesh->grab();

@@ -33,6 +33,8 @@ public:
 	//Where story happens, check state, collision detect, physics staffs.
 	void update();
 
+	void shoot();
+
 	void draw();
 
 	void enableGravityField(bool enabled);

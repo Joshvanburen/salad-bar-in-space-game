@@ -58,7 +58,7 @@ private:
 
 	float speed;
 
-
+	int ttl;
 	//2d speed and direction - Irrlicht probably has a better vector class for representing 2d vectors!
 	irr::core::vector3df velocity;
 

@@ -56,6 +56,12 @@ WorldEntity* Gravship::clone(){
 	return entity;
 }
 
+void Gravship::shoot(){
+	WorldEntity* bullet = &EntityManager::getSingleton().cloneEntity(*GameSystem::bulletSrc);
+	bullet->setLocation(this->getLocation());
+	bullet->getPhysicsBody()->setVelocity(irr::core::vector3df(0.0f, 0.0f, 20.0f));
+
+}
 void Gravship::enableGravityField(bool enabled){
 	m_GravityOn = enabled;
 
