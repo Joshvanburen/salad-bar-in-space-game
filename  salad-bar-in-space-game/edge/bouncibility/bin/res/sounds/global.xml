@@ -1,4 +1,4 @@
 <?xml version="1.0"?>
 <sounds>
-  <sound name="ball_collision" filename="./res/sounds/media/explosion.wav" volume="1" />	
+  <sound name="ball_collision" filename="./res/sounds/media/bell.wav" volume="1" />	
 </sounds>

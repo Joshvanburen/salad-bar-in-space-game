@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <sounds>
+  <sound name="bullet_hit" filename="./res/sounds/media/explosion.wav" volume="1.0" />
   <sound name="track1" filename="./res/sounds/media/02 - dance from outer space.mp3" volume="0.6"/>
   <sound name="track2" filename="./res/sounds/media/03 - La decouverte et la conquete.mp3" volume="0.6"/>
   <sound name="track3" filename="./res/sounds/media/05 - La preparation.mp3" volume="0.6"/>
