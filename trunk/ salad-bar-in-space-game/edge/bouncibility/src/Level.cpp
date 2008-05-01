@@ -28,6 +28,7 @@ Level::Level() : m_SceneNode(NULL), m_Mesh(NULL), m_Physics_Body(NULL){
 	m_MaxY = 0;
 	m_Camera = NULL;
 	m_Material = NULL;
+	m_MusicIndex = 0;
 }
 
 Level::~Level(){
@@ -36,6 +37,11 @@ Level::~Level(){
 //Updates the level
 void Level::update()
 {
+
+	if (!m_MusicList[m_MusicIndex]->isPlaying()){
+		m_MusicIndex = rand() % m_MusicList.size();
+		m_MusicList[m_MusicIndex]->play(false);
+	}
 	if (m_EntitiesToAdd.size() > 0){
 		::EntityVector::iterator entityAddItr = m_EntitiesToAdd.begin();
 		for(;entityAddItr != m_EntitiesToAdd.end(); entityAddItr++){
@@ -57,6 +63,7 @@ void Level::shutdown(){
 		m_Physics_Body->remove();
 		m_Physics_Body = NULL;
 	}
+	m_MusicList.clear();
 	m_Status = Level::STOPPED;
 	
 	m_Camera->drop();
@@ -95,8 +102,8 @@ bool Level::load(const std::string& LevelDefinition)
 		case irr::io::EXN_ELEMENT:
 			if (!strcmp("level", xml->getNodeName())){
 				m_LevelName = xml->getAttributeValue("name");
-				m_MusicName = xml->getAttributeValue("music");
-				m_Music = SoundManager::getSingleton().getSound(m_MusicName);
+				//m_MusicName = xml->getAttributeValue("music");
+				//m_Music = SoundManager::getSingleton().getSound(m_MusicName);
 				m_Time = xml->getAttributeValueAsInt("time");
 				m_StartingX = xml->getAttributeValueAsInt("startingx");
 				m_StartingY = xml->getAttributeValueAsInt("startingy");
@@ -120,6 +127,10 @@ bool Level::load(const std::string& LevelDefinition)
 				
 				
 			
+			}
+			else if (!strcmp("music", xml->getNodeName())){
+				m_MusicName = xml->getAttributeValue("sound");
+				m_MusicList.push_back(SoundManager::getSingleton().getSound(m_MusicName));
 			}
 			else if (!strcmp("entity", xml->getNodeName())){
 				std::string entityName(xml->getAttributeValue("name"));
@@ -170,9 +181,9 @@ bool Level::load(const std::string& LevelDefinition)
 
 	m_Material = PhysicsManager::getSingleton().getMaterial(materialName);
 	m_Physics_Body->setMaterial(m_Material);
-
-	
-	//m_Music->play(true);
+	srand(time(NULL));
+	m_MusicIndex = rand() % m_MusicList.size();
+	m_MusicList[m_MusicIndex]->play(false);
 
 	m_MinY = 0;
 	m_MaxY = m_LevelDimensions.Height;

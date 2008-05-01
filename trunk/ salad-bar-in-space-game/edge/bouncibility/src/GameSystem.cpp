@@ -191,7 +191,6 @@ void GameSystem::shutdown(){
 	if (m_Device->getReferenceCount() > 0)
 		m_Device->drop();
 
-
 }
 void GameSystem::init(){
 
@@ -255,8 +254,8 @@ void GameSystem::init(){
 	//Initialize GUI
 
 	hudImage = m_Driver->getTexture("./res/textures/HeadsUp.png");
-	titleScreen = m_Driver->getTexture("./textures/Cats/splash2.png");
-	splashScreen = m_Driver->getTexture("./textures/Cats/TittleScreen.png");
+	titleScreen = m_Driver->getTexture("./textures/cats/splash2.png");
+	splashScreen = m_Driver->getTexture("./textures/cats/TittleScreen.png");
 
 
 

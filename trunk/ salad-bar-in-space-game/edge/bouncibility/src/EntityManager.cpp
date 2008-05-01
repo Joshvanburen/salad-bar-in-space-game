@@ -408,7 +408,7 @@ WorldEntity& Entity::EnemyFactory::loadEntity(const std::string& XMLFilename){
 
 					body->setMass(mass);
 					if (gravity_enabled){
-						body->addForceContinuous(irr::core::vector3df(PhysicsManager::getSingleton().getGravity() ,0,0));
+						//body->addForceContinuous(irr::core::vector3df(PhysicsManager::getSingleton().getGravity() ,0,0));
 					}
 
 					entity->setPhysicsBody(body);
@@ -429,7 +429,7 @@ WorldEntity& Entity::EnemyFactory::loadEntity(const std::string& XMLFilename){
 		}
 	}
 
-
+	entity->load();
 	return *entity;
 }
 
@@ -452,6 +452,7 @@ WorldEntity& Entity::BulletFactory::loadEntity(const std::string& XMLFilename){
 	irr::newton::IMaterial* material;
 	float speed = 1;
 	float mass = 1;
+	float radius = 1;
 	//float scale = 1;
 	//float maxSpeed = 1;
 	//	float rotX = 0;
@@ -474,7 +475,7 @@ WorldEntity& Entity::BulletFactory::loadEntity(const std::string& XMLFilename){
 				textureFile = xml->getAttributeValue("texture");
 				materialName = xml->getAttributeValue("material");
 				//physics_enabled = xml->getAttributeValueAsInt("enable_physics");
-				//radius = xml->getAttributeValueAsFloat("radius");
+				radius = xml->getAttributeValueAsFloat("radius");
 				//color = xml->getAttributeValue("color");
 				//ai_type = xml->getAttributeValue("ai");
 				//mass = xml->getAttributeValueAsFloat("mass");
@@ -484,7 +485,7 @@ WorldEntity& Entity::BulletFactory::loadEntity(const std::string& XMLFilename){
 				//rotZ = xml->getAttributeValueAsFloat("rotZ");
 				//maxSpeed = xml->getAttributeValueAsFloat("max_speed");
 
-				irr::scene::ISceneNode* node = LevelManager::getSceneManager()->addSphereSceneNode(18);
+				irr::scene::ISceneNode* node = LevelManager::getSceneManager()->addSphereSceneNode(radius);
 				//irr::scene::IAnimatedMeshSceneNode* node = LevelManager::getSceneManager()->addAnimatedMeshSceneNode(mesh);
 
 				//if (node){
@@ -495,6 +496,7 @@ WorldEntity& Entity::BulletFactory::loadEntity(const std::string& XMLFilename){
 				
 				entity = new Bullet();
 				
+				((Bullet*)entity)->setBulletRadius(radius);
 				//entity->setRotation(irr::core::vector3df(rotX, rotY, rotZ));
 				//entity->setMesh(mesh);
 				//
@@ -847,6 +849,7 @@ bool EntityManager::init(const std::string& XMLEntityDefinition){
 	this->m_Loader.registerFactory("obstacle", new Entity::ObstacleFactory());
 	this->m_Loader.registerFactory("spawner", new Entity::SpawnerFactory());
 
+	this->m_Loader.registerFactory("bullet", new Entity::BulletFactory());
 	irr::io::IrrXMLReader* xml = irr::io::createIrrXMLReader(XMLEntityDefinition.c_str());
 
 	if (!xml){

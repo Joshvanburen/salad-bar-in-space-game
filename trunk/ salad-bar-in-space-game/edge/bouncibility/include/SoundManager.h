@@ -39,6 +39,9 @@ namespace Sound{
 		void setVolume(float newVolume);
 
 		float getVolume();
+		
+		bool isPlaying();
+
 
 		void setPosition(irrklang::vec3df& newPosition);
 
