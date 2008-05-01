@@ -390,6 +390,8 @@ WorldEntity& Entity::EnemyFactory::loadEntity(const std::string& XMLFilename){
 
 					material = PhysicsManager::getSingleton().getMaterial(materialName);
 
+					//material->setCollidable(PhysicsManager::getSingleton().getMaterial("shipb"), false);
+					material->setCollidable(PhysicsManager::getSingleton().getMaterial("enemy"), false);
 
 					irr::newton::SBodyFromNode physics_node;
 					physics_node.Mesh = mesh->getMesh(2);

@@ -45,6 +45,9 @@ public:
 		return m_Helper;
 	}
 
+	int getHealth(){
+		return m_Health;
+	}
 	// Change Enemy state, all the other properties of the Enemy may be changed from here
 	void changeState(const std::string name);
 
@@ -56,6 +59,7 @@ private:
 	WorldEntity* clone();
 
 
+	int m_Health;
 	//This is the Gravship's gravity helper object
 	GravshipHelper* m_Helper;
 

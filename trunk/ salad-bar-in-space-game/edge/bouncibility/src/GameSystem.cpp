@@ -137,6 +137,8 @@ GameSystem::GameSystem(){
 	quit = NULL;
 	pause = NULL;
 	start = NULL;
+
+	m_SplashTTL = 2000;
 }
 
 
@@ -294,7 +296,10 @@ void GameSystem::init(){
 
 }
 
-
+void GameSystem::appendSplashScreen(irr::gui::IGUIImage* image){
+	m_SplashTTL = 2000;
+	m_SplashScreens.push_back(image);
+}
 
 void GameSystem::startGame(){
 
@@ -371,6 +376,15 @@ void GameSystem::run(){
 		tmp += m_FPS;
 		m_Device->setWindowCaption(tmp.c_str());
 
+		m_SplashTTL -= this->getDeltaMillis();
+		if(m_SplashTTL < 0){
+			m_SplashTTL = 2000;
+			if (m_SplashScreens.size() > 0){
+				irr::gui::IGUIImage* image = m_SplashScreens.front();
+				image->remove();
+				m_SplashScreens.pop_front();
+			}	
+		}
 		if(firstTime){
 			p.pause();
 			if(start->isPressed()){
@@ -417,6 +431,8 @@ void GameSystem::run(){
 				//update();
 			}
 			m_SceneMgr->drawAll();
+			m_Driver->draw2DRectangle(irr::video::SColor(255, 0, 0, 255), irr::core::rect<irr::s32>(irr::core::position2di(640-s_Gravship->getHealth(), 10), irr::core::position2di(640+s_Gravship->getHealth(), 45)));
+
 			update();
 			m_Input_Mgr->getInput();
 		}

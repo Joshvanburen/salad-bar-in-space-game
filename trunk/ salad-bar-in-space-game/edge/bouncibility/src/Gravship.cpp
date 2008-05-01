@@ -21,8 +21,9 @@ void Gravship::update(){
 
 
 void Gravship::takeDamage(int howmuch){
-
+	m_Health -= howmuch;
 }
+
 
 
 WorldEntity* Gravship::clone(){
@@ -107,7 +108,7 @@ Gravship* Gravship::EntityToGravship(WorldEntity* entity){
 }
 
 Gravship::Gravship() : m_GravityOn(false), m_Helper(NULL){
-
+	m_Health = 225;
 }
 
 Gravship::~Gravship(){

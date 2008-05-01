@@ -56,7 +56,7 @@ void Spawner::spawnEntity(){
 	entity->setLocation(this->getLocation().X, this->getLocation().Y, this->getLocation().Z);
 	entity->setVisible(true);
 	entity->getPhysicsBody()->setFreeze(false);
-	entity->getSceneNode()->getMaterial(0).EmissiveColor.set(0,0,0,0);
+
 }
 void Spawner::addEntity(const std::string& entityName, float probability){
 	WorldEntity* entity = &EntityManager::getSingleton().createEntity(entityName);
