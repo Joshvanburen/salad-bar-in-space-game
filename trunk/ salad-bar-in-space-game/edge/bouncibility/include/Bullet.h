@@ -53,9 +53,11 @@ public:
 
 	void moveToPlayer();
 
-	void moveTo(irr::core::vector3df loc);
+	void moveToDest();
 
 	WorldEntity* clone();
+
+	irr::core::vector3df dest;
 
 private: 
  	
@@ -66,6 +68,7 @@ private:
 	int ttl;
 	//2d speed and direction - Irrlicht probably has a better vector class for representing 2d vectors!
 	irr::core::vector3df velocity;
+
 
 
 
