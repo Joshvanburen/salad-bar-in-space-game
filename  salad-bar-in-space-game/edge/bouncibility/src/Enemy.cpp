@@ -2,8 +2,15 @@
 #include "GameIncludes.h"
 
 
-void Enemy::load(){
+Bullet* Enemy::s_BulletSrc = NULL;
 
+void Enemy::load(){
+	if (!s_BulletSrc){
+		s_BulletSrc = (Bullet*)&EntityManager::getSingleton().createEntity("bullet");
+		s_BulletSrc->setLocation(-10000, -10000, -10000);
+		s_BulletSrc->setVisible(false);
+		s_BulletSrc->getPhysicsBody()->setFreeze(true);
+	}
 }
 
 void Enemy::update(){
@@ -293,5 +300,5 @@ Enemy::~Enemy(){
 }
 
 void Enemy::splat(){
-	
+	std::cout << "splat!\n";
 }

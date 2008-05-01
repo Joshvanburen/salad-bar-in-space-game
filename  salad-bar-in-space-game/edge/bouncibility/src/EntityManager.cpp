@@ -955,6 +955,7 @@ bool EntityManager::remove(const int entityID){
 	if(m_EntityItr == m_IdEntityMap.end())
 		return false;
 
+	LevelManager::getSingleton().getCurrentLevel().removeEntity(m_EntityItr->second);
 	delete m_EntityItr->second;
 	m_IdEntityMap.erase(m_EntityItr);
 	return true;
