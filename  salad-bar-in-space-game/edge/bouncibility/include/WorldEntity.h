@@ -112,6 +112,7 @@ public:
 		m_EnableMovement = enabled;
 	}
 
+
 	// There are many WorldEntities that we may wish to pass a change of state to,
 	// so the world Entity should be where the current state object is held. It
 	// provides a virtual function for manipulating the state.

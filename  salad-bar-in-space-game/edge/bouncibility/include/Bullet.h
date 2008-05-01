@@ -21,7 +21,7 @@
 //class GameSystem;
 
 class Bullet : public WorldEntity {
-
+friend class BulletFactory;
 public:
 
 
@@ -39,6 +39,10 @@ public:
 	void update();
 
 
+	void setBulletRadius(float newRadius){
+
+		m_BulletRadius = newRadius;
+	}
 	// Change Bullet state, all the other properties of the Bullet may be changed from here
 	void changeState(const std::string name) {};
 
@@ -55,6 +59,7 @@ public:
 
 private: 
  	
+	float m_BulletRadius;
 
 	float speed;
 

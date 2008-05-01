@@ -10,6 +10,7 @@ void Enemy::load(){
 		s_BulletSrc->setLocation(-10000, -10000, -10000);
 		s_BulletSrc->setVisible(false);
 		s_BulletSrc->getPhysicsBody()->setFreeze(true);
+		//EntityManager::getSingleton().claim(s_BulletSrc->getID());
 	}
 }
 
@@ -74,7 +75,7 @@ WorldEntity* Enemy::clone(){
 
 	body->setUserData(entity);
 
-	body->addForceContinuous(irr::core::vector3df(0,0,PhysicsManager::getSingleton().getGravity()));
+	//body->addForceContinuous(irr::core::vector3df(0,0,PhysicsManager::getSingleton().getGravity()));
 	entity->m_Physics_Body = body;
 	entity->color = this->color;
 	entity->weight = this->weight;
@@ -253,7 +254,7 @@ void Enemy::shootPlayer() {
 
 void Enemy::shootTarget() {
 
-	Bullet* newBullet = dynamic_cast<Bullet*>(GameSystem::bulletSrc->clone());
+	Bullet* newBullet = dynamic_cast<Bullet*>(&EntityManager::getSingleton().cloneEntity(Enemy::s_BulletSrc->getID()));
 	newBullet->setLocation(this->getLocation());
 	newBullet->moveTo(this->target);
 

@@ -104,9 +104,13 @@ void Sound::Audio::play(bool looped){
 	}
 	else{
 		m_pSound = SoundManager::engine->play2D(m_Sources[value], looped, false, true);
+		
 	}
 }
 
+bool Sound::Audio::isPlaying(){
+	return !m_pSound->isFinished();
+}
 void Sound::Audio::stop(){
 	if (m_pSound){
 

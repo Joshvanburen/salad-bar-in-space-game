@@ -31,7 +31,9 @@ class Level
 			std::string m_LevelFile;
 			//!name of music file
 			std::string m_MusicName;
+			int m_MusicIndex;
 			//!Handle to the sound object for music.
+			std::vector<Sound::Audio*> m_MusicList;
 			Sound::Audio* m_Music;
 			//!Level timer;
 			int m_Time;

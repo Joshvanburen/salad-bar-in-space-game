@@ -22,21 +22,34 @@ void Bullet::update(){
 
 }
 
+
+
 WorldEntity* Bullet::clone(){
 	Bullet* entity = new Bullet();
 	entity->location = this->location;
-	//entity->id = -1;
-	//entity->currentState = this->currentState;
+
+
 	if (m_Mesh){
 		this->m_Mesh->grab();
 	}
 	entity->m_Mesh = this->m_Mesh;
-	//entity->m_Radius = this->m_Radius;
-	entity->m_SceneNode = this->m_SceneNode->clone();
+	entity->m_Radius = this->m_Radius;
+	entity->m_BulletRadius = this->m_BulletRadius;
+	//Clone isn't working for the animated scene node.  Should just make from scratch.
+	irr::scene::ISceneNode* node = LevelManager::getSceneManager()->addSphereSceneNode(this->m_BulletRadius);
+
+	if (node){
+		node->setScale(irr::core::vector3df(this->m_SceneNode->getScale()));
+		node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
+		
+	}
+	entity->m_SceneNode = node;
 
 	irr::newton::SBodyFromNode physics_node;
 	physics_node.Node = entity->m_SceneNode;
 	physics_node.Type = irr::newton::EBT_PRIMITIVE_ELLIPSOID;
+
+
 
 	irr::newton::ICharacterController* body = m_Physics_Body->getWorld()->createCharacterController(m_Physics_Body->getWorld()->createBody(physics_node));
 	body->setRotationUpdate(false);
@@ -121,7 +134,7 @@ void Bullet::moveTo(irr::core::vector3df loc) {
 //}
 //
 Bullet::Bullet() : WorldEntity(){
-
+	m_BulletRadius = 1;
 	ttl = 10000;
 }
 
