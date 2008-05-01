@@ -129,6 +129,10 @@ private:
 
 	float speed;
 
+	irr::gui::IGUIImage* splatScreen;
+
+	int splatTTL;
+
 	irr::core::vector3df dest;
 	irr::core::vector3df nowhere;
 	irr::core::vector3df target;
