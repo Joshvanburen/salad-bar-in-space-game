@@ -229,8 +229,9 @@ WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename)
 				rotY = xml->getAttributeValueAsFloat("rotY");
 				rotZ = xml->getAttributeValueAsFloat("rotZ");
 
-				irr::scene::IAnimatedMesh* mesh = LevelManager::getSceneManager()->getMesh(meshFile.c_str());
-				irr::scene::IAnimatedMeshSceneNode* node = LevelManager::getSceneManager()->addAnimatedMeshSceneNode(mesh);
+				irr::scene::ISceneNode* node = LevelManager::getSceneManager()->addCubeSceneNode(20);
+				//irr::scene::IAnimatedMesh* mesh = LevelManager::getSceneManager()->getMesh(meshFile.c_str());
+				//irr::scene::IAnimatedMeshSceneNode* node = LevelManager::getSceneManager()->addAnimatedMeshSceneNode(mesh);
 
 				
 			
@@ -240,28 +241,28 @@ WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename)
 					node->setScale(irr::core::vector3df(scale, scale, scale));
 					node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 					
-					irr::scene::ILightSceneNode* light = LevelManager::getSceneManager()->addLightSceneNode(node, irr::core::vector3d<float>(0.0f, 50.0f, 0.0f));
-					irr::video::SLight lightParams;
+					//irr::scene::ILightSceneNode* light = LevelManager::getSceneManager()->addLightSceneNode(node, irr::core::vector3d<float>(0.0f, 50.0f, 0.0f));
+					//irr::video::SLight lightParams;
 
-					lightParams.Radius = 600.0f;
-					lightParams.Direction = irr::core::vector3df(0.0, -10.0f, 0.0f);
-					lightParams.Type = irr::video::ELT_SPOT;
-					lightParams.InnerCone = 100.0f;
-					lightParams.OuterCone = 180.0f;
-					light->setLightData(lightParams);
+					//lightParams.Radius = 600.0f;
+					//lightParams.Direction = irr::core::vector3df(0.0, -10.0f, 0.0f);
+					//lightParams.Type = irr::video::ELT_SPOT;
+					//lightParams.InnerCone = 100.0f;
+					//lightParams.OuterCone = 180.0f;
+					//light->setLightData(lightParams);
 					//lightParams.Falloff = 0.5f;
 					
 				}
 				
-				node->setAnimationSpeed(5);
+				//node->setAnimationSpeed(5);
 
-				node->setFrameLoop(2, 21);
+				//node->setFrameLoop(2, 21);
 			
 				entity = new Gravship();
 				
-				entity->setMesh(mesh);
+				//entity->setMesh(mesh);
 				
-				entity->setRotation(irr::core::vector3df(rotX, rotY, rotZ));
+				//entity->setRotation(irr::core::vector3df(rotX, rotY, rotZ));
 				entity->setSceneNode(node);
 				//node->setMaterialTexture(0,LevelManager::getSingleton().getDriver()->getTexture(textureFile.c_str()));
 
@@ -274,7 +275,7 @@ WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename)
 				
 
 				irr::newton::SBodyFromNode physics_node;
-				physics_node.Mesh = mesh->getMesh(2);
+				//physics_node.Mesh = mesh->getMesh(2);
 				physics_node.Node = node;
 				physics_node.Type = irr::newton::EBT_PRIMITIVE_BOX;
 
@@ -291,7 +292,7 @@ WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename)
 
 				body->setMass(irr::f32(mass));
 				entity->setPhysicsBody(body);
-				material->setCollidable(PhysicsManager::getSingleton().getMaterial("level"), true);
+				//material->setCollidable(PhysicsManager::getSingleton().getMaterial("level"), true);
 				
 
 			
@@ -323,6 +324,7 @@ WorldEntity& Entity::EnemyFactory::loadEntity(const std::string& XMLFilename){
 	int physics_enabled = 0;
 	int gravity_enabled = 0;
 	std::string materialName;
+	std::string splatFile;
 	irr::newton::IMaterial* material;
 	float radius = 1;
 	float mass = 1;
@@ -346,6 +348,7 @@ WorldEntity& Entity::EnemyFactory::loadEntity(const std::string& XMLFilename){
 				name = xml->getAttributeValue("name");
 				meshFile = xml->getAttributeValue("mesh");
 				textureFile = xml->getAttributeValue("texture");
+				splatFile = xml->getAttributeValue("splat");
 				//startState = xml->getAttributeValue("start_state");
 				physics_enabled = xml->getAttributeValueAsInt("enable_physics");
 				radius = xml->getAttributeValueAsFloat("radius");
@@ -368,10 +371,14 @@ WorldEntity& Entity::EnemyFactory::loadEntity(const std::string& XMLFilename){
 				
 				entity = new Enemy();
 				
+
 	
 				entity->setRotation(irr::core::vector3df(rotX, rotY, rotZ));
 				entity->setMesh(mesh);
+				irr::video::ITexture* splatImage = LevelManager::getDriver()->getTexture(splatFile.c_str());
 				
+				((Enemy*)entity)->setSplatImage(splatImage);
+
 				((Enemy*)entity)->setColor(color);
 				((Enemy*)entity)->setRadius(radius);
 				entity->setSceneNode(node);
@@ -387,7 +394,7 @@ WorldEntity& Entity::EnemyFactory::loadEntity(const std::string& XMLFilename){
 					irr::newton::SBodyFromNode physics_node;
 					physics_node.Mesh = mesh->getMesh(2);
 					physics_node.Node = node;
-					physics_node.Type = irr::newton::EBT_PRIMITIVE_BOX;
+					physics_node.Type = irr::newton::EBT_CONVEX_HULL;
 
 					irr::newton::ICharacterController* body = PhysicsManager::getSingleton().getPhysicsWorld()->createCharacterController(PhysicsManager::getSingleton().getPhysicsWorld()->createBody(physics_node));
 					body->setRotationUpdate(false);

@@ -243,7 +243,13 @@ Enemy::Enemy() : WorldEntity(){
 
 	//bulletSrc = GameSystem::getBulletSrc();
 	target = dest;
+
+	splatImage = NULL;
 }
 
 Enemy::~Enemy(){
+}
+
+void Enemy::splat(){
+	
 }

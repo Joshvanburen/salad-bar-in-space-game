@@ -274,7 +274,12 @@ bool ScriptManager::init(){
 
 
 	this->registerAsGlobal("Enemy& EntityToEnemy(WorldEntity&)", ::asFUNCTION(Enemy::EntityToEnemy));
-	
+
+	registerReferenceObject("Gravship");
+	registerAsGlobal("Gravship& EntityToGravship(WorldEntity&)", ::asFUNCTION(Gravship::EntityToGravship));
+	registerObjectMethod("Enemy", "void splat()", ::asMETHOD(Enemy, splat));
+	registerObjectMethod("Gravship", "void takeDamage(int)", ::asMETHOD(Gravship, takeDamage));
+
 	//Register global handles to singletons
 	registerReferenceObject("EntityManager");
 	registerReferenceObject("InputManager");
@@ -379,7 +384,7 @@ bool ScriptManager::init(){
 //	registerObjectMethod("SoundManager", "void removeAll()", ::asMETHOD(SoundManager, removeAll));
 //	registerObjectMethod("SoundManager", "void removeSound(Sound::Audio* sound)", ::asMETHODPR(SoundManager, removeSound, (Sound::Audio* sound), void));
 //	registerObjectMethod("SoundManager", "Audio* addSound(const string&, const string&, bool is3D)", ::asMETHOD(SoundManager, addSound));
-//	registerObjectMethod("SoundManager", "Audio* getSound(const string&)", ::asMETHOD(SoundManager, getSound));
+	registerObjectMethod("SoundManager", "Audio* getSound(const string&)", ::asMETHOD(SoundManager, getSound));
 //	registerObjectMethod("SoundManager", "void removeSound(const string&)", ::asMETHODPR(SoundManager, removeSound, (const std::string&), void));
 
 
