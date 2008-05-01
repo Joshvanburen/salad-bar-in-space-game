@@ -8,4 +8,5 @@
 	<entity name="obstacle_one" file="./res/entities/definitions/obstacle_one.xml" type="obstacle" script="obstacle"/>
 	<entity name="one_second_spawner" file="./res/entities/definitions/one_second_spawner.xml" type="spawner" script="spawner"/>
 	<entity name="bullet" file="./res/entities/definitions/bullet.xml" type="bullet" script="spawner" />
+	<entity name="gravshipb" file="./res/entities/definitions/bullet.xml" type="bullet" script="spawner" />
 </worldentities>
