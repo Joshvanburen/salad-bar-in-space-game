@@ -29,6 +29,7 @@ GameSystem* GameSystem::gameSystem = GameSystem::getSingletonPtr();
 
 Bullet* GameSystem::bulletSrc = NULL;
 //Menu* GameSystem::menu = Menu::getSingletonPtr();
+Pause p;
 
 void grab(int v)
 {
@@ -135,7 +136,7 @@ GameSystem::GameSystem(){
 
 	quit = NULL;
 	pause = NULL;
-	unpause = NULL;
+	start = NULL;
 }
 
 
@@ -171,8 +172,15 @@ void GameSystem::shutdown(){
 
 	quit = NULL;
 	pause = NULL;
-	unpause = NULL;
+	start = NULL;
 	resync = NULL;
+
+	image = NULL;
+	hudImage = NULL;
+	titleScreen = NULL;
+	title = NULL;
+	splash = NULL;
+	splashScreen = NULL;
 
 	m_Input_Mgr->shutdown();
 	m_LevelMgr->shutdown();
@@ -232,7 +240,7 @@ void GameSystem::init(){
 	m_Console.loadDefaultCommands(m_Device);
 
 
-		// Register special function with overloads to catch any type.
+	// Register special function with overloads to catch any type.
 	// This is used by the exec command to output the resulting value from the statement.
 	ScriptManager::getSingleton().registerAsGlobal("void _grab(bool)", asFUNCTIONPR(grab, (bool), void));
 	ScriptManager::getSingleton().registerAsGlobal("void _grab(int)", asFUNCTIONPR(grab, (int), void));
@@ -243,23 +251,33 @@ void GameSystem::init(){
 	ScriptManager::getSingleton().registerAsGlobal("void _grab(const string& in)", asFUNCTIONPR(grab, (const std::string&), void));
 	ScriptManager::getSingleton().registerAsGlobal("void _grab(WorldEntity& in)", asFUNCTIONPR(grab, (WorldEntity*), void));
 	
-
 	m_GUI = m_Device->getGUIEnvironment();
 	//Initialize GUI
 
-	
-	irr::video::ITexture* hudImage = m_Driver->getTexture("./res/textures/HeadsUp.png");
+	hudImage = m_Driver->getTexture("./res/textures/HeadsUp.png");
+	titleScreen = m_Driver->getTexture("./textures/Cats/splash2.png");
+	splashScreen = m_Driver->getTexture("./textures/Cats/TittleScreen.png");
 
 	std::cout << hudImage->getName() << "\n";
-	irr::gui::IGUIImage* image = m_GUI->addImage(hudImage, irr::core::position2d<irr::s32>(0, 0), true);
+
+	image = m_GUI->addImage(hudImage, irr::core::position2d<irr::s32>(0, 0), true);
+	image->setVisible(false);
+	title = m_GUI->addImage(titleScreen, irr::core::position2d<irr::s32>(0,0), true);
+	title->setVisible(true);
+	splash = m_GUI->addImage(splashScreen, irr::core::position2d<irr::s32>(0,0), true);
+	splash->setVisible(false);
+
 	image->setMinSize(irr::core::dimension2di(1280, 1024));
 	image->setMaxSize(irr::core::dimension2di(1280, 1024));
+	title->setMinSize(irr::core::dimension2di(1280, 1024));
+	title->setMaxSize(irr::core::dimension2di(1280, 1024));
+	splash->setMinSize(irr::core::dimension2di(1280, 1024));
+	splash->setMaxSize(irr::core::dimension2di(1280, 1024));
 	//this->m_PointsDisplay = m_GUI->addStaticText(L"0", irr::core::rect<s32>(1100,10,1250,30), true, false);
 
 	m_GUI->addEditBox(L"Editable Text", rect<s32>(350, 80, 550, 100));
 	//m_PointsDisplay->setOverrideColor(irr::video::SColor(0, 255, 255, 255));
 	ScriptManager::getSingleton().registerScriptFunction("main", new Scripting::MainFunction());
-
 
 	IC_Command* cmd = new EXECUTESCRIPT();
 	m_Console.registerCommand(cmd);
@@ -328,10 +346,13 @@ void GameSystem::positionCamera(){
 }
 
 void GameSystem::run(){
-
-	Pause p;
+	bool firstTime = true;
+	int i = 0;
 	while(m_Device->run())
 	{
+
+		//menu->init(m_Device);
+
 		/*
 		Anything can be drawn between a beginScene() and an endScene()
 		call. The beginScene clears the screen with a color and also the
@@ -344,12 +365,60 @@ void GameSystem::run(){
 		irr::core::stringw tmp(L"FPS: ");
 		tmp += m_FPS;
 		m_Device->setWindowCaption(tmp.c_str());
-		
-		if( pause->isPressed() ){
-			if(p.isPaused() )
+
+		if(firstTime){
+			p.pause();
+			if(start->isPressed()){
+				if( title->isVisible() ){
+					title->setVisible(false);
+					splash->setVisible(true);
+					image->setVisible(false);
+				}else if( splash->isVisible() ){
+					title->setVisible(false);
+					splash->setVisible(false);
+					image->setVisible(true);
+					firstTime = false;
+					p.unPause();
+				}
+			}	
+		}
+
+		/*//splash screens
+		if(firstTime){
+			p.pause();
+			
+			if(i == 0){
+				title->setVisible(true);
+				splash->setVisible(false);
+				image->setVisible(false);
+			}
+			
+			if( i == 1 ){
+				title->setVisible(false);
+				splash->setVisible(true);
+				image->setVisible(false);
+			}
+			
+			if( i == 2 ){
+				title->setVisible(false);
+				splash->setVisible(false);
+				image->setVisible(true);
+				firstTime = false;
 				p.unPause();
-			else
+			}
+		}	
+		*/
+		if( pause->isPressed() ){
+			if(p.isPaused() ){
+				splash->setVisible(false);
+				image->setVisible(true);
+				p.unPause();
+			}
+			else{
+				splash->setVisible(true);
+				image->setVisible(false);
 				p.pause();
+			}
 		}
 
 		if(m_FPS > 0){
@@ -364,10 +433,11 @@ void GameSystem::run(){
 				m_Input_Mgr->stopPolling();
 				m_PhysicsMgr->update();
 				m_LevelMgr->update();
-				m_SceneMgr->drawAll();
-				update();
+				//m_SceneMgr->drawAll();
+				//update();
 			}
-
+			m_SceneMgr->drawAll();
+			update();
 			m_Input_Mgr->getInput();
 		}
 		
@@ -413,6 +483,8 @@ void GameSystem::setupInput(){
 	pause = InputManager::getSingleton().createAction("pause", InputManager::getSingleton().getKeyboard(), Input::Keyboard::KEY_P, Input::Action::BEHAVIOR_DETECT_RELEASE );
 	pause->addCode(Input::Wiimote::WII_PLUS_BUTTON, InputManager::getSingleton().getWiimote());
 
+	start = InputManager::getSingleton().createAction("start", InputManager::getSingleton().getKeyboard(), Input::Keyboard::KEY_SPACE, Input::Action::BEHAVIOR_DETECT_RELEASE );
+	start->addCode(Input::Wiimote::WII_MINUS_BUTTON, InputManager::getSingleton().getWiimote());
 
 }
 void GameSystem::handleInput(){
