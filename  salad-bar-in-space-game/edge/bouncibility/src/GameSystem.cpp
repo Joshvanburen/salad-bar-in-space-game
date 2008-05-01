@@ -358,6 +358,11 @@ void GameSystem::run(){
 	bool firstTime = true;
 	bool quitOnce = true;
 	int i = 0;
+
+	irr::u32 r = 0;
+	irr::u32 b = 0;
+	irr::u32 g = 255;
+
 	while(m_Device->run())
 	{
 
@@ -431,8 +436,14 @@ void GameSystem::run(){
 				//update();
 			}
 			m_SceneMgr->drawAll();
-			m_Driver->draw2DRectangle(irr::video::SColor(255, 0, 0, 255), irr::core::rect<irr::s32>(irr::core::position2di(640-s_Gravship->getHealth(), 10), irr::core::position2di(640+s_Gravship->getHealth(), 45)));
+			m_Driver->draw2DRectangle(irr::video::SColor(255, r, g, b), irr::core::rect<irr::s32>(irr::core::position2di(640-s_Gravship->getHealth(), 10), irr::core::position2di(640+s_Gravship->getHealth(), 45)));
 			
+			if( s_Gravship->getHealth() <= 75 ){
+				r = 255;
+				g = 0;
+			}
+
+
 			if(s_Gravship->getHealth() <= 0 ){
 				p.pause();
 				image->setVisible(false);
