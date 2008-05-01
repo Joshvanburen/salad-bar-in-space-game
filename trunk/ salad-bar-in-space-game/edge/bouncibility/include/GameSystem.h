@@ -61,7 +61,7 @@ class Bullet;
 class GameSystem : public CSingleton<GameSystem>
 {
 	friend CSingleton;
-	friend class Menu;
+	//friend class Menu;
 	private:
 
 		GameSystem();
@@ -114,6 +114,7 @@ class GameSystem : public CSingleton<GameSystem>
 		Input::Action* morph;
 		Input::Action* hover;
 		Input::Action* pause;
+		Input::Action* start;
 		Input::Action* unpause;
 		Input::Action* resync;	
 		Input::Action* quit;
@@ -138,6 +139,15 @@ class GameSystem : public CSingleton<GameSystem>
 		irr::scene::ISceneManager* m_SceneMgr;
 		irr::IrrlichtDevice* m_Device;
 		irr::video::IVideoDriver* m_Driver;
+
+		//Splash Screens
+		irr::video::ITexture* hudImage;
+		irr::video::ITexture* titleScreen;
+		irr::video::ITexture* splashScreen;
+		irr::gui::IGUIImage* image;
+		irr::gui::IGUIImage* title;
+		irr::gui::IGUIImage* splash;
+
 
 		LevelManager* m_LevelMgr;
 		PhysicsManager* m_PhysicsMgr;
@@ -177,7 +187,7 @@ class GameSystem : public CSingleton<GameSystem>
 		static InputManager* inputManager;
 		static WorldEntityAIManager* aiManager;
 		static GameSystem* gameSystem;
-		static Menu* menu;
+		//static Menu* menu;
 
 		//irr::u32 getMillis() { return m_DeltaMillis;};
 		static Bullet* bulletSrc;
