@@ -144,9 +144,11 @@ class GameSystem : public CSingleton<GameSystem>
 		irr::video::ITexture* hudImage;
 		irr::video::ITexture* titleScreen;
 		irr::video::ITexture* splashScreen;
+		irr::video::ITexture* gameOver;
 		irr::gui::IGUIImage* image;
 		irr::gui::IGUIImage* title;
 		irr::gui::IGUIImage* splash;
+		irr::gui::IGUIImage* over;
 
 
 		LevelManager* m_LevelMgr;
