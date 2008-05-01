@@ -155,7 +155,7 @@ void Enemy::setAi(Scripting::WorldEntityAIFunction* newAIScript){
 
 void Enemy::moveToPlayer(){
 
-	genRandomNW();
+	//genRandomNW();
 	dest = GameSystem::getSingleton().getGravship()->getSceneNode()->getPosition();
     moveToDest();
 }

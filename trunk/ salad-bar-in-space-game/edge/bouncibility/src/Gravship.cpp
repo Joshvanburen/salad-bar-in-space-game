@@ -1,10 +1,31 @@
 #include "Common.h"
 #include "GameIncludes.h"
 
-
+Bullet* Gravship::s_BulletSrc = NULL;
 void Gravship::load(){
 
+	if (!s_BulletSrc){
+		s_BulletSrc = (Bullet*)&EntityManager::getSingleton().createEntity("gravshipb");
+		s_BulletSrc->setLocation(this->getLocation());
+		s_BulletSrc->setVisible(false);
+		s_BulletSrc->getPhysicsBody()->setFreeze(true);
+		//EntityManager::getSingleton().claim(s_BulletSrc->getID());
+	}
 }
+
+void Gravship::shoot() {
+
+	Bullet* newBullet = dynamic_cast<Bullet*>(&EntityManager::getSingleton().cloneEntity(Gravship::s_BulletSrc->getID()));
+	newBullet->setLocation(this->m_Physics_Body->getPosition());
+	target.X = -10000;
+	target.Y = -10000;
+	target.Z = -10000;
+	newBullet->dest = target;
+	newBullet->moveToDest();
+
+}
+
+
 
 void Gravship::update(){
 	WorldEntity::update();
@@ -14,6 +35,7 @@ void Gravship::update(){
 	if (this->m_GravityOn){
 	}
 
+	//shoot();
 
 	m_Helper->update();
 	
@@ -60,12 +82,15 @@ WorldEntity* Gravship::clone(){
 	return entity;
 }
 
+/*
 void Gravship::shoot(){
 	WorldEntity* bullet = &EntityManager::getSingleton().cloneEntity(*GameSystem::bulletSrc);
 	bullet->setLocation(this->getLocation());
 	bullet->getPhysicsBody()->setVelocity(irr::core::vector3df(0.0f, 0.0f, 20.0f));
 
 }
+*/
+
 void Gravship::enableGravityField(bool enabled){
 	m_GravityOn = enabled;
 
