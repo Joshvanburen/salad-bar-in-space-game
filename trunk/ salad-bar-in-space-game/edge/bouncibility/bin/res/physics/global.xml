@@ -13,7 +13,9 @@
 	<collision material1="gravship" material2="gravship" softness="0.0" static_friction="0.0" kinetic_friction="0.0" elasticity="1.0" />
 	<collision material1="enemy" material2="level" softness="1.0" static_friction="1.0" kinetic_friction="1.0" elasticity="0.2" />
 	<collision material1="enemy" material2="enemy" softness="0.0" static_friction="0.0" kinetic_friction="0.0" elasticity="0.3" />
+		<callback script="bullet" material1="gravship" material2="bullet" />
 	<callback script="gravship" material1="gravship" material2="enemy" />
+
     <sound name="ball_collision" material1="gravship" material2="enemy" />
   </collisions>
 </physics>
