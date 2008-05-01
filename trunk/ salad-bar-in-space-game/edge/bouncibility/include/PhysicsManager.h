@@ -56,6 +56,7 @@ namespace Physics{
 
 		Physics::SoundList m_Sounds;
 
+		bool m_CollisionOccurred;
 		WorldEntityCollisionCallback(const std::string& m_Material1, const std::string& material2);
 		WorldEntityCollisionCallback(const std::string& m_Material1, const std::string& material2, Scripting::ScriptFunction* scriptFunction);
 		~WorldEntityCollisionCallback();

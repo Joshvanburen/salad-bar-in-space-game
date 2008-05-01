@@ -258,7 +258,7 @@ void GameSystem::init(){
 	titleScreen = m_Driver->getTexture("./textures/Cats/splash2.png");
 	splashScreen = m_Driver->getTexture("./textures/Cats/TittleScreen.png");
 
-	std::cout << hudImage->getName() << "\n";
+
 
 	image = m_GUI->addImage(hudImage, irr::core::position2d<irr::s32>(0, 0), true);
 	image->setVisible(false);
@@ -275,7 +275,7 @@ void GameSystem::init(){
 	splash->setMaxSize(irr::core::dimension2di(1280, 1024));
 	//this->m_PointsDisplay = m_GUI->addStaticText(L"0", irr::core::rect<s32>(1100,10,1250,30), true, false);
 
-	m_GUI->addEditBox(L"Editable Text", rect<s32>(350, 80, 550, 100));
+
 	//m_PointsDisplay->setOverrideColor(irr::video::SColor(0, 255, 255, 255));
 	ScriptManager::getSingleton().registerScriptFunction("main", new Scripting::MainFunction());
 

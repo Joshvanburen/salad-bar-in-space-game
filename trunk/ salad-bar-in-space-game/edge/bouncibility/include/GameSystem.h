@@ -168,6 +168,9 @@ class GameSystem : public CSingleton<GameSystem>
 		void run();
 		void shutdown();
 
+		irr::gui::IGUIEnvironment* getGUI(){
+			return m_GUI;
+		}
 		irr::core::dimension2di getScreenDim(){
 			return m_ScreenDim;
 		}

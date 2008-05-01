@@ -48,17 +48,15 @@ void WorldEntity::update(){
 	this->getSceneNode()->setPosition(irr::core::vector3df(position.X,position.Y, position.Z));
 }
 WorldEntity::~WorldEntity(){
-	if (m_SceneNode){
-		bool result = this->m_SceneNode->drop();
-		m_SceneNode = NULL;
-	}
+
 	if (m_Mesh){
 		this->m_Mesh->drop();
 		m_Mesh = NULL;
 	}
 	if (m_Physics_Body){
-		m_Physics_Body->removeBody();
+		m_Physics_Body->remove();
 		m_Physics_Body = NULL;
+		m_SceneNode = NULL;
 	}
 }
 WorldEntity::WorldEntity(int iID, float x, float y, float z){

@@ -16,6 +16,14 @@ void Enemy::load(){
 void Enemy::update(){
 	WorldEntity::update();
 
+	splatTTL -= GameSystem::getSingleton().getDeltaMillis();
+	if (splatScreen && splatTTL < 0){
+		splatScreen->setVisible(false);
+		splatScreen->remove();
+		splatScreen->drop();
+		splatScreen = NULL;
+		splatTTL = 2000;
+	}
 	genRandomDest();
 
 	//this->m_Physics_Body->setVelocity(this->velocity);
@@ -38,6 +46,7 @@ WorldEntity* Enemy::clone(){
 	if (m_Mesh){
 		this->m_Mesh->grab();
 	}
+	entity->splatImage = this->splatImage;
 	entity->m_Mesh = this->m_Mesh;
 	entity->m_Radius = this->m_Radius;
 	//Clone isn't working for the animated scene node.  Should just make from scratch.
@@ -285,12 +294,12 @@ Enemy::Enemy() : WorldEntity(){
 	color = '0';
 	timer = 0;
 
+	splatTTL = 2000;
+	splatScreen = NULL;
 	genRandomNW();
 
 	
 	
-
-	//bulletSrc = GameSystem::getBulletSrc();
 	target = dest;
 
 	splatImage = NULL;
@@ -301,5 +310,6 @@ Enemy::~Enemy(){
 }
 
 void Enemy::splat(){
-	std::cout << "splat!\n";
+	splatScreen = GameSystem::getSingleton().getGUI()->addImage(splatImage, irr::core::position2d<irr::s32>(300, 300), true);
+	std::cout << "splat! " << splatImage->getName() << "\n";
 }

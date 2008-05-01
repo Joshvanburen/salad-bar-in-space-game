@@ -17,6 +17,7 @@ Physics::WorldEntityCollisionCallback::WorldEntityCollisionCallback(const std::s
 
 Physics::WorldEntityCollisionCallback::WorldEntityCollisionCallback(const std::string& material1, const std::string& material2, Scripting::ScriptFunction* scriptFunction) : IMaterialCollisionCallback(), entity1(NULL), entity2(NULL), m_Material1(material1), m_Material2(material2){
 	m_CollisionHandlerScripts.insert(scriptFunction);
+	m_CollisionOccurred = false;
 }
 
 Physics::WorldEntityCollisionCallback::~WorldEntityCollisionCallback(){
@@ -25,6 +26,23 @@ Physics::WorldEntityCollisionCallback::~WorldEntityCollisionCallback(){
 
 void Physics::WorldEntityCollisionCallback::ContactEnd(irr::newton::IMaterialPair* material_pair){
 
+	if (m_CollisionOccurred){
+		//Save anything relevant about the points that are in contact.
+
+		m_ScriptItrEnd = m_CollisionHandlerScripts.end();
+
+		for (m_ScriptItr = m_CollisionHandlerScripts.begin(); m_ScriptItr != m_ScriptItrEnd; ++m_ScriptItr){
+			((Scripting::MaterialCollisionFunction*)(*m_ScriptItr))->callFunction(this->entity1, this->entity2);
+			//Call the script collision function with entity1 and entity2 pointers.
+		}
+
+		m_SoundsItrEnd = m_Sounds.end();
+
+		for (m_SoundsItr = m_Sounds.begin(); m_SoundsItr != m_SoundsItrEnd; ++m_SoundsItr){
+			//(*m_SoundsItr)->play(false);
+		}
+	}
+	m_CollisionOccurred = false;
 }
 
 int  Physics::WorldEntityCollisionCallback::ContactBegin (irr::newton::IMaterialPair *material_pair, irr::newton::IBody *body0, irr::newton::IBody *body1){
@@ -38,22 +56,12 @@ int  Physics::WorldEntityCollisionCallback::ContactBegin (irr::newton::IMaterial
 	return 1;
 }
 
+
+
 int  Physics::WorldEntityCollisionCallback::ContactProcess (irr::newton::IMaterialPairAndContact *material_pair_and_contact){
 
-	//Save anything relevant about the points that are in contact.
+	m_CollisionOccurred = true;
 
-	m_ScriptItrEnd = m_CollisionHandlerScripts.end();
-
-	for (m_ScriptItr = m_CollisionHandlerScripts.begin(); m_ScriptItr != m_ScriptItrEnd; ++m_ScriptItr){
-		((Scripting::MaterialCollisionFunction*)(*m_ScriptItr))->callFunction(this->entity1, this->entity2);
-		//Call the script collision function with entity1 and entity2 pointers.
-	}
-
-	m_SoundsItrEnd = m_Sounds.end();
-
-	for (m_SoundsItr = m_Sounds.begin(); m_SoundsItr != m_SoundsItrEnd; ++m_SoundsItr){
-		//(*m_SoundsItr)->play(false);
-	}
 	return 1;
 
 }
