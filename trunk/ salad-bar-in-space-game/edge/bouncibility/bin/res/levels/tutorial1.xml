@@ -1,7 +1,12 @@
 <?xml version="1.0"?>
 <level name="tutorial1" music="tutorial1_music" time="50" startingx="100" startingy="100" width="2500" height="2000" map="res/levels/space.irr" material="level" gravity="10.0">
 	<camera xloc="0" yloc="10" zloc="0" xlook="400" ylook="1800" zlook="-300"/>
-	
+	<music sound="track1" />
+	<music sound="track2" />
+	<music sound="track3" />
+	<music sound="track4" />
+	<music sound="track5" />
+	<music sound="track6" />
 	<entities>
 
 		<entity name="gravship" startstate="normal" xloc="400" yloc="2000" handle="player" />
