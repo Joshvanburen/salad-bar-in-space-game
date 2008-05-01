@@ -6,6 +6,8 @@ using namespace io;
 
 int EntityManager::Next_Available_ID = 1;
 
+
+
 WorldEntity& Entity::SpawnerFactory::loadEntity(const std::string &XMLFilename){
 	std::string name;
 	int frequency = 0;
@@ -555,6 +557,124 @@ WorldEntity& Entity::BulletFactory::loadEntity(const std::string& XMLFilename){
 }
 
 
+WorldEntity& Entity::GravshipbFactory::loadEntity(const std::string& XMLFilename){
+
+
+	irr::io::IrrXMLReader* xml = irr::io::createIrrXMLReader(XMLFilename.c_str());
+
+	// strings for storing the data we want to get out of the file
+	std::string name;
+	//std::string meshFile;
+	std::string textureFile;
+	//std::string startState;
+	//std::string color;
+	//std::string ai_type;
+	//int physics_enabled = 0;
+	//int gravity_enabled = 0;
+	std::string materialName;
+	irr::newton::IMaterial* material;
+	float speed = 1;
+	float mass = 1;
+	float radius = 1;
+	//float scale = 1;
+	//float maxSpeed = 1;
+	//	float rotX = 0;
+	//float rotY = 0;
+	//float rotZ = 0;
+	Bullet* entity = NULL;
+
+	while(xml && xml->read())
+	{
+		switch(xml->getNodeType())
+		{
+		case EXN_TEXT:
+			//No text nodes
+			break;
+
+		case EXN_ELEMENT:
+			if (!strcmp("gravshipb", xml->getNodeName())){
+				name = xml->getAttributeValue("name");
+				//meshFile = xml->getAttributeValue("mesh");
+				textureFile = xml->getAttributeValue("texture");
+				materialName = xml->getAttributeValue("material");
+				//physics_enabled = xml->getAttributeValueAsInt("enable_physics");
+				radius = xml->getAttributeValueAsFloat("radius");
+				//color = xml->getAttributeValue("color");
+				//ai_type = xml->getAttributeValue("ai");
+				//mass = xml->getAttributeValueAsFloat("mass");
+				speed = xml->getAttributeValueAsFloat("speed");
+				//rotX = xml->getAttributeValueAsFloat("rotX");
+				//rotY = xml->getAttributeValueAsFloat("rotY");
+				//rotZ = xml->getAttributeValueAsFloat("rotZ");
+				//maxSpeed = xml->getAttributeValueAsFloat("max_speed");
+
+				irr::scene::ISceneNode* node = LevelManager::getSceneManager()->addSphereSceneNode(radius);
+				//irr::scene::IAnimatedMeshSceneNode* node = LevelManager::getSceneManager()->addAnimatedMeshSceneNode(mesh);
+
+				//if (node){
+				//	node->setScale(irr::core::vector3df(scale, scale, scale));
+				//	node->setMaterialFlag(irr::video::EMF_LIGHTING, true);
+				//	
+				//}
+				
+				entity = new Bullet();
+				
+				((Bullet*)entity)->setBulletRadius(radius);
+				//entity->setRotation(irr::core::vector3df(rotX, rotY, rotZ));
+				//entity->setMesh(mesh);
+				//
+				//((Enemy*)entity)->setColor(color);
+				//((Enemy*)entity)->setRadius(radius);
+				entity->setSceneNode(node);
+				//node->setMaterialFlag();
+				node->setMaterialTexture(0,LevelManager::getSingleton().getDriver()->getTexture(textureFile.c_str()));
+				//if (physics_enabled){
+					//gravity_enabled = xml->getAttributeValueAsInt("enable_gravity");
+					
+
+
+					material = PhysicsManager::getSingleton().getMaterial(materialName);
+
+
+					irr::newton::SBodyFromNode physics_node;
+					//physics_node.Mesh = mesh->getMesh(2);
+					physics_node.Node = node;
+					physics_node.Type = irr::newton::EBT_PRIMITIVE_ELLIPSOID;
+
+					irr::newton::ICharacterController* body = PhysicsManager::getSingleton().getPhysicsWorld()->createCharacterController(PhysicsManager::getSingleton().getPhysicsWorld()->createBody(physics_node));
+					body->setRotationUpdate(false);
+					body->setContinuousCollisionMode(true);
+
+					body->setMaterial(material);
+
+					body->setUserData(entity);
+
+					//body->setMass(mass);
+					//if (gravity_enabled){
+					//	body->addForceContinuous(irr::core::vector3df(0,PhysicsManager::getSingleton().getGravity(),0 ));
+					//}
+
+					entity->setPhysicsBody(body);
+
+					
+			
+				//}
+
+				//Scripting::WorldEntityAIFunction* ai_script = ((Scripting::WorldEntityAIFunction*)(WorldEntityAIManager::getSingleton().getAI(ai_type)));
+
+				entity->setSpeed(speed);
+
+			//entity->changeState(startState)
+							
+			}
+			break;
+		}
+	}
+
+
+	return *entity;
+}
+
 WorldEntity& Entity::ObstacleFactory::loadEntity(const std::string& XMLFilename){
 	
 	//Creates a pointer to the XML file reader
@@ -852,6 +972,7 @@ bool EntityManager::init(const std::string& XMLEntityDefinition){
 	this->m_Loader.registerFactory("spawner", new Entity::SpawnerFactory());
 
 	this->m_Loader.registerFactory("bullet", new Entity::BulletFactory());
+	this->m_Loader.registerFactory("gravshipb", new Entity::GravshipbFactory());
 	irr::io::IrrXMLReader* xml = irr::io::createIrrXMLReader(XMLEntityDefinition.c_str());
 
 	if (!xml){
