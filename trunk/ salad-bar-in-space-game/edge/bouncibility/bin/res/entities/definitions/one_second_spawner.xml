@@ -1,5 +1,5 @@
 <spawnerdefinition>
-<spawner name="one_second_spawner" frequency="2000" simultaneous_spawn="2"/>
+<spawner name="one_second_spawner" frequency="10000" simultaneous_spawn="2"/>
 <entity name="enemy1" probability="1.0" />
 <entity name="enemy2" probability="1.0" />
 <entity name="enemy3" probability="1.0" />
