@@ -25,7 +25,7 @@ void Bullet::update(){
 WorldEntity* Bullet::clone(){
 	Bullet* entity = new Bullet();
 	entity->location = this->location;
-	entity->id = -1;
+	//entity->id = -1;
 	//entity->currentState = this->currentState;
 	if (m_Mesh){
 		this->m_Mesh->grab();

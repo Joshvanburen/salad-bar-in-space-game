@@ -9,11 +9,13 @@ void Enemy::load(){
 void Enemy::update(){
 	WorldEntity::update();
 
+	genRandomDest();
+
 	//this->m_Physics_Body->setVelocity(this->velocity);
 
 	if (m_EnableMovement){
 		timer += GameSystem::getSingleton().getDeltaMillis();
-		if (timer > 1000) {
+		if (timer > 2000) {
 			ai_script->callFunction(this);
 			timer =  0;
 		}
@@ -134,8 +136,11 @@ void Enemy::setAi(Scripting::WorldEntityAIFunction* newAIScript){
 
 }
 
+
+
 void Enemy::moveToPlayer(){
 
+	genRandomNW();
 	dest = GameSystem::getSingleton().getGravship()->getSceneNode()->getPosition();
     moveToDest();
 }
@@ -145,10 +150,8 @@ bool Enemy::moveToDest() {
 	
 	const irr::core::vector3df myLoc = this->getSceneNode()->getPosition();
 
-	//dest.Z = -800;
-	//dest.Y = 1200;
 
-	irr::core::vector3df conn = dest - myLoc;
+	irr::core::vector3df conn = myLoc - dest;
 
 	if (conn.getLength() < 10) { return false;}
 
@@ -169,6 +172,34 @@ bool Enemy::moveToDest() {
 	return true;
 
 }
+
+bool Enemy::moveNowhere() {
+	
+	const irr::core::vector3df myLoc = this->getSceneNode()->getPosition();
+
+
+	irr::core::vector3df conn = myLoc - nowhere;
+
+	if (conn.getLength() < 10) { return false;}
+
+	conn = conn.normalize();
+
+	conn = conn * speed;
+
+	this->m_Physics_Body->setVelocity(conn);
+
+	
+	//this->m_Physics_Body->addForce(conn);
+	
+	irr::core::vector3df velocity = this->m_Physics_Body->getVelocity();
+	if (velocity.getLengthSQ() > m_MaxSpeedSQ){
+		this->m_Physics_Body->setVelocity(velocity.normalize() * m_MaxSpeed);
+	}
+	
+	return true;
+
+}
+
 
 bool Enemy::moveAwayFromPlayer(float distance) {
 	const irr::core::vector3df myLoc = this->getSceneNode()->getPosition();
@@ -213,18 +244,29 @@ void Enemy::shootTarget() {
 }
 
 //irr::core::vector3df genRandomLoc() {
-void Enemy::genRandomLoc() {
-	irr::core::vector3df newLoc;
+void Enemy::genRandomDest() {
+	irr::core::vector3df newLoc = GameSystem::getSingleton().getGravship()->getSceneNode()->getPosition();
 
-	newLoc.X = 8000 * rand()/(RAND_MAX + 1.0) - 4000;
-	newLoc.Y = 8000 * rand()/(RAND_MAX + 1.0) - 4000;
-	newLoc.Z = -2000;
+	newLoc.X = newLoc.X + 800 * rand()/(RAND_MAX + 1.0) - 400;
+	newLoc.Y = newLoc.Y + 800 * rand()/(RAND_MAX + 1.0) - 400;
 
 	setDest(newLoc);
 
 	//return newLoc;
 
 }
+
+void Enemy::genRandomNW() {
+
+	nowhere.X = 4000 * rand()/(RAND_MAX + 1.0) ;
+	nowhere.Y = 4000 * rand()/(RAND_MAX + 1.0) ;
+	nowhere.Z = 0;
+
+
+	//return newLoc;
+
+}
+
 
 //void Enemy::moveRandomly(){
 //
@@ -236,7 +278,7 @@ Enemy::Enemy() : WorldEntity(){
 	color = '0';
 	timer = 0;
 
-	genRandomLoc();
+	genRandomNW();
 
 	
 	
