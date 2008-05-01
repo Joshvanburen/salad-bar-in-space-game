@@ -14,9 +14,9 @@
 
 		<entity name="obstacle_one" startstate="normal" xloc="2000" yloc="200" />
 
-
-		<entity name="one_second_spawner" startstate="normal" xloc="400" yloc="2000" handle="spawner"/>
-		
+		<entity name="one_second_spawner" startstate="normal" xloc="100" yloc="2000" handle="left_spawner" />
+		<entity name="one_second_spawner" startstate="normal" xloc="400" yloc="2000" handle="middle_spawner"/>
+		<entity name="one_second_spawner" startstate="normal" xloc="800" yloc="1900" handle="right_spawner" />
 	
 	</entities>
 </level>
