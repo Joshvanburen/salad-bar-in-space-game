@@ -7,6 +7,7 @@ void Bullet::load(){
 
 void Bullet::update(){
 	WorldEntity::update();
+	
 
 	//this->m_Physics_Body->setVelocity(this->velocity);
 

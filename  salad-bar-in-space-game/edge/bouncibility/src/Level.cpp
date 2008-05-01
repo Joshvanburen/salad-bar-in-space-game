@@ -49,6 +49,14 @@ void Level::update()
 		}
 		m_EntitiesToAdd.clear();
 	}
+	if (m_EntitiesToRemove.size() > 0){
+		EntityVector::iterator entityRemoveItr = m_EntitiesToRemove.begin();
+		for(;entityRemoveItr != m_EntitiesToRemove.end(); entityRemoveItr++){
+			m_WorldEntities.remove(*entityRemoveItr);
+		}
+		m_EntitiesToRemove.clear();
+		
+	}
 	::EntityVector::iterator worldEntityEnd = m_WorldEntities.end();
 	for(m_WorldEntityItr = m_WorldEntities.begin(); m_WorldEntityItr != worldEntityEnd; m_WorldEntityItr++){
 		(*m_WorldEntityItr)->update();
@@ -197,7 +205,8 @@ bool Level::load(const std::string& LevelDefinition)
 
 void Level::removeEntity(WorldEntity* entity){
 
-	m_WorldEntities.remove(entity);
+	m_EntitiesToRemove.push_back(entity);
+
 	
 }
 void Level::addEntity(WorldEntity* entity){

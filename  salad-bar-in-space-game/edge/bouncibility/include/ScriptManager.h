@@ -94,6 +94,7 @@ namespace Scripting{
 		void unload(); //!< Unloads the stored script from memory.
 
 	public:
+		
 		//! Tells the caller whether this script has been loaded yet or not.
 		bool isLoaded(){
 			return loaded;
