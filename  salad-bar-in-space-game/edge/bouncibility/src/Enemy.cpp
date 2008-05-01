@@ -30,6 +30,11 @@ void Enemy::update(){
 		}
 	}
 
+	if (this->getSceneNode()->getPosition().Z > 800) {
+		//EntityManager::getSingleton().remove(this->id);
+		return;
+	}
+
 
 }
 
@@ -176,7 +181,7 @@ bool Enemy::moveToDest() {
 	
 	irr::core::vector3df velocity = this->m_Physics_Body->getVelocity();
 	if (velocity.getLengthSQ() > m_MaxSpeedSQ){
-		this->m_Physics_Body->setVelocity(velocity.normalize() * m_MaxSpeed);
+		this->m_Physics_Body->setVelocity(velocity.normalize() * m_MaxSpeed/2);
 	}
 	
 	return true;
@@ -248,8 +253,10 @@ void Enemy::shootPlayer() {
 void Enemy::shootTarget() {
 
 	Bullet* newBullet = dynamic_cast<Bullet*>(&EntityManager::getSingleton().cloneEntity(Enemy::s_BulletSrc->getID()));
-	newBullet->setLocation(this->getLocation());
-	newBullet->moveTo(this->target);
+	newBullet->setLocation(this->m_Physics_Body->getPosition());
+	target = GameSystem::getSingleton().getGravship()->getSceneNode()->getPosition();
+	newBullet->dest = target;
+	newBullet->moveToDest();
 
 }
 
@@ -259,6 +266,7 @@ void Enemy::genRandomDest() {
 
 	newLoc.X = newLoc.X + 800 * rand()/(RAND_MAX + 1.0) - 400;
 	newLoc.Y = newLoc.Y + 800 * rand()/(RAND_MAX + 1.0) - 400;
+	newLoc.Z = 1000;
 
 	setDest(newLoc);
 
@@ -270,7 +278,7 @@ void Enemy::genRandomNW() {
 
 	nowhere.X = 4000 * rand()/(RAND_MAX + 1.0) ;
 	nowhere.Y = 4000 * rand()/(RAND_MAX + 1.0) ;
-	nowhere.Z = 0;
+	nowhere.Z = 1000;
 
 
 	//return newLoc;
