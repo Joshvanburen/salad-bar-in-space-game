@@ -433,7 +433,7 @@ void GameSystem::run(){
 				over->setVisible(true);
 				quitOnce = false;
 			}else{
-				break;
+				exit(0);
 			}
 		}
 		
