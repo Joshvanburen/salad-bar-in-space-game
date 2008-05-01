@@ -315,8 +315,6 @@ bool ScriptManager::init(){
 	registerObjectMethod("Level", "float getMaxX()", ::asMETHOD(Level, getMaxX));
 	registerObjectMethod("Level", "float getMaxY()", ::asMETHOD(Level, getMaxY));
 
-	
-	registerReferenceObject("Gravship");
 	registerReferenceObject("GravshipHelper");
 	registerReferenceObject("Obstacle");
 
@@ -386,7 +384,7 @@ bool ScriptManager::init(){
 //	registerObjectMethod("SoundManager", "void removeAll()", ::asMETHOD(SoundManager, removeAll));
 //	registerObjectMethod("SoundManager", "void removeSound(Sound::Audio* sound)", ::asMETHODPR(SoundManager, removeSound, (Sound::Audio* sound), void));
 //	registerObjectMethod("SoundManager", "Audio* addSound(const string&, const string&, bool is3D)", ::asMETHOD(SoundManager, addSound));
-	registerObjectMethod("SoundManager", "Audio* getSound(const string&)", ::asMETHOD(SoundManager, getSound));
+	registerObjectMethod("SoundManager", "Audio& getSound(const string&)", ::asMETHOD(SoundManager, getSound));
 //	registerObjectMethod("SoundManager", "void removeSound(const string&)", ::asMETHODPR(SoundManager, removeSound, (const std::string&), void));
 
 

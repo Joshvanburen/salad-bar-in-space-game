@@ -184,6 +184,11 @@ bool Level::load(const std::string& LevelDefinition)
 	return true;
 }
 
+void Level::removeEntity(WorldEntity* entity){
+
+	m_WorldEntities.remove(entity);
+	
+}
 void Level::addEntity(WorldEntity* entity){
 	m_EntitiesToAdd.push_back(entity);
 }

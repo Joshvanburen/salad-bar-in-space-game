@@ -12,7 +12,7 @@ namespace Sound{
 	class Audio;
 }
 
-typedef std::vector<WorldEntity*> EntityVector;
+typedef std::list<WorldEntity*> EntityVector;
 //!The Level class holds everything within a specific level.  It loads in all the world entities and updates them.  Each level has its own xml file. 
 class Level
 {
@@ -81,6 +81,7 @@ class Level
 			irr::scene::ICameraSceneNode* getCamera(){
 				return m_Camera;
 			}
+			void removeEntity(WorldEntity* entity);
 
 			void addEntity(WorldEntity* entity);
 			//!Releases all resources used.  Does not need to delete the entities it has, EntityManager does this.

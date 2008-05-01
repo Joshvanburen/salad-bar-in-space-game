@@ -25,7 +25,7 @@ class Enemy : public WorldEntity {
 
 public:
 
-
+	static Bullet* s_BulletSrc;
 	// Constructor and destructor
 	Enemy();
 	~Enemy();
