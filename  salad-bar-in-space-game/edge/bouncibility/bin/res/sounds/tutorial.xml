@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <sounds>
   <sound name="tutorial1_music" filename="./res/sounds/media/The Killing Spree.mp3" volume="1"/>
+  <sound name="splat" filename="./res/sounds/media/bell.wav" volume="1" />
 
 </sounds>
