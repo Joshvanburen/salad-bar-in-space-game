@@ -76,18 +76,15 @@ public:
 
 	void moveToPlayer();
 
-<<<<<<< .mine
-
 	void setSplatImage(irr::video::ITexture* image){
 		splatImage = image;
 	}
 
 	void splat();
 
-	int moveToDest();
-=======
+
 	bool moveToDest();
->>>>>>> .r236
+
 
 	bool moveAwayFromPlayer(float distance);
 
