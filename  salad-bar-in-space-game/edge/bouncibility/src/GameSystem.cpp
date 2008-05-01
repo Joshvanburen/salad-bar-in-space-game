@@ -285,6 +285,8 @@ void GameSystem::startGame(){
 	}
 	else{
 		this->s_Gravship = dynamic_cast<Gravship*>((EntityManager::getSingleton().getEntity(entity_ID)));
+		this->s_Gravship->setLocation(s_Gravship->getLocation().X, s_Gravship->getLocation().Y, 800);
+		//LevelManager::getSingleton().getCurrentLevel().getCamera()->setParent(s_Gravship->getSceneNode());
 		//irr::scene::ISceneNode* node = LevelManager::getSingleton().getSceneManager()->addCubeSceneNode(5.0, s_Gravship->getSceneNode());
 		//node->setMaterialTexture(0, LevelManager::getSingleton().getDriver()->getTexture("./res/textures/neon_green.png"));
 		//node->setPosition(irr::core::vector3df(0.0f, 0.0f, -15.0f));
