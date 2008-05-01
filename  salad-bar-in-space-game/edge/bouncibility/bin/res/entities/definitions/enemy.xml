@@ -1,2 +1,0 @@
-<enemy name="cat3" mesh="./res/meshes/dogcatrat/cat.b3d" texture="res/textures/blue_ball_texture.png" enable_physics="1" material="enemy" enable_gravity="1" radius="8.5" color="yellow" mass="2" ai="shooter" scale="4.5" rotX="270" rotY="0" rotZ="90" max_speed="20" splat="res/textures/Cats/catsplat3.png" />
-
