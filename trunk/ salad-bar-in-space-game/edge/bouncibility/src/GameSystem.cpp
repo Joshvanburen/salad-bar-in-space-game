@@ -357,7 +357,6 @@ void GameSystem::positionCamera(){
 void GameSystem::run(){
 	bool firstTime = true;
 	bool quitOnce = true;
-	bool endGame = false;
 	int i = 0;
 	while(m_Device->run())
 	{
@@ -435,7 +434,10 @@ void GameSystem::run(){
 			m_Driver->draw2DRectangle(irr::video::SColor(255, 0, 0, 255), irr::core::rect<irr::s32>(irr::core::position2di(640-s_Gravship->getHealth(), 10), irr::core::position2di(640+s_Gravship->getHealth(), 45)));
 			
 			if(s_Gravship->getHealth() <= 0 ){
-				endGame = true;
+				p.pause();
+				image->setVisible(false);
+				over->setVisible(true);
+				quitOnce = false;
 			}
 
 			update();
@@ -446,13 +448,12 @@ void GameSystem::run(){
 		m_Console.renderConsole(m_GUI,m_Driver,m_DeltaMillis);
 		m_Driver->endScene();
 
-		if(quit->isPressed() || endGame ){
+		if( quit->isPressed() ){
 			if(quitOnce){
 				//m_LevelMgr->repeat();
 				p.pause();
 				image->setVisible(false);
 				over->setVisible(true);
-				endGame = false;
 				quitOnce = false;
 			}else{
 				exit(0);
