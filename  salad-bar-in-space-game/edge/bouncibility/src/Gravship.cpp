@@ -20,6 +20,9 @@ void Gravship::update(){
 }
 
 
+void Gravship::takeDamage(int howmuch){
+
+}
 
 
 WorldEntity* Gravship::clone(){

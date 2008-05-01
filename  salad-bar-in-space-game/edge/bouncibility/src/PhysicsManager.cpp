@@ -45,7 +45,7 @@ int  Physics::WorldEntityCollisionCallback::ContactProcess (irr::newton::IMateri
 	m_ScriptItrEnd = m_CollisionHandlerScripts.end();
 
 	for (m_ScriptItr = m_CollisionHandlerScripts.begin(); m_ScriptItr != m_ScriptItrEnd; ++m_ScriptItr){
-		//((Scripting::MaterialCollisionFunction*)(*m_ScriptItr))->callFunction(this->entity1, this->entity2);
+		((Scripting::MaterialCollisionFunction*)(*m_ScriptItr))->callFunction(this->entity1, this->entity2);
 		//Call the script collision function with entity1 and entity2 pointers.
 	}
 

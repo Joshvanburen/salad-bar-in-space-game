@@ -118,6 +118,9 @@ class GameSystem : public CSingleton<GameSystem>
 		Input::Action* resync;	
 		Input::Action* quit;
 
+
+		dimension2d<irr::s32> m_ScreenDim;
+
 		int m_CursorX;
 		int m_CursorY;
 
@@ -155,6 +158,9 @@ class GameSystem : public CSingleton<GameSystem>
 		void run();
 		void shutdown();
 
+		irr::core::dimension2di getScreenDim(){
+			return m_ScreenDim;
+		}
 		irr::u32 getDeltaMillis(){
 			return m_DeltaMillis;
 		}

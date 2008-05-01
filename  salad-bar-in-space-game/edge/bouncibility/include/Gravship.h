@@ -37,6 +37,8 @@ public:
 
 	void draw();
 
+	void takeDamage(int howmuch);
+
 	void enableGravityField(bool enabled);
 
 	GravshipHelper* getHelper(){

@@ -199,9 +199,9 @@ void GameSystem::init(){
 	m_LevelMgr = LevelManager::getSingletonPtr();
 	m_PhysicsMgr = PhysicsManager::getSingletonPtr();
 
-	dimension2d<s32> screenDim(1280,1024);
 
-	m_Device = irr::createDevice( irr::video::EDT_DIRECT3D9, screenDim, 24,
+	m_ScreenDim.set(1280, 1024);
+	m_Device = irr::createDevice( irr::video::EDT_DIRECT3D9, m_ScreenDim, 24,
 		false, false, false, InputManager::getSingleton().getEventReceiver());
 
 	m_SceneMgr = m_Device->getSceneManager();
@@ -226,7 +226,7 @@ void GameSystem::init(){
 
 	m_Console.getConfig().dimensionRatios.Y = 0.8f;
 
-	m_Console.initializeConsole(m_Device->getGUIEnvironment(), screenDim);
+	m_Console.initializeConsole(m_Device->getGUIEnvironment(), m_ScreenDim);
 	
 	//register common commands
 	m_Console.loadDefaultCommands(m_Device);
@@ -285,8 +285,8 @@ void GameSystem::startGame(){
 	}
 	else{
 		this->s_Gravship = dynamic_cast<Gravship*>((EntityManager::getSingleton().getEntity(entity_ID)));
-		this->s_Gravship->setLocation(s_Gravship->getLocation().X, s_Gravship->getLocation().Y, 800);
-		//LevelManager::getSingleton().getCurrentLevel().getCamera()->setParent(s_Gravship->getSceneNode());
+		this->s_Gravship->setLocation(s_Gravship->getLocation().X, s_Gravship->getLocation().Y, 780);
+		LevelManager::getSingleton().getCurrentLevel().getCamera()->setParent(s_Gravship->getSceneNode());
 		//irr::scene::ISceneNode* node = LevelManager::getSingleton().getSceneManager()->addCubeSceneNode(5.0, s_Gravship->getSceneNode());
 		//node->setMaterialTexture(0, LevelManager::getSingleton().getDriver()->getTexture("./res/textures/neon_green.png"));
 		//node->setPosition(irr::core::vector3df(0.0f, 0.0f, -15.0f));
