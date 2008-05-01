@@ -20,6 +20,7 @@ class Level
 	private:
 			//!Vector to hold all world entities
 			EntityVector m_WorldEntities;
+			EntityVector m_EntitiesToAdd;
 			//!Iterator for the world entities
 			EntityVector::iterator m_WorldEntityItr;
 			//!Level name
@@ -80,6 +81,8 @@ class Level
 			irr::scene::ICameraSceneNode* getCamera(){
 				return m_Camera;
 			}
+
+			void addEntity(WorldEntity* entity);
 			//!Releases all resources used.  Does not need to delete the entities it has, EntityManager does this.
 			void shutdown();
 			//!Updates the level and all children

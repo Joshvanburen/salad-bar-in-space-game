@@ -173,7 +173,7 @@ class GameSystem : public CSingleton<GameSystem>
 		static GameSystem* gameSystem;
 		static Menu* menu;
 
-		irr::u32 getMillis() { return m_DeltaMillis;};
+		//irr::u32 getMillis() { return m_DeltaMillis;};
 		static Bullet* bulletSrc;
 		Bullet* getBulletSrc() {return bulletSrc;};
 };
