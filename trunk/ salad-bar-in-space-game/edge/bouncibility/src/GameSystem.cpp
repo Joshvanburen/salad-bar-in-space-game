@@ -388,31 +388,6 @@ void GameSystem::run(){
 			}	
 		}
 
-		/*//splash screens
-		if(firstTime){
-			p.pause();
-			
-			if(i == 0){
-				title->setVisible(true);
-				splash->setVisible(false);
-				image->setVisible(false);
-			}
-			
-			if( i == 1 ){
-				title->setVisible(false);
-				splash->setVisible(true);
-				image->setVisible(false);
-			}
-			
-			if( i == 2 ){
-				title->setVisible(false);
-				splash->setVisible(false);
-				image->setVisible(true);
-				firstTime = false;
-				p.unPause();
-			}
-		}	
-		*/
 		if( pause->isPressed() ){
 			if(p.isPaused() ){
 				splash->setVisible(false);
@@ -452,10 +427,11 @@ void GameSystem::run(){
 
 		if(quit->isPressed()){
 			if(quitOnce){
-				m_LevelMgr->repeat();
-				//p.pause();
-				//over->setVisible(true);
-				//quitOnce = false;
+				//m_LevelMgr->repeat();
+				p.pause();
+				image->setVisible(false);
+				over->setVisible(true);
+				quitOnce = false;
 			}else{
 				break;
 			}
@@ -489,7 +465,7 @@ void GameSystem::setupInput(){
 
 	
 	
-	quit = InputManager::getSingleton().createAction("quit", InputManager::getSingleton().getKeyboard(), Input::Keyboard::KEY_ESC, Input::Action::BEHAVIOR_DETECT_TAP);
+	quit = InputManager::getSingleton().createAction("quit", InputManager::getSingleton().getKeyboard(), Input::Keyboard::KEY_ESC, Input::Action::BEHAVIOR_DETECT_RELEASE);
 	quit->addCode(Input::Wiimote::WII_HOME_BUTTON, InputManager::getSingleton().getWiimote());
 
 	pause = InputManager::getSingleton().createAction("pause", InputManager::getSingleton().getKeyboard(), Input::Keyboard::KEY_P, Input::Action::BEHAVIOR_DETECT_RELEASE );
