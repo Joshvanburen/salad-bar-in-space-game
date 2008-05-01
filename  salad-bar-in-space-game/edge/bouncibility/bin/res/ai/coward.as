@@ -13,7 +13,7 @@ int update(Enemy &enemy)
 		enemy1.moveToDest();
 	}
 	else {
-		enemy1.genRandomLoc();
+		enemy1.genRandomDest();
 	}
 
 
