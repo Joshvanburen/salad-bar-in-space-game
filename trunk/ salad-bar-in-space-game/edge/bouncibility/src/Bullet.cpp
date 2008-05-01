@@ -15,9 +15,18 @@ void Bullet::update(){
 		EntityManager::getSingleton().remove(this->id);
 		return;
 	}
-	if (m_EnableMovement){
-		//ai_script->callFunction(this);
+
+	if ((this->getSceneNode()->getPosition().Z > 800 ) || (this->getSceneNode()->getPosition().X > 2000 )|| 
+	   (this->getSceneNode()->getPosition().X < 0 ) || (this->getSceneNode()->getPosition().Y > 2000 )||
+	   (this->getSceneNode()->getPosition().Y < 0 ) )
+	{
+		EntityManager::getSingleton().remove(this->id);
+		return;
 	}
+
+	//if (m_EnableMovement){
+	//	//ai_script->callFunction(this);
+	//}
 
 
 }
@@ -59,7 +68,7 @@ WorldEntity* Bullet::clone(){
 
 	body->setUserData(entity);
 
-	body->addForceContinuous(irr::core::vector3df(0,PhysicsManager::getSingleton().getGravity(),0));
+	//body->addForceContinuous(irr::core::vector3df(0,PhysicsManager::getSingleton().getGravity(),0));
 	entity->m_Physics_Body = body;
 	//entity->color = this->color;
 	//entity->weight = this->weight;
@@ -84,45 +93,36 @@ Bullet* Bullet::EntityToBullet(WorldEntity* entity){
 
 void Bullet::moveToPlayer(){
 
-	const irr::core::vector3df playerLoc = GameSystem::getSingleton().getGravship()->getSceneNode()->getPosition();
-	const irr::core::vector3df myLoc = this->getSceneNode()->getPosition();
+	dest = GameSystem::getSingleton().getGravship()->getSceneNode()->getPosition();
+    moveToDest();
 
-	irr::core::vector3df conn = myLoc - playerLoc;
-	conn = conn.normalize();
-
-	//irr::core::vector3df vel = this->m_Physics_Body->getVelocity();
-	//float spd = 75;
-	conn = conn * speed;
-
-
-	this->m_Physics_Body->addForce(conn);
-
-	irr::core::vector3df velocity = this->m_Physics_Body->getVelocity();
-	if (velocity.getLengthSQ() > m_MaxSpeedSQ){
-		this->m_Physics_Body->setVelocity(velocity.normalize() * m_MaxSpeed);
-	}
 }
 
 
-void Bullet::moveTo(irr::core::vector3df loc) {
+void Bullet::moveToDest() {
 	
 	const irr::core::vector3df myLoc = this->getSceneNode()->getPosition();
 
-	irr::core::vector3df conn = myLoc - loc;
+
+	irr::core::vector3df conn = myLoc - dest;
+
+	//if (conn.getLength() < 10) { return false;}
+
 	conn = conn.normalize();
 
-	//irr::core::vector3df vel = this->m_Physics_Body->getVelocity();
-	//float spd = 75;
 	conn = conn * speed;
 
+	this->m_Physics_Body->setVelocity(conn);
 
-	this->m_Physics_Body->addForce(conn);
-
+	
+	//this->m_Physics_Body->addForce(conn);
+	
 	irr::core::vector3df velocity = this->m_Physics_Body->getVelocity();
 	if (velocity.getLengthSQ() > m_MaxSpeedSQ){
 		this->m_Physics_Body->setVelocity(velocity.normalize() * m_MaxSpeed);
 	}
-
+	
+	//return true;
 }
 
 
@@ -134,6 +134,7 @@ void Bullet::moveTo(irr::core::vector3df loc) {
 //}
 //
 Bullet::Bullet() : WorldEntity(){
+	//dest = GameSystem::getSingleton().getGravship()->getSceneNode()->getPosition();
 	m_BulletRadius = 1;
 	ttl = 10000;
 }

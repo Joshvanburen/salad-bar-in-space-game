@@ -8,7 +8,7 @@ WorldEntity::WorldEntity() : m_SceneNode(NULL), m_Mesh(NULL), m_Physics_Body(NUL
 	m_Radius = 0.0f;
 	m_EnableRotation = false;
 	m_EnableMovement = true;
-	m_MaxSpeed = 5;
+	m_MaxSpeed = 20;
 	m_MaxSpeedSQ = 25;
 	m_LevelMgr = LevelManager::getSingletonPtr();
 }
