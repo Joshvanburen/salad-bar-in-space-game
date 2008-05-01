@@ -15,7 +15,7 @@ int collide(WorldEntity &entity1, WorldEntity &entity2)
 			PrintString("unknown collider");
 			return 1;
 		}
-		gravship.takeDamage(10);
+		gravship.takeDamage(25);
 		
 		soundManager.getSound("splat").play(false);
 		enemy.splat();
@@ -26,7 +26,7 @@ int collide(WorldEntity &entity1, WorldEntity &entity2)
 		PrintString("unknown collider");
 		return 1;
 		}
-		gravship.takeDamage(10);
+		gravship.takeDamage(25);
 		
 		soundManager.getSound("splat").play(false);
 		enemy.splat();

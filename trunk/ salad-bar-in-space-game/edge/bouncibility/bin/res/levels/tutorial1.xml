@@ -10,14 +10,10 @@
 	<entities>
 
 		<entity name="gravship" startstate="normal" xloc="400" yloc="2000" handle="player" />
-		<entity name="enemy" startstate="normal" xloc="500" yloc="700" />
-		<entity name="enemy" startstate="normal" xloc="300" yloc="800" />
+
 
 		<entity name="obstacle_one" startstate="normal" xloc="2000" yloc="200" />
-		<entity name="enemy" startstate="normal" xloc="1000" yloc="500" />
-		<entity name="enemy" startstate="normal" xloc="1200" yloc="700" />
-		<entity name="enemy" startstate="normal" xloc="1000" yloc="800" />
-		<entity name="enemy" startstate="normal" xloc="1200" yloc="900" />
+
 
 		<entity name="one_second_spawner" startstate="normal" xloc="400" yloc="2000" handle="spawner"/>
 		

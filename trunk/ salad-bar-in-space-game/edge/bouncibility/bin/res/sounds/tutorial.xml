@@ -8,4 +8,7 @@
   <sound name="track6" filename="./res/sounds/media/09 - L action.mp3" volume="0.6"/>  
   <sound name="splat" filename="./res/sounds/media/catsplat01.wav" volume="1" />
   <sound name="splat" filename="./res/sounds/media/catsplat02.wav" volume="1" />
+  
+  <sound name="splat" filename="./res/sounds/media/catsplat03.wav" volume="1" />
+  <sound name="splat" filename="./res/sounds/media/catsplat04.wav" volume="1" />
 </sounds>
