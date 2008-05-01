@@ -19,6 +19,8 @@ class Gravship : public WorldEntity {
 	friend class Entity::GravshipFactory;
 public:
 
+	static Bullet* s_BulletSrc;
+
 
 	// Constructor and destructor
 	Gravship();
@@ -84,4 +86,6 @@ private:
 
 
 	bool m_GravityOn;
+
+	irr::core::vector3df target;
 };
