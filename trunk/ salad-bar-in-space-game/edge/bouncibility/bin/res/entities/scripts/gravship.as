@@ -5,14 +5,33 @@ void main()
 int collide(WorldEntity &entity1, WorldEntity &entity2)
 {
 	PrintString("In Gravship Script");
-	Ball@ ball1 = EntityToBall(entity1);
-	Ball@ ball2 = EntityToBall(entity2);
-	if (ball1 == null || ball2 == null){
-		//collision between something that isn't two balls
+	Gravship@ gravship = EntityToGravship(entity1);
+	Enemy@ enemy = EntityToEnemy(entity2);
+	if (gravship == null){
+		Enemy@ enemy = EntityToEnemy(entity1);
+		Gravship@ gravship = EntityToGravship(entity2
+);
+		if (enemy == null){
+			PrintString("unknown collider");
+			return 1;
+		}
+		gravship.takeDamage(10);
+		
+		soundManager.getSound("splat").play(false);
+		enemy.splat();
+		entityManager.remove(entity1.getID());
 	}
 	else{
-		PrintString("yay, they are both balls");
+		if (enemy == null){
+		PrintString("unknown collider");
+		return 1;
+		}
+		gravship.takeDamage(10);
+		
+		soundManager.getSound("splat").play(false);
+		enemy.splat();
+	entityManager.remove(entity2.getID());
 	}
-	entity2.move();
+
 	return 1;
 }
