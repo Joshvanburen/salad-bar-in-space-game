@@ -256,7 +256,7 @@ void GameSystem::init(){
 	hudImage = m_Driver->getTexture("./res/textures/HeadsUp.png");
 	titleScreen = m_Driver->getTexture("./textures/cats/splash2.png");
 	splashScreen = m_Driver->getTexture("./textures/cats/TittleScreen.png");
-
+	gameOver = m_Driver->getTexture("./res/textures/gameOver.png");
 
 
 	image = m_GUI->addImage(hudImage, irr::core::position2d<irr::s32>(0, 0), true);
@@ -265,6 +265,9 @@ void GameSystem::init(){
 	title->setVisible(true);
 	splash = m_GUI->addImage(splashScreen, irr::core::position2d<irr::s32>(0,0), true);
 	splash->setVisible(false);
+	over = m_GUI->addImage(gameOver, irr::core::position2d<irr::s32>(0,0), true);
+	over->setVisible(false);
+
 
 	image->setMinSize(irr::core::dimension2di(1280, 1024));
 	image->setMaxSize(irr::core::dimension2di(1280, 1024));
@@ -272,6 +275,8 @@ void GameSystem::init(){
 	title->setMaxSize(irr::core::dimension2di(1280, 1024));
 	splash->setMinSize(irr::core::dimension2di(1280, 1024));
 	splash->setMaxSize(irr::core::dimension2di(1280, 1024));
+	over->setMinSize(irr::core::dimension2di(1280, 1024));
+	over->setMaxSize(irr::core::dimension2di(1280, 1024));
 	//this->m_PointsDisplay = m_GUI->addStaticText(L"0", irr::core::rect<s32>(1100,10,1250,30), true, false);
 
 
@@ -346,6 +351,7 @@ void GameSystem::positionCamera(){
 
 void GameSystem::run(){
 	bool firstTime = true;
+	bool quitOnce = true;
 	int i = 0;
 	while(m_Device->run())
 	{
@@ -445,7 +451,14 @@ void GameSystem::run(){
 		m_Driver->endScene();
 
 		if(quit->isPressed()){
-			break;
+			if(quitOnce){
+				m_LevelMgr->repeat();
+				//p.pause();
+				//over->setVisible(true);
+				//quitOnce = false;
+			}else{
+				break;
+			}
 		}
 		
 		m_Input_Mgr->resumePolling();
