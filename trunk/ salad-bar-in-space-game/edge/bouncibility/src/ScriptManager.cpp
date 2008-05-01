@@ -267,9 +267,11 @@ bool ScriptManager::init(){
 	registerReferenceObject("Enemy");
 	registerObjectMethod("Enemy", "void moveToPlayer()", ::asMETHOD(Enemy, moveToPlayer));
 	registerObjectMethod("Enemy", "bool moveToDest()", ::asMETHOD(Enemy, moveToDest));
+	registerObjectMethod("Enemy", "bool moveNowhere()", ::asMETHOD(Enemy, moveNowhere));
 	registerObjectMethod("Enemy", "bool moveAwayFromPlayer(float distance)", ::asMETHOD(Enemy, moveAwayFromPlayer));
 	registerObjectMethod("Enemy", "void shootPlayer()", ::asMETHOD(Enemy, shootPlayer));
-	registerObjectMethod("Enemy", "void genRandomLoc()", ::asMETHOD(Enemy, genRandomLoc));
+	registerObjectMethod("Enemy", "void genRandomDest()", ::asMETHOD(Enemy, genRandomDest));
+	registerObjectMethod("Enemy", "void genRandomNW()", ::asMETHOD(Enemy, genRandomNW));
 	registerObjectMethod("Enemy", "void setDest()", ::asMETHOD(Enemy, setDest));
 
 
