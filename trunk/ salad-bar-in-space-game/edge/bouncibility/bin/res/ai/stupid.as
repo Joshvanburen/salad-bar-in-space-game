@@ -10,6 +10,8 @@ int update(Enemy &enemy)
 
 	enemy1.moveToDest();
 
+	//enemy1.genRandomLoc();
+
 
 	return 1;
 }
