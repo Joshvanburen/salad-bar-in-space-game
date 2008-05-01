@@ -12,9 +12,9 @@ void Enemy::update(){
 	//this->m_Physics_Body->setVelocity(this->velocity);
 
 	if (m_EnableMovement){
-		timer += GameSystem::getSingleton().getMillis();
+		timer += GameSystem::getSingleton().getDeltaMillis();
 		if (timer > 1000) {
-			//ai_script->callFunction(this);
+			ai_script->callFunction(this);
 			timer =  0;
 		}
 	}
@@ -64,6 +64,8 @@ WorldEntity* Enemy::clone(){
 	entity->bouncibility = this->bouncibility;
 	entity->radius = this->radius;
 	entity->velocity = this->velocity;
+
+	entity->ai_script = this->ai_script;
 
 	return entity;
 }
@@ -139,38 +141,42 @@ void Enemy::moveToPlayer(){
 }
 
 
-int Enemy::moveToDest() {
+bool Enemy::moveToDest() {
 	
 	const irr::core::vector3df myLoc = this->getSceneNode()->getPosition();
 
+	//dest.Z = -800;
+	//dest.Y = 1200;
+
 	irr::core::vector3df conn = dest - myLoc;
 
-	if (conn.getLength() < 10) { return 0;}
+	if (conn.getLength() < 10) { return false;}
 
 	conn = conn.normalize();
 
 	conn = conn * speed;
 
+	this->m_Physics_Body->setVelocity(conn);
 
-	this->m_Physics_Body->addForce(conn);
-
+	
+	//this->m_Physics_Body->addForce(conn);
+	
 	irr::core::vector3df velocity = this->m_Physics_Body->getVelocity();
 	if (velocity.getLengthSQ() > m_MaxSpeedSQ){
 		this->m_Physics_Body->setVelocity(velocity.normalize() * m_MaxSpeed);
 	}
-
-	return 1;
+	
+	return true;
 
 }
 
-int Enemy::moveAwayFromPlayer(float distance) {
-
+bool Enemy::moveAwayFromPlayer(float distance) {
 	const irr::core::vector3df myLoc = this->getSceneNode()->getPosition();
 	const irr::core::vector3df playerLoc = GameSystem::getSingleton().getGravship()->getSceneNode()->getPosition();
 
-	irr::core::vector3df conn = myLoc - playerLoc;
+	irr::core::vector3df conn = playerLoc - myLoc;
 
-	if (conn.getLength() > distance) {return 0;}
+	if (conn.getLength() > distance) {return false;}
 
 	conn = conn.normalize();
 
@@ -178,6 +184,7 @@ int Enemy::moveAwayFromPlayer(float distance) {
 	//float spd = 75;
 	conn = conn * speed;
 
+	//std::cout << speed;
 
 	this->m_Physics_Body->addForce(conn);
 
@@ -186,7 +193,7 @@ int Enemy::moveAwayFromPlayer(float distance) {
 		this->m_Physics_Body->setVelocity(velocity.normalize() * m_MaxSpeed);
 	}
 
-	return 1;
+	return true;
 
 }
 
@@ -209,9 +216,9 @@ void Enemy::shootTarget() {
 void Enemy::genRandomLoc() {
 	irr::core::vector3df newLoc;
 
-	newLoc.X = 1000 * rand()/(RAND_MAX + 1.0);
-	newLoc.Y = 1000 * rand()/(RAND_MAX + 1.0);
-	newLoc.Z = 1000 * rand()/(RAND_MAX + 1.0);
+	newLoc.X = 8000 * rand()/(RAND_MAX + 1.0) - 4000;
+	newLoc.Y = 8000 * rand()/(RAND_MAX + 1.0) - 4000;
+	newLoc.Z = -2000;
 
 	setDest(newLoc);
 
@@ -229,9 +236,10 @@ Enemy::Enemy() : WorldEntity(){
 	color = '0';
 	timer = 0;
 
-	dest.X = 0;
-	dest.Y = 0;
-	dest.Z = 0;
+	genRandomLoc();
+
+	
+	
 
 	//bulletSrc = GameSystem::getBulletSrc();
 	target = dest;
