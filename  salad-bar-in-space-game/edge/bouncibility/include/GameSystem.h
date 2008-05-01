@@ -155,6 +155,8 @@ class GameSystem : public CSingleton<GameSystem>
 		PhysicsManager* m_PhysicsMgr;
 		IC_Console m_Console;
 
+		std::list<irr::gui::IGUIImage*> m_SplashScreens;
+		int m_SplashTTL;
 		//CTimer* g_pTimer;
 			
 	// Public methods and variables
@@ -170,6 +172,7 @@ class GameSystem : public CSingleton<GameSystem>
 		void run();
 		void shutdown();
 
+		void appendSplashScreen(irr::gui::IGUIImage* image);
 		irr::gui::IGUIEnvironment* getGUI(){
 			return m_GUI;
 		}

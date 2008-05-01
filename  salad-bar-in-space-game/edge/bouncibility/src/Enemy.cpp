@@ -17,14 +17,7 @@ void Enemy::load(){
 void Enemy::update(){
 	WorldEntity::update();
 
-	splatTTL -= GameSystem::getSingleton().getDeltaMillis();
-	if (splatScreen && splatTTL < 0){
-		splatScreen->setVisible(false);
-		splatScreen->remove();
-		splatScreen->drop();
-		splatScreen = NULL;
-		splatTTL = 2000;
-	}
+
 	genRandomDest();
 
 	//this->m_Physics_Body->setVelocity(this->velocity);
@@ -75,7 +68,7 @@ WorldEntity* Enemy::clone(){
 
 	body->setUserData(entity);
 
-	//body->addForceContinuous(irr::core::vector3df(0,0,PhysicsManager::getSingleton().getGravity()));
+	body->addForceContinuous(irr::core::vector3df(0,0,PhysicsManager::getSingleton().getGravity()));
 	entity->m_Physics_Body = body;
 	entity->color = this->color;
 	entity->weight = this->weight;
@@ -311,6 +304,8 @@ Enemy::~Enemy(){
 }
 
 void Enemy::splat(){
-	splatScreen = GameSystem::getSingleton().getGUI()->addImage(splatImage, irr::core::position2d<irr::s32>(300, 300), true);
+	int x = rand() % 800 + 200;
+	int y = rand() % 600 + 50;
+	GameSystem::getSingleton().appendSplashScreen(GameSystem::getSingleton().getGUI()->addImage(splatImage, irr::core::position2d<irr::s32>(x, y), true));
 	std::cout << "splat! " << splatImage->getName() << "\n";
 }
