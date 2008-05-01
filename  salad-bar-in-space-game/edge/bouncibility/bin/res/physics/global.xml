@@ -5,6 +5,7 @@
     <material name="level" />
 	<material name="enemy" />
 	<material name="gravship_helper" />
+	<material name="bullet" />
   </materials>
   <collisions>
     <collision material1="gravship" material2="level" softness="1.0" static_friction="1.0" kinetic_friction="1.0" elasticity="0.0" />

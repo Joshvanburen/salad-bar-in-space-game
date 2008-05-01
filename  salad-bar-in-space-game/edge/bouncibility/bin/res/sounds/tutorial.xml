@@ -1,6 +1,11 @@
 <?xml version="1.0"?>
 <sounds>
-  <sound name="tutorial1_music" filename="./res/sounds/media/The Killing Spree.mp3" volume="1"/>
+  <sound name="track1" filename="./res/sounds/media/02 - dance from outer space.mp3" volume="0.6"/>
+  <sound name="track2" filename="./res/sounds/media/03 - La decouverte et la conquete.mp3" volume="0.6"/>
+  <sound name="track3" filename="./res/sounds/media/05 - La preparation.mp3" volume="0.6"/>
+  <sound name="track4" filename="./res/sounds/media/01 - Introduction premier theme.mp3" volume="0.6"/>
+  <sound name="track5" filename="./res/sounds/media/08 - Introduction deuxieme theme.mp3" volume="0.6"/>
+  <sound name="track6" filename="./res/sounds/media/09 - L action.mp3" volume="0.6"/>  
   <sound name="splat" filename="./res/sounds/media/catsplat01.wav" volume="1" />
   <sound name="splat" filename="./res/sounds/media/catsplat02.wav" volume="1" />
 </sounds>

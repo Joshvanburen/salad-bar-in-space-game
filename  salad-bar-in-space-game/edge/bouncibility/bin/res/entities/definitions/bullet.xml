@@ -1,1 +1,1 @@
-<bullet name="bullet1" texture="res/textures/blue_ball_texture.png" speed="75" />
+<bullet name="bullet1" texture="res/textures/blue_ball_texture.png" speed="75" radius="18.0" material="bullet" />
