@@ -76,9 +76,9 @@ public:
 
 	void moveToPlayer();
 
-	int moveToDest();
+	bool moveToDest();
 
-	int moveAwayFromPlayer(float distance);
+	bool moveAwayFromPlayer(float distance);
 
 	void shootPlayer();
 
