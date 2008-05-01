@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <level name="tutorial1" music="tutorial1_music" time="50" startingx="100" startingy="100" width="2500" height="2000" map="res/levels/space.irr" material="level" gravity="10.0">
-	<camera xloc="400" yloc="2000" zloc="800" xlook="400" ylook="2000" zlook="-300"/>
+	<camera xloc="400" yloc="2000" zloc="800" xlook="400" ylook="1800" zlook="-300"/>
 	
 	<entities>
 
-		<entity name="gravship" startstate="normal" xloc="500" yloc="0" handle="player" />
+		<entity name="gravship" startstate="normal" xloc="400" yloc="1970" handle="player" />
 		<entity name="enemy" startstate="normal" xloc="500" yloc="700" />
 		<entity name="enemy" startstate="normal" xloc="300" yloc="800" />
 
