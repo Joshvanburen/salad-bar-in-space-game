@@ -297,6 +297,7 @@ Enemy::Enemy() : WorldEntity(){
 }
 
 Enemy::~Enemy(){
+	
 }
 
 void Enemy::splat(){
