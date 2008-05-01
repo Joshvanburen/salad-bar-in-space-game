@@ -38,9 +38,7 @@ bool WorldEntityAIManager::init(){
 
 	
 
-	Scripting::WorldEntityAIFunction* script_function = new Scripting::WorldEntityAIFunction();
 
-	ScriptManager::getSingleton().registerScriptFunction("entity_ai", script_function);
 
 
 	m_AIDefinition = "./res/ai/global.xml";
@@ -60,6 +58,8 @@ bool WorldEntityAIManager::readInXML(const std::string& XMLMaterialDefinition){
 	// strings for storing the data we want to get out of the file
 	std::string type;
 	std::string scriptName;
+	int i = 0;
+	char buffer [64];
 	//std::string material2;
 	//irr::newton::IMaterial* material;
 	//irr::newton::IMaterial* second_material;
@@ -86,7 +86,12 @@ bool WorldEntityAIManager::readInXML(const std::string& XMLMaterialDefinition){
 				if (!script.isLoaded()){
 					script.load();
 				}
-				Scripting::ScriptFunction* scriptFunction = script.addFunction("entity_ai");
+				itoa(i, (char*)buffer, 10);
+				//buffer = "entity_ai" + buffer;
+				Scripting::WorldEntityAIFunction* script_function = new Scripting::WorldEntityAIFunction();
+				ScriptManager::getSingleton().registerScriptFunction(buffer, script_function);
+
+				Scripting::ScriptFunction* scriptFunction = script.addFunction(buffer);
 
 				
 				m_AIFunctionItr = m_AIFunctionMap.find(type);
@@ -98,6 +103,7 @@ bool WorldEntityAIManager::readInXML(const std::string& XMLMaterialDefinition){
 					m_AIFunctionMap.insert(std::make_pair(type, (Scripting::WorldEntityAIFunction*)scriptFunction));
 				}
 
+				i++;
 			}
 
 			break;
@@ -116,6 +122,8 @@ Scripting::ScriptFunction* WorldEntityAIManager::getAI(const std::string type) {
 	if (m_AIFunctionItr == m_AIFunctionMap.end()){
 		std::cout << "AI with type: " << type << "not exists. Continuing...\n";
 	}
+
+	//std::cout << type << m_AIFunctionItr->first << "ai check ... \n";
 	
 	return m_AIFunctionItr->second;
 

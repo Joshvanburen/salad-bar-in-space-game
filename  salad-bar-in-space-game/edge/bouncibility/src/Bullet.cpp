@@ -74,7 +74,7 @@ void Bullet::moveToPlayer(){
 	const irr::core::vector3df playerLoc = GameSystem::getSingleton().getGravship()->getSceneNode()->getPosition();
 	const irr::core::vector3df myLoc = this->getSceneNode()->getPosition();
 
-	irr::core::vector3df conn = playerLoc - myLoc;
+	irr::core::vector3df conn = myLoc - playerLoc;
 	conn = conn.normalize();
 
 	//irr::core::vector3df vel = this->m_Physics_Body->getVelocity();
@@ -95,7 +95,7 @@ void Bullet::moveTo(irr::core::vector3df loc) {
 	
 	const irr::core::vector3df myLoc = this->getSceneNode()->getPosition();
 
-	irr::core::vector3df conn = loc - myLoc;
+	irr::core::vector3df conn = myLoc - loc;
 	conn = conn.normalize();
 
 	//irr::core::vector3df vel = this->m_Physics_Body->getVelocity();

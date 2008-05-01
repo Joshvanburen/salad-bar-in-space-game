@@ -998,5 +998,6 @@ WorldEntity& EntityManager::cloneEntity(WorldEntity& entity){
 	this->m_IdEntityMap.insert(std::make_pair(Next_Available_ID, newEntity));
 	newEntity->id = Next_Available_ID;
 	Next_Available_ID++;
+	LevelManager::getSingleton().getCurrentLevel().addEntity(newEntity);
 	return(*newEntity);
 }

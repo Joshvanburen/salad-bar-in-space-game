@@ -36,6 +36,13 @@ Level::~Level(){
 //Updates the level
 void Level::update()
 {
+	if (m_EntitiesToAdd.size() > 0){
+		::EntityVector::iterator entityAddItr = m_EntitiesToAdd.begin();
+		for(;entityAddItr != m_EntitiesToAdd.end(); entityAddItr++){
+			m_WorldEntities.push_back(*entityAddItr);
+		}
+		m_EntitiesToAdd.clear();
+	}
 	::EntityVector::iterator worldEntityEnd = m_WorldEntities.end();
 	for(m_WorldEntityItr = m_WorldEntities.begin(); m_WorldEntityItr != worldEntityEnd; m_WorldEntityItr++){
 		(*m_WorldEntityItr)->update();
@@ -175,6 +182,10 @@ bool Level::load(const std::string& LevelDefinition)
 	delete xml;
 
 	return true;
+}
+
+void Level::addEntity(WorldEntity* entity){
+	m_EntitiesToAdd.push_back(entity);
 }
 
 //Gets the level name
