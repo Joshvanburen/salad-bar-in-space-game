@@ -1,6 +1,7 @@
 <scripts>
 	<script name="gravship" filename="./res/entities/scripts/gravship.as" />
 	<script name="enemy" filename="./res/entities/scripts/enemy.as" />
+	<script name="bullet" filename="./res/entities/scripts/bullet.as" />
 	<script name="gravship_helper" filename="./res/entities/scripts/gravship_helper.as" />
 	<script name="stupid_ai" filename="./res/ai/stupid.as" />
 	<script name="smart_ai" filename="./res/ai/smart.as" />

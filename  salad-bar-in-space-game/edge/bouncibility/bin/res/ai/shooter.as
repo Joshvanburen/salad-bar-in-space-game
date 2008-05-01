@@ -8,8 +8,8 @@ int update(Enemy &enemy)
 
 	Enemy@ enemy1 = enemy;
 
-	if (!enemy1.moveNowhere()) {
-		enemy1.genRandomNW();
+	if (!enemy1.moveToDest()) {
+		enemy1.genRandomDest();
 	}
 
 	enemy1.shootPlayer();
