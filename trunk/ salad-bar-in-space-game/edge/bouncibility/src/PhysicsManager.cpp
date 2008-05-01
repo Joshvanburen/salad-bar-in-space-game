@@ -227,7 +227,11 @@ bool PhysicsManager::readInXML(const std::string& XMLMaterialDefinition){
 				if (!script.isLoaded()){
 					script.load();
 				}
-				Scripting::ScriptFunction* callbackFunction = script.addFunction("material_collision");
+				Scripting::MaterialCollisionFunction* script_function = new Scripting::MaterialCollisionFunction();
+
+				ScriptManager::getSingleton().registerScriptFunction(material1+material2, script_function);
+
+				Scripting::ScriptFunction* callbackFunction = script.addFunction(material1+material2);
 				
 				this->addObserver(callbackFunction, material1, material2);
 			}

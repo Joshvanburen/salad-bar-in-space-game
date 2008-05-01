@@ -273,7 +273,7 @@ WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename)
 				material = PhysicsManager::getSingleton().getMaterial(materialName);
 
 				((Gravship*)entity)->m_Helper = (GravshipHelper*)&(EntityManager::getSingleton().createEntity(helper));
-				((Gravship*)entity)->m_Helper->setLocation(entity->getLocation().X, entity->getLocation().Y + 100.0f, entity->getLocation().Z);
+				
 				
 
 				irr::newton::SBodyFromNode physics_node;
@@ -392,7 +392,7 @@ WorldEntity& Entity::EnemyFactory::loadEntity(const std::string& XMLFilename){
 
 					material = PhysicsManager::getSingleton().getMaterial(materialName);
 
-					//material->setCollidable(PhysicsManager::getSingleton().getMaterial("shipb"), false);
+					material->setCollidable(PhysicsManager::getSingleton().getMaterial("bullet"), false);
 					material->setCollidable(PhysicsManager::getSingleton().getMaterial("enemy"), false);
 
 					irr::newton::SBodyFromNode physics_node;
@@ -489,7 +489,9 @@ WorldEntity& Entity::BulletFactory::loadEntity(const std::string& XMLFilename){
 				//rotZ = xml->getAttributeValueAsFloat("rotZ");
 				//maxSpeed = xml->getAttributeValueAsFloat("max_speed");
 
-				irr::scene::ISceneNode* node = LevelManager::getSceneManager()->addSphereSceneNode(radius);
+				irr::scene::ISceneNode* node = LevelManager::getSceneManager()->addBillboardSceneNode();
+				node->setMaterialTexture(0, LevelManager::getSingleton().getDriver()->getTexture(textureFile.c_str()));
+				
 				//irr::scene::IAnimatedMeshSceneNode* node = LevelManager::getSceneManager()->addAnimatedMeshSceneNode(mesh);
 
 				//if (node){
@@ -498,6 +500,8 @@ WorldEntity& Entity::BulletFactory::loadEntity(const std::string& XMLFilename){
 				//	
 				//}
 				
+				node->setScale(irr::core::vector3df(radius, radius, radius));
+
 				entity = new Bullet();
 				
 				((Bullet*)entity)->setBulletRadius(radius);
@@ -508,7 +512,7 @@ WorldEntity& Entity::BulletFactory::loadEntity(const std::string& XMLFilename){
 				//((Enemy*)entity)->setRadius(radius);
 				entity->setSceneNode(node);
 				//node->setMaterialFlag();
-				node->setMaterialTexture(0,LevelManager::getSingleton().getDriver()->getTexture(textureFile.c_str()));
+				//node->setMaterialTexture(0,LevelManager::getSingleton().getDriver()->getTexture(textureFile.c_str()));
 				//if (physics_enabled){
 					//gravity_enabled = xml->getAttributeValueAsInt("enable_gravity");
 					
@@ -520,7 +524,7 @@ WorldEntity& Entity::BulletFactory::loadEntity(const std::string& XMLFilename){
 					irr::newton::SBodyFromNode physics_node;
 					//physics_node.Mesh = mesh->getMesh(2);
 					physics_node.Node = node;
-					physics_node.Type = irr::newton::EBT_PRIMITIVE_ELLIPSOID;
+					physics_node.Type = irr::newton::EBT_PRIMITIVE_BOX;
 
 					irr::newton::ICharacterController* body = PhysicsManager::getSingleton().getPhysicsWorld()->createCharacterController(PhysicsManager::getSingleton().getPhysicsWorld()->createBody(physics_node));
 					body->setRotationUpdate(false);
@@ -1121,6 +1125,7 @@ WorldEntity& EntityManager::cloneEntity(const int entityID){
 
 	this->m_IdEntityMap.insert(std::make_pair(Next_Available_ID, newEntity));
 	newEntity->id = Next_Available_ID;
+	LevelManager::getSingleton().getCurrentLevel().addEntity(newEntity);
 	Next_Available_ID++;
 	return(*newEntity);
 }

@@ -21,6 +21,7 @@ class Level
 			//!Vector to hold all world entities
 			EntityVector m_WorldEntities;
 			EntityVector m_EntitiesToAdd;
+			EntityVector m_EntitiesToRemove;
 			//!Iterator for the world entities
 			EntityVector::iterator m_WorldEntityItr;
 			//!Level name

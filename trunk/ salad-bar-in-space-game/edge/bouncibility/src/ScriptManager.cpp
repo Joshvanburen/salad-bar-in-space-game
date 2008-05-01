@@ -78,7 +78,7 @@ Scripting::ScriptFunction::~ScriptFunction(){
 }
 
 void Scripting::ScriptFunction::callFunction(){
-	this->execute();
+	
 }
 void Scripting::ScriptFunction::execute(){
 	int r = m_pContext->Execute();
@@ -281,6 +281,9 @@ bool ScriptManager::init(){
 	registerAsGlobal("Gravship& EntityToGravship(WorldEntity&)", ::asFUNCTION(Gravship::EntityToGravship));
 	registerObjectMethod("Enemy", "void splat()", ::asMETHOD(Enemy, splat));
 	registerObjectMethod("Gravship", "void takeDamage(int)", ::asMETHOD(Gravship, takeDamage));
+
+	registerReferenceObject("Bullet");
+	registerAsGlobal("Bullet& EntityToBullet(WorldEntity&)", ::asFUNCTION(Bullet::EntityToBullet));
 
 	//Register global handles to singletons
 	registerReferenceObject("EntityManager");

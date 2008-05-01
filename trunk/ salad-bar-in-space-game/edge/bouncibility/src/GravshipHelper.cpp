@@ -37,7 +37,7 @@ void GravshipHelper::update(){
 		this->m_Physics_Body->setMaterial(m_EmptyMaterial);
 	}
 	//m_Light->setPosition(irr::core::vector3df(this->m_SceneNode->getPosition().X, this->m_SceneNode->getPosition().Y-10.0f, this->m_SceneNode->getPosition().Z));
-
+	m_OrbitingEntities.clear();
 }
 
 void GravshipHelper::applyGravityToOrbitingEntities(){
@@ -185,6 +185,7 @@ void GravshipHelper::updateOrbitingEntities(){
            //the objects have already interpenetrated
 
 		   this->m_OrbitingEntities.insert(otherEntity);
+		   (otherEntity)->enableMovement(false);
            continue;
        }
 
@@ -199,12 +200,13 @@ void GravshipHelper::updateOrbitingEntities(){
        //IT IS CONFIRMED THAT THE OBJECTS WILL COLLIDE!!!
 
 	   this->m_OrbitingEntities.insert(otherEntity);
+	   (otherEntity)->enableMovement(false);
 		(otherEntity)->enableRotation(true);
 	   continue;
        /*********************************************************************************************************/
 	}
 
-	//Make sure that orbiting entities are still in range.
+	/*//Make sure that orbiting entities are still in range.
 	std::list<WorldEntity*> entitiesToRemove;
 	for (m_OrbitingEntitiesItr = m_OrbitingEntities.begin(); m_OrbitingEntitiesItr != m_OrbitingEntities.end(); m_OrbitingEntitiesItr++){
 		WorldEntity* otherEntity = *m_OrbitingEntitiesItr;
@@ -249,7 +251,7 @@ void GravshipHelper::updateOrbitingEntities(){
 	for (entitiesToRemoveItr = entitiesToRemove.begin(); entitiesToRemoveItr != entitiesToRemove.end(); entitiesToRemoveItr++){
 		(*entitiesToRemoveItr)->enableRotation(false);
 		m_OrbitingEntities.erase((*entitiesToRemoveItr));
-	}
+	}*/
 
 }
 
