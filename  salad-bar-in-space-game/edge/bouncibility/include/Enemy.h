@@ -85,6 +85,8 @@ public:
 
 	bool moveToDest();
 
+	bool moveNowhere();
+
 
 	bool moveAwayFromPlayer(float distance);
 
@@ -93,8 +95,9 @@ public:
 	void shootTarget();
 
 	//irr::core::vector3df genRandomLoc();
-	void genRandomLoc();
-
+	void genRandomDest();
+	void genRandomNW();	
+	
 	//static Bullet* bulletSrc;
 
 private: 
@@ -127,6 +130,7 @@ private:
 	float speed;
 
 	irr::core::vector3df dest;
+	irr::core::vector3df nowhere;
 	irr::core::vector3df target;
 
 };
