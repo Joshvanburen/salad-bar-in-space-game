@@ -344,6 +344,12 @@ void Input::Wiimote::resync(){
 	}
 	wiiuse_resync(wiimotes[0]);
 
+	
+
+}
+
+float Input::Wiimote::getPitch(){
+	return wiimotes[0]->orient.a_pitch;
 }
 bool Input::Wiimote::hasAttachment(){
 	if (!found){

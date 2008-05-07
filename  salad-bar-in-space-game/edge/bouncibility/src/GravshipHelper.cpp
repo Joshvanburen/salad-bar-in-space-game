@@ -3,7 +3,7 @@
 
 
 void GravshipHelper::load(){
-	m_EmptyMaterial = PhysicsManager::getSingleton().getMaterial("empty");
+	//m_EmptyMaterial = PhysicsManager::getSingleton().getMaterial("empty");
 
 	//m_Light = LevelManager::getSceneManager()->addLightSceneNode(NULL, irr::core::vector3d<float>(this->m_SceneNode->getPosition().X, this->m_SceneNode->getPosition().Y -10.0f, this->m_SceneNode->getPosition().Z));
 
@@ -24,17 +24,17 @@ void GravshipHelper::update(){
 	//this->m_Physics_Body->setVelocity(this->velocity);
 
 	//Find any new entities that are in our gravity field range and remove those who are no longer in it.
-	updateOrbitingEntities();
+	//updateOrbitingEntities();
 	//If gravity field is on, Apply force to any entities in our orbiting range
 	if (this->m_GravityOn){
 
 //		this->m_Physics_Body->setMaterial(m_Material);
 
-		applyGravityToOrbitingEntities();
+		//applyGravityToOrbitingEntities();
 	}
 	else{
 
-		this->m_Physics_Body->setMaterial(m_EmptyMaterial);
+		//this->m_Physics_Body->setMaterial(m_EmptyMaterial);
 	}
 	//m_Light->setPosition(irr::core::vector3df(this->m_SceneNode->getPosition().X, this->m_SceneNode->getPosition().Y-10.0f, this->m_SceneNode->getPosition().Z));
 	m_OrbitingEntities.clear();
@@ -315,6 +315,7 @@ GravshipHelper::GravshipHelper() : m_GravityOn(false){
 	m_MaxForce = 1;
 	m_MaxForceSQ = 1;
 	m_Light = NULL;
+	this->m_EnableRotation = true;
 }
 
 GravshipHelper::~GravshipHelper(){

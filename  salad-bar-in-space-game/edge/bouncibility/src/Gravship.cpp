@@ -6,7 +6,7 @@ void Gravship::load(){
 
 	if (!s_BulletSrc){
 		s_BulletSrc = (Bullet*)&EntityManager::getSingleton().createEntity("gravshipb");
-		s_BulletSrc->setLocation(this->getLocation());
+		s_BulletSrc->setLocation(-19999, -19999, -19999);
 		s_BulletSrc->setVisible(false);
 		s_BulletSrc->getPhysicsBody()->setFreeze(true);
 		//EntityManager::getSingleton().claim(s_BulletSrc->getID());
@@ -16,9 +16,9 @@ void Gravship::load(){
 void Gravship::shoot() {
 
 	Bullet* newBullet = dynamic_cast<Bullet*>(&EntityManager::getSingleton().cloneEntity(Gravship::s_BulletSrc->getID()));
-	newBullet->setLocation(this->m_Physics_Body->getPosition());
-	target.X = -10000;
-	target.Y = -10000;
+	newBullet->setLocation(this->m_Physics_Body->getPosition().X, this->m_Physics_Body->getPosition().Y, this->m_Physics_Body->getPosition().Z - 50);
+	target.X = this->m_Physics_Body->getPosition().X;
+	target.Y = this->m_Physics_Body->getPosition().Y;
 	target.Z = -10000;
 	newBullet->dest = target;
 	newBullet->moveToDest();

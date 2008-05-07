@@ -139,6 +139,7 @@ GameSystem::GameSystem(){
 	start = NULL;
 
 	m_SplashTTL = 2000;
+	m_FireRate = 1000;
 }
 
 
@@ -211,7 +212,7 @@ void GameSystem::init(){
 
 	m_ScreenDim.set(1280, 1024);
 	m_Device = irr::createDevice( irr::video::EDT_DIRECT3D9, m_ScreenDim, 24,
-		false, false, false, InputManager::getSingleton().getEventReceiver());
+		true, false, false, InputManager::getSingleton().getEventReceiver());
 
 	m_SceneMgr = m_Device->getSceneManager();
 
@@ -313,8 +314,9 @@ void GameSystem::startGame(){
 	else{
 		this->s_Gravship = dynamic_cast<Gravship*>((EntityManager::getSingleton().getEntity(entity_ID)));
 		this->s_Gravship->setLocation(s_Gravship->getLocation().X, s_Gravship->getLocation().Y, 780);
-		s_Gravship->getHelper()->setLocation(s_Gravship->getLocation().X, s_Gravship->getLocation().Y, s_Gravship->getLocation().Z - 100.0f);
+		s_Gravship->getHelper()->setLocation(s_Gravship->getLocation().X, s_Gravship->getLocation().Y, s_Gravship->getLocation().Z - 400.0f);
 		LevelManager::getSingleton().getCurrentLevel().getCamera()->setParent(s_Gravship->getSceneNode());
+		s_Gravship->getHelper()->getPhysicsBody()->getMaterial()->setCollidable(PhysicsManager::getSingleton().getMaterial("enemy"), true);
 		//irr::scene::ISceneNode* node = LevelManager::getSingleton().getSceneManager()->addCubeSceneNode(5.0, s_Gravship->getSceneNode());
 		//node->setMaterialTexture(0, LevelManager::getSingleton().getDriver()->getTexture("./res/textures/neon_green.png"));
 		//node->setPosition(irr::core::vector3df(0.0f, 0.0f, -15.0f));
@@ -381,7 +383,7 @@ void GameSystem::run(){
 		irr::core::stringw tmp(L"FPS: ");
 		tmp += m_FPS;
 		m_Device->setWindowCaption(tmp.c_str());
-
+		m_FireRate -= this->getDeltaMillis();
 		m_SplashTTL -= this->getDeltaMillis();
 		if(m_SplashTTL < 0){
 			m_SplashTTL = 2000;
@@ -428,7 +430,7 @@ void GameSystem::run(){
 
 
 		m_Driver->beginScene(true, true, SColor(255,100,101,140));
-		if (m_FPS > 5){
+		if (m_FPS > 0){
 			if(!p.isPaused()){
 				m_Input_Mgr->stopPolling();
 				m_PhysicsMgr->update();
@@ -484,13 +486,14 @@ void GameSystem::setupInput(){
 	down_momentum = m_Input_Mgr->createAction("down_momentum", *m_Keyboard, Input::Keyboard::KEY_S, Input::Action::BEHAVIOR_DETECT_PRESS);
 	gravityOn = m_Input_Mgr->createAction("gravity_on", *m_Keyboard, Input::Keyboard::KEY_SPACE, Input::Action::BEHAVIOR_DETECT_PRESS);
 
-	shoot = m_Input_Mgr->createAction("shoot", *m_Keyboard, Input::Keyboard::KEY_Z, Input::Action::BEHAVIOR_DETECT_PRESS);
+	shoot = m_Input_Mgr->createAction("shoot", *m_Keyboard, Input::Keyboard::KEY_Z, Input::Action::BEHAVIOR_DETECT_RELEASE);
+
+
+	shoot->addCode(Input::Wiimote::WII_B_BUTTON, *m_Wiimote);
 
 	reverseGravity = m_Input_Mgr->createAction("reverse_gravity", *m_Keyboard, Input::Keyboard::KEY_R, Input::Action::BEHAVIOR_DETECT_PRESS);
 	
-	reverseGravity->addCode(Input::Wiimote::WII_B_BUTTON, *m_Wiimote);
 
-	gravityOn->addCode(Input::Wiimote::WII_A_BUTTON, *m_Wiimote);
 	
 	resync = m_Input_Mgr->createAction("resync", *m_Wiimote, Input::Wiimote::WII_2_BUTTON, Input::Action::BEHAVIOR_DETECT_PRESS);
 	up_momentum->addCode(Input::Wiimote::WII_UP_BUTTON, *m_Wiimote);
@@ -512,25 +515,36 @@ void GameSystem::setupInput(){
 }
 void GameSystem::handleInput(){
 	if (up_momentum->isPressed()){
-		s_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(s_Gravship->getPhysicsBody()->getVelocity().X, 0.0f, 3.0f));
+		s_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(s_Gravship->getPhysicsBody()->getVelocity().X, 15.0f, 0.0f));
 	}
 	if(down_momentum->isPressed()){
-		s_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(s_Gravship->getPhysicsBody()->getVelocity().X, 0.0f, -3.0f));
+		s_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(s_Gravship->getPhysicsBody()->getVelocity().X, -15.0f, 0.0f));
 	}
 	if(right_momentum->isPressed()){
-		s_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(3.0f, s_Gravship->getPhysicsBody()->getVelocity().Y, 0.0f));
+		s_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(-15.0f, s_Gravship->getPhysicsBody()->getVelocity().Y, 0.0f));
 	}
 	if(left_momentum->isPressed()){
-		s_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(-3.0f, s_Gravship->getPhysicsBody()->getVelocity().Y, 0.0f));
+		s_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(15.0f, s_Gravship->getPhysicsBody()->getVelocity().Y, 0.0f));
+	}
+	if (!up_momentum->isPressed() && !down_momentum->isPressed() && !right_momentum->isPressed() && !left_momentum->isPressed()){
+		s_Gravship->getPhysicsBody()->setVelocity(irr::core::vector3df(0.0f, 0.0f, 0.0f));
+	}
+	if(shoot->isPressed()){
+		if (m_FireRate < 0){
+			m_FireRate = 1000;
+			s_Gravship->shoot();
+		}
+		
 	}
 
-	if(shoot->isPressed()){
-		s_Gravship->shoot();
-	}
+	LevelManager::getSingleton().getCurrentLevel().getCamera()->setTarget(irr::core::vector3df(s_Gravship->getPhysicsBody()->getPosition().X, s_Gravship->getPhysicsBody()->getPosition().Y, -10000));
+	s_Gravship->getHelper()->setLocation(s_Gravship->getLocation().X, s_Gravship->getLocation().Y, s_Gravship->getLocation().Z - 500);
 	if (resync->isPressed()){
 		m_Wiimote->resync();
 
 	}	
+	//std::cout << m_Wiimote->getPitch() << "\n";
+	//s_Gravship->getHelper()->getPhysicsBody()->setRotation(irr::core::vector3df(0.0f, m_Wiimote->getPitch(), 0.0f));
 	if(gravityOn->isPressed()){
 		s_Gravship->enableGravityField(true);
 	}
@@ -538,14 +552,14 @@ void GameSystem::handleInput(){
 		s_Gravship->enableGravityField(false);
 	}
 
-	if(reverseGravity->isPressed()){
-		s_Gravship->getHelper()->reverseGravityField(true);
-		std::cout << EntityManager::getSingleton().getEntityID("spawner") << "\n";
-		((Spawner*)EntityManager::getSingleton().getEntity(11))->pause(true);
-	}
-	else{
-		s_Gravship->getHelper()->reverseGravityField(false);
-	}
+	//if(reverseGravity->isPressed()){
+	//	s_Gravship->getHelper()->reverseGravityField(true);
+	//	std::cout << EntityManager::getSingleton().getEntityID("spawner") << "\n";
+	//	((Spawner*)EntityManager::getSingleton().getEntity(11))->pause(true);
+	//}
+	//else{
+	//	s_Gravship->getHelper()->reverseGravityField(false);
+	//}
 
 }
 void GameSystem::update() {
@@ -574,13 +588,14 @@ void GameSystem::update() {
 	}
 	s_Gravship->getHelper()->setLocation(irr::core::vector3df(newX, s_Gravship->getHelper()->getLocation().Y, newY));
 	//s_Gravship->getHelper()->setLocation(irr::core::vector3df(cursor_position.X-wiimote_change.X, cursor_position.Y + wiimote_change.Y, 0.0f));
-	irr::core::vector3df direction(0.0f, 1.0f, 0.0f);
+	//irr::core::vector3df direction(0.0f, 1.0f, 0.0f);
 
 	
-	direction.rotateXYBy(-m_Wiimote->joystickAngle(),irr::core::vector3df(0.0f, 0.0f, 0.0f ));
-	direction = direction * 5 * m_Wiimote->joystickMagnitude();
-	irr::core::vector3df rotation(direction.getHorizontalAngle());
-	s_Gravship->setRotation(irr::core::vector3df(s_Gravship->getSceneNode()->getRotation().X, s_Gravship->getSceneNode()->getRotation().Y, rotation.Y - rotation.X));
+	//direction.rotateXYBy(-m_Wiimote->joystickAngle(),irr::core::vector3df(0.0f, 0.0f, 0.0f ));
+	//direction = direction * 20 * m_Wiimote->joystickMagnitude();
+	
+	//irr::core::vector3df rotation(direction.getHorizontalAngle());
+	//s_Gravship->setRotation(irr::core::vector3df(s_Gravship->getSceneNode()->getRotation().X, s_Gravship->getSceneNode()->getRotation().Y, rotation.Y - rotation.X));
 
 	//s_Gravship->getPhysicsBody()->setVelocity(direction);
 

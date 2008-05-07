@@ -94,6 +94,9 @@ void Enemy::changeVelocity(float x_speed, float y_speed){
 }
 
 Enemy* Enemy::EntityToEnemy(WorldEntity* entity){
+	if (!entity){
+		return NULL;
+	}
 	return dynamic_cast<Enemy*>(entity);
 }
 

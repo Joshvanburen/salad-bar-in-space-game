@@ -117,13 +117,15 @@ WorldEntity& Entity::GravshipHelperFactory::loadEntity(const std::string& XMLFil
 				rotZ = xml->getAttributeValueAsFloat("rotZ");
 				maxOrbitSpeed = xml->getAttributeValueAsFloat("max_orbit_speed");
 				maxForce = xml->getAttributeValueAsFloat("max_gravity_force");
-				irr::scene::ISceneNode* node = LevelManager::getSceneManager()->addSphereSceneNode(irr::f32(radius));
-		
+				irr::scene::IAnimatedMesh* mesh = LevelManager::getSceneManager()->getMesh(meshFile.c_str());
+				irr::scene::IAnimatedMeshSceneNode* node = LevelManager::getSceneManager()->addAnimatedMeshSceneNode(mesh);
+			
+				
 				
 
 				if (node){
-					node->setScale(irr::core::vector3df(1.0f, 1.0f, 1.0f));
-					node->setMaterialFlag(irr::video::EMF_LIGHTING, true);
+					node->setScale(irr::core::vector3df(50.0f, 50.0f, 50.0f));
+					node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 					
 				}
 				
@@ -131,7 +133,7 @@ WorldEntity& Entity::GravshipHelperFactory::loadEntity(const std::string& XMLFil
 			
 				entity = new GravshipHelper();
 				
-				entity->setMesh(NULL);
+				entity->setMesh((irr::scene::IAnimatedMesh*)mesh);
 				entity->setRotation(irr::core::vector3df(rotX, rotY, rotZ));
 				
 				((GravshipHelper*)entity)->m_GravityFieldRadius = fieldRadius;
@@ -140,7 +142,7 @@ WorldEntity& Entity::GravshipHelperFactory::loadEntity(const std::string& XMLFil
 				((GravshipHelper*)entity)->setMaxOrbitSpeed(maxOrbitSpeed);
 				((GravshipHelper*)entity)->setMaxForce(maxForce);
 				entity->setSceneNode(node);
-				node->setMaterialTexture(0,LevelManager::getSingleton().getDriver()->getTexture(textureFile.c_str()));
+				//node->setMaterialTexture(0,LevelManager::getSingleton().getDriver()->getTexture(textureFile.c_str()));
 
 
 				materialName = xml->getAttributeValue("material");
@@ -151,9 +153,10 @@ WorldEntity& Entity::GravshipHelperFactory::loadEntity(const std::string& XMLFil
 
 				
 				irr::newton::SBodyFromNode physics_node;
-
+				physics_node.Mesh = mesh->getMesh(0);
+				physics_node.Mass = 10000;
 				physics_node.Node = node;
-				physics_node.Type = irr::newton::EBT_PRIMITIVE_ELLIPSOID;
+				physics_node.Type = irr::newton::EBT_CONVEX_HULL;
 
 				irr::newton::IBody* body = PhysicsManager::getSingleton().getPhysicsWorld()->createBody(physics_node);
 				
@@ -163,12 +166,14 @@ WorldEntity& Entity::GravshipHelperFactory::loadEntity(const std::string& XMLFil
 
 				((GravshipHelper*)entity)->m_Material = material;
 
+				material->setCollidable(PhysicsManager::getSingleton().getMaterial("enemy"), true);
+
 
 				body->setUserData(entity);
 
 				//body->addForceContinuous(irr::core::vector3df(0,PhysicsManager::getSingleton().getGravity(),0 ));
 
-				body->setMass(irr::f32(mass));
+				body->setMass(irr::f32(10000));
 
 				entity->setPhysicsBody(body);
 				
@@ -288,7 +293,7 @@ WorldEntity& Entity::GravshipFactory::loadEntity(const std::string& XMLFilename)
 				body->setMaterial(material);
 
 				body->setUserData(entity);
-				
+				material->setCollidable(PhysicsManager::getSingleton().getMaterial("gravshipb"), false);
 
 				body->addForceContinuous(irr::core::vector3df(0,0,PhysicsManager::getSingleton().getGravity() ));
 
@@ -395,6 +400,7 @@ WorldEntity& Entity::EnemyFactory::loadEntity(const std::string& XMLFilename){
 					material->setCollidable(PhysicsManager::getSingleton().getMaterial("bullet"), false);
 					material->setCollidable(PhysicsManager::getSingleton().getMaterial("enemy"), false);
 
+					material->setCollidable(PhysicsManager::getSingleton().getMaterial("gravship_helper"), true);
 					irr::newton::SBodyFromNode physics_node;
 					physics_node.Mesh = mesh->getMesh(2);
 					physics_node.Node = node;
@@ -404,8 +410,8 @@ WorldEntity& Entity::EnemyFactory::loadEntity(const std::string& XMLFilename){
 					body->setRotationUpdate(false);
 					body->setContinuousCollisionMode(false);
 
-					body->setAutoFreeze(true);
-					body->setFreezeTreshold(1.0, 1.0, 10);
+					//body->setAutoFreeze(true);
+					//body->setFreezeTreshold(1.0, 1.0, 10);
 					body->setMaterial(material);
 
 					body->setUserData(entity);
@@ -612,7 +618,9 @@ WorldEntity& Entity::GravshipbFactory::loadEntity(const std::string& XMLFilename
 				//rotZ = xml->getAttributeValueAsFloat("rotZ");
 				//maxSpeed = xml->getAttributeValueAsFloat("max_speed");
 
-				irr::scene::ISceneNode* node = LevelManager::getSceneManager()->addSphereSceneNode(radius);
+				irr::scene::ISceneNode* node = LevelManager::getSceneManager()->addBillboardSceneNode();
+				node->setMaterialTexture(0, LevelManager::getSingleton().getDriver()->getTexture(textureFile.c_str()));
+				
 				//irr::scene::IAnimatedMeshSceneNode* node = LevelManager::getSceneManager()->addAnimatedMeshSceneNode(mesh);
 
 				//if (node){
@@ -620,6 +628,9 @@ WorldEntity& Entity::GravshipbFactory::loadEntity(const std::string& XMLFilename
 				//	node->setMaterialFlag(irr::video::EMF_LIGHTING, true);
 				//	
 				//}
+				
+				node->setScale(irr::core::vector3df(radius, radius, radius));
+
 				
 				entity = new Bullet();
 				
