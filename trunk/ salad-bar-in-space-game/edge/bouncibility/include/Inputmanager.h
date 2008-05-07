@@ -226,6 +226,9 @@ namespace Input{
 
 		float getBatteryLevel();
 
+		
+float Input::Wiimote::getPitch();
+
 		bool hasAttachment();
 
 		int* whichLEDs();

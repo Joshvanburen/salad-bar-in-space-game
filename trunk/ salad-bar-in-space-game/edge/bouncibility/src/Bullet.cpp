@@ -87,6 +87,9 @@ void Bullet::changeVelocity(float x_speed, float y_speed){
 }
 
 Bullet* Bullet::EntityToBullet(WorldEntity* entity){
+	if (!entity){
+		return NULL;
+	}
 	return dynamic_cast<Bullet*>(entity);
 }
 
@@ -137,7 +140,7 @@ void Bullet::moveToDest() {
 Bullet::Bullet() : WorldEntity(){
 	//dest = GameSystem::getSingleton().getGravship()->getSceneNode()->getPosition();
 	m_BulletRadius = 1;
-	ttl = 10000;
+	ttl = 2000;
 }
 
 Bullet::~Bullet(){

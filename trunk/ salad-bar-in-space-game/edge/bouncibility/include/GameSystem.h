@@ -134,6 +134,8 @@ class GameSystem : public CSingleton<GameSystem>
 		irr::s32 m_FPS;
 		irr::u32 m_DeltaMillis;
 
+		int m_FireRate;
+
 		irr::gui::IGUIEnvironment* m_GUI;
 		irr::scene::ICameraSceneNode* m_Camera;
 		irr::scene::ISceneManager* m_SceneMgr;
