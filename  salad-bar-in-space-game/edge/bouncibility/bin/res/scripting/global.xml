@@ -10,4 +10,5 @@
 	<script name="shooter_ai" filename="./res/ai/shooter.as" />
 	<script name="obstacle" filename="./res/ai/obstacle.as" />
 	<script name="spawner" filename="./res/entities/scripts/spawner.as" />
+	
 </scripts>

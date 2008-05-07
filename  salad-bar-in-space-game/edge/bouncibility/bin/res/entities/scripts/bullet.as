@@ -4,37 +4,32 @@ void main()
 }
 int collide(WorldEntity &entity1, WorldEntity &entity2)
 {
-	PrintString("In Enemy Script");
-	Enemy@ enemy = EntityToEnemy(entity1);
+	PrintString("In Bullet Script");
+	Gravship@ gravship = EntityToGravship(entity1);
 	Bullet@ bullet = EntityToBullet(entity2);
-	if (enemy == null){
+	if (gravship == null){
 		Bullet@ bullet = EntityToBullet(entity1);
-		Enemy@ enemy = EntityToEnemy(entity2
+		Gravship@ gravship = EntityToGravship(entity2
 );
 		if (bullet == null){
 			PrintString("unknown collider");
 			return 1;
 		}
+		gravship.takeDamage(10);
 		
 		soundManager.getSound("bullet_hit").play(false);
 		entityManager.remove(entity1.getID());
-		entityManager.remove(entity2.getID());
-		//explosion
 	}
 	else{
-		if (enemy == null){
+		if (bullet == null){
 		PrintString("unknown collider");
 		return 1;
 		}
-	
+		gravship.takeDamage(10);
 		
 		soundManager.getSound("bullet_hit").play(false);
-		
 	entityManager.remove(entity2.getID());
-	entityManager.remove(entity1.getID());
-	//explosion
 	}
-	
-	
+
 	return 1;
 }
