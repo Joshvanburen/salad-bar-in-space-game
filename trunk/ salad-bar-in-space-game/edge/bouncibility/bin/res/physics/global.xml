@@ -6,16 +6,19 @@
 	<material name="enemy" />
 	<material name="gravship_helper" />
 	<material name="bullet" />
+	<material name="gravshipb" />
   </materials>
   <collisions>
     <collision material1="gravship" material2="level" softness="1.0" static_friction="1.0" kinetic_friction="1.0" elasticity="0.0" />
+	<collision material1="gravship_helper" material2="enemy" softness="0.5" static_friction="0.5" kinetic_friction="0.5" elasticity="0.9" />
 	<collision material1="gravship" material2="enemy" softness="1.0" static_friction="0.0" kinetic_friction="0.0" elasticity="0.0" />
 	<collision material1="gravship" material2="gravship" softness="0.0" static_friction="0.0" kinetic_friction="0.0" elasticity="1.0" />
 	<collision material1="enemy" material2="level" softness="1.0" static_friction="1.0" kinetic_friction="1.0" elasticity="0.2" />
 	<collision material1="enemy" material2="enemy" softness="0.0" static_friction="0.0" kinetic_friction="0.0" elasticity="0.3" />
+			<callback script="enemy" material1="enemy" material2="gravshipb" />
 		<callback script="bullet" material1="gravship" material2="bullet" />
 	<callback script="gravship" material1="gravship" material2="enemy" />
 
-    <sound name="ball_collision" material1="gravship" material2="enemy" />
+
   </collisions>
 </physics>
